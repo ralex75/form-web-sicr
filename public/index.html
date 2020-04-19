@@ -1,0 +1,246 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta property="description" content="Servizio Impianti Calcolo e Reti"/>
+	<meta property="content-lenguage" content="IT"/>
+	<meta property="author" content="Piero Gatta"/>
+	<meta property="revisit-after" content="7-days"/>
+	<meta property="keywords" content="Physics"/>
+	<meta property="keywords" content="ccr"/>
+	<meta property="keywords" content="sicr"/>
+	<meta property="keywords" content="reti"/>
+	<meta property="keywords" content="INFN"/>
+	<meta property="keywords" content="Roma"/>
+	<meta property="keywords" content="calcolo"/>
+	<meta property="keywords" content="infn"/>
+	<meta property="keywords" content="Roma"/>	
+	<meta property="og:description" content=""/>
+	<meta property="og:url" content=""/>
+	<meta property="og:title" content="sicr"/>
+	<meta name="my:fb" content="on"/>
+	<meta name="my:google" content="on"/>
+	<meta name="my:tw" content="on"/>
+	<meta name="my:in" content="on"/>
+	<meta name="my:pint" content="on"/>
+	<meta property="og:locale" content="it"/>
+	<meta property="og:site_name" content="supporto"/>
+	<title>Supporto</title>
+	<link href="/css/style_base.css" rel="stylesheet" type="text/css">
+	<link rel="SHORTCUT ICON" href="favicon.ico">
+	<!--<script type="text/javascript" src="js/myscript.js"></script>-->
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+	<div id="header"><img id="logo_sicr" src="img/header.png" width="1200" height="150" alt=""/>
+	</div>
+	<div id="barrel">&nbsp;</div>
+	<div id="pre_menu">&nbsp;</div>
+	<div id="menu">
+    	<ul id="ulprimo">
+      		<li class="liprimo" id="primavoce" name="primavoce"><a href="home.html">Home</a></li>
+			<li class="liprimo"><a href="#">rete</a></li>
+			<li class="liprimo"><a href="wifi.html">wifi</a></li>
+			<li class="liprimo"><a href="stampanti.html">stampanti</a></li>
+			<li class="liprimo"><a href="webmail.html">webmail</a></li>
+			<li class="liprimo"><a href="tier2.html">Tier2</a></li>
+			<li class="liprimo_sel"><a href="#">Supporto &nabla;</a>
+				<ul class="ulsecondo">
+					<li class="lisecondo" id="primavoce_sub" name="primavoce_sub"><a href="https://osticket.roma1.infn.it/support/index.php" target="_blank">Tecnico PC & Device</a></li>
+					<li class="lisecondo"><a href="#">Account e Rete</a></li>
+				</ul>
+			</li>
+			<li class="liprimo"><a href="vpn.html">VPN</a></li>
+			<li class="liprimo"><a href="staff.html">staff</a></li>
+    	</ul>
+  	</div>
+	<div id="content">
+		<div class="colonne_content_sin_2col fadein" id="col_sin_menu" name="col_sin_menu">
+			
+		</div>
+		<div class="colonne_content_centr_2col" id="colonne_content">
+			 
+			 <h2 class="centrato">Elenco richieste</h2>
+			  <table>
+				  <tbody>
+					<tr id="table_intest">
+						<td>ID</td>
+						<td>Data</td>
+						<td>descrizione</td>
+						<td>azioni</td>
+					</tr>
+					<tr>
+					  <td>1</td>
+						<td>12/02/2020</td>
+						<td>modifica nodo pcatlas.roma1.infn.it</td>
+						<td>
+							<button class="button_p"><img src="img/button/modifica_blu.png"></button>
+							<button class="button_p"><img src="img/button/elimina_blu.png"></button>
+						</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>14/02/2020</td>
+						<td>richiesta account email</td>
+						<td>
+							<button class="button_p"><img src="img/button/modifica_blu.png"></button>
+							<button class="button_p"><img src="img/button/elimina_blu.png"></button>
+						</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>14/02/2020</td>
+						<td>richiesta account email</td>
+						<td>
+							<button class="button_p"><img src="img/button/modifica_blu.png"></button>
+							<button class="button_p"><img src="img/button/elimina_blu.png"></button>
+						</td>
+					</tr>
+					  <tr>
+						<td>2</td>
+						<td>14/02/2020</td>
+						<td>richiesta account email</td>
+						<td>
+							<button class="button_p"><img src="img/button/modifica_blu.png"></button>
+							<button class="button_p"><img src="img/button/elimina_blu.png"></button>
+						</td>
+					</tr>
+				  </tbody>
+				</table>
+
+			<!---form---------------------->
+
+				<form @submit.prevent="handleSubmit">
+				<div class="form_sez">
+					<div class="form_intest">
+					  Identificativo Nodo
+					</div>
+				 	<div class="form_riga">
+						<div class="form_col">
+						  <label for="macAddress">Mac Address</label><br>
+						  <input type="text" id="macAddress">		
+						</div>
+						<div class="form_col">
+							<label for="hostName">Modalità</label>
+							<br> 
+							<select >
+								<option  value="STATIC">STATICO</option>
+								<option selected value="DHCP">DHCP</option>
+							</select>
+						</div> 
+					</div>
+					<div class="form_riga">
+						<div class="form_col">
+						  <label for="hostName">Nome</label><br>
+						  <input type="text" id="hostName">
+						</div>
+						<div class="form_col">
+						  <label for="hostDomain">Dominio</label><br>
+						  <select >
+							<option selected  value="roma1.infn.it">roma1.infn.it</option>
+							<option value="phys.uniroma1.it">phys.uniroma1.it</option>
+							</select>
+						</div>
+					</div> 
+				</div>
+				<div class="form_sez">
+					<div class="form_intest">
+					  Locazione Presa
+					</div>
+					<div class="form_riga">
+						<div class="form_col">
+							<label for="edificio">Edificio</label><br>
+							<select >
+								<option selected  value="roma1.infn.it">Marconi</option>
+								<option value="phys.uniroma1.it">Fermi</option>
+							</select>
+						</div>
+						<div class="form_col">
+							<label for="piano">Piano</label><br>
+							<select >
+								<option selected  value="terra">Terra</option>
+								<option value="primo">Primo</option>
+								<option value="secondo">Secondo</option>
+							</select>
+						</div>
+					</div>
+					<div class="form_riga">
+						<div class="form_col">
+							<label for="piano">Stanza</label><br>
+							<select >
+								<option selected  value="142">142</option>
+								<option value="143">143</option>
+								<option value="144">144</option>
+							</select>
+						</div>
+						<div class="form_col">
+							<label for="edificio">Porta</label><br>
+							<select >
+								<option selected  value="a1-33">a1-33</option>
+								<option value="a1-34">a1-34</option>
+							</select>
+						</div>
+						
+					</div>
+				</div>
+				
+				<div class="form_sez">
+					<div class="form_intest">
+					  Ulteriori informazioni
+					</div>
+				 	<div class="form_riga">
+						<div class="form_col_long">
+						  <label for="macAddress">Note</label><br>
+							<textarea name="testo" rows="5" >
+							</textarea>		
+						</div>
+					</div>	
+				</div>	
+				<div class="form_sez">
+					<div class="form_pied">
+					  <button class="button_m"><img src="img/button/button_invia_bia.png"></button>  
+					</div>	
+				</div>		
+			  </form>
+
+			
+			<div class="prof_div">
+				<h2 class="centrato">Il mio Profilo</h2>
+				<div class="prof_intest">
+					<p>Piero Gatta</p>
+				</div>
+				<div class="prof_lab">
+					<p>E-mail</p>
+				</div>
+				<div class="prof_val">
+					<p>Piero@gmail.com</p>
+				</div>
+				<div class="prof_lab">
+					<p>Telefono</p>
+				</div>
+				<div class="prof_val">
+					<p>+39 067070845</p>
+				</div>
+				<div class="prof_lab">
+					<p>Telefono</p>
+				</div>
+				<div class="prof_val">
+					<p>+39 067070845</p>
+				</div>
+				<div class="prof_lab">
+					<p>Telefono</p>
+				</div>
+				<div class="prof_val">
+					<p>+39 067070845</p>
+				</div>
+			</div>
+			
+		</div>
+		<script type="module" src="js/app.js"></script>
+	</div>
+	<div id="webmaster">	
+			<p>Webmaster <a href="mailto:piero.gatta@roma1.infn.it">Piero Gatta</a> - <a href="http://www.roma1.infn.it/PRIVACY-POLICY-ENG.pdf" target="_blank">Privacy Policy</a> - last update <script>
+			document.write(document.lastModified);</script></p>
+	</div>
+</body>
+</html>
