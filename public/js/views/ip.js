@@ -49,7 +49,7 @@ const template=`
 				 	<div class="form_riga">
 						<div class="form_col_long">
 						  <label for="note">Note</label><br>
-							<textarea name="note" rows="5" >
+							<textarea id="notes" name="notes" rows="5" >
 							</textarea>		
 						</div>
 					</div>	
@@ -82,7 +82,7 @@ const template=`
     .form_col.success input{
         border-color:#2ecc71
     }
-    .form_col.error input{
+    .form_col.error input,.form_col.error select{
         border-color:#e74c3c
     }
 
@@ -118,14 +118,24 @@ const template=`
 </style>
 `
 
-import {Base} from './base.js'
+import {Base, UI} from './base.js'
 import {Location} from './location.js'
 import {Dialog} from './dialog.js'
 import services from '../services.js'
 
 export class IP extends Base{
   
+    constructor(target,args)
+    {
+        super(target,args);
+        this.init();
+    }
+
+    getContent(){
+        return template;
+    }
     
+
     modeIsDHCP(){
         return this.$config.value=='DHCP';
     }
@@ -244,11 +254,51 @@ export class IP extends Base{
         return this.$config.value;
     }
 
-    submitForm(){
+    submitForm(useMacBusy){
         console.log("Submit")
+  
+        var curr={}
+        curr.mac=this.$hostmac.value.trim();
+        curr.config=this.$config.value;
+        curr.port=this.selectedPort.port_code;
+        curr.notes=this.$notes.value.trim();
+        curr.useMacBusy=useMacBusy;
+
+        if(!this.modeIsDHCP())
+        {
+            curr.name=this.$hostname.value.trim();
+            curr.domain=this.$hostdomain.value;
+        }
+        
+       
+        var from=null;
+        var action='create';
+
+        if(this.eHost)
+        {
+            from=Object.assign({},this.eHost);
+            action='update';
+        }
+
+        if(from)
+        {
+            delete from['location'];
+            delete from['port_alias'];
+        }
+
+        
+       
+        var data={
+                from:from,
+                to:curr,
+                action:action
+            }
+
+
+        UI.EmitSaveRequest('IP',data);
     }
 
-    async init(){
+    init(){
 
         var trg=this.target;
 
@@ -275,9 +325,7 @@ export class IP extends Base{
         this.$config=trg.querySelector("#config")
         this.$hostdomain=trg.querySelector("#hostDomain")
         this.$location=trg.querySelector("#location")
-       
-
-        this.showDialog('Richiesta conferma','<b>Il mac address inserito risulta già registrato</b>. <br><br> Si intende utilizzarlo?');
+        this.$notes=trg.querySelector("#notes")
       
         var location= null;
 
@@ -293,8 +341,7 @@ export class IP extends Base{
 
 
         this.$location=new Location(this.$location,location);
-        this.$location.render();
-
+    
 
         this.$config.addEventListener('change',ev=>{
            
@@ -329,12 +376,7 @@ export class IP extends Base{
 
     }
 
-   
-
-    render(){
-        this.target.innerHTML=template;
-        this.init();
-    }
+  
 
     checkDuplicatedMacAddress(mac){
         return new Promise((resolve,reject)=>{
@@ -399,16 +441,17 @@ export class IP extends Base{
 
     }
 
+     //DIALOG PROMPT
     showDialog(title,message)
     {
 
-        //DIALOGO PROMPT
+       
         var dlgplace=this.target.querySelector("#dialogPlaceHolder")
-        var dlg=new Dialog(dlgplace);
+        var dlg=new Dialog(dlgplace,this);
         dlg.showYesButton(this.submitForm)
-        dlg.showNoButton()
+        dlg.showNoButton(()=>{this.setError(this.$hostmac,"Il mac address risulta già registrato.")})
         dlg.setTitle(title);
-        dlg.setContent(message)
+        dlg.setMessage(message)
         dlg.show();
 
     }
@@ -417,9 +460,9 @@ export class IP extends Base{
     async handleSubmit(){
         
         //validazione primo livello, campi vuoti o non corretti
-        var formIsValid=this.validateFields();
+        var validFields=this.validateFields();
 
-        if(!formIsValid) return;
+        if(!validFields) return;
 
 
         var dataIsChanged=this.eHost ? false :true;
@@ -445,49 +488,64 @@ export class IP extends Base{
            
         }
        
-        formIsValid=dataIsChanged;
+        if(!dataIsChanged){
+            return UI.ShowResultView();
+        }
+       
 
-        if(!formIsValid) return;
-
-        debugger;
-
+        
         //check nome duplicato
         if(!this.modeIsDHCP())
         {
-            
-            var duplicateName=await this.checkDuplicateName(`${this.$hostname.value}.${this.$hostdomain.value}`)
+            var hostFullName=`${this.$hostname.value}.${this.$hostdomain.value}`;
+
+            var eHostFullName= this.eHost ? `${this.eHost.name}.${this.eHost.domain}` : null;
+
+            var duplicateName=await this.checkDuplicateName(hostFullName);
 
             if(duplicateName)
             {
-                this.setError(this.$hostname,"Il nome risulta già registrato.")
+                var setError=(eHostFullName ? eHostFullName!=hostFullName : true)
+                if(setError)
+                {
+                    this.setError(this.$hostname,"Il nome risulta già registrato.")
+                }
+                duplicateName=setError;
             }
 
-            formIsValid=!duplicateName
-    
-
-            if(!formIsValid) return;
+            if(duplicateName) return;
         }
 
-        
+         //check mac duplicato
         var mac=this.$hostmac.value;
-       
-        //check macaddress duplicato
-       
-        var duplicateMac=await this.checkDuplicatedMacAddress(mac);
+        
+        var duplicateMac = await this.checkDuplicatedMacAddress(mac);
 
+        //se duplicato e non è quello di edit
         if(duplicateMac)
         {
-            //controlla che il macaddress inserito non sia uno di quelli dell'utente
-           
-            this.setError(this.$hostmac,"Il mac address risulta già registrato.")
-
-            this.showDialog('<h3>Attenzione</h3>Il mac address risulta già registrato. Si intende utilizzarlo?')
             
+            var setError=(this.eHost ? this.eHost.mac!=mac : true)
+            
+            duplicateMac=setError;
+            
+            if(setError)
+            {
+                
+                //controlla che il macaddress inserito non sia uno di quelli dell'utente
+                //this.setError(this.$hostmac,"Il mac address risulta già registrato.")
+
+                //this.showDialog('<h3>Attenzione</h3>Il mac address risulta già registrato. Si intende utilizzarlo?')
+                this.showDialog('Richiesta conferma','<b>Il mac address inserito risulta già registrato</b>. <br><br> Si intende utilizzarlo?');
+            }
         }
 
+
+        if(duplicateMac) return;
 
         console.log("FormIsValid:",!(duplicateMac || duplicateName))
 
+        this.submitForm(false);
         
     }
 }

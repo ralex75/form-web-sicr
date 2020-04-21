@@ -40,6 +40,7 @@ export class Location extends Base {
     {
         super(target);
         this.args=args;
+        this.init();
     }
 
     init(){
@@ -213,9 +214,8 @@ export class Location extends Base {
         this.$ports.dispatchEvent(new CustomEvent("selectedPort",{detail:p,bubbles:true}))
     }
 
-    render(){
-        this.target.innerHTML=template;
-        this.init();
+    getContent(){
+       return template;
     }
 
 }

@@ -30,10 +30,16 @@ const template=`
 `
 
 
-import {Base} from './base.js'
+import {Base,UI} from './base.js'
 import services from '../services.js'
 
 export class HostList extends Base{
+
+    constructor(target)
+    {
+        super(target);
+        this.init();
+    }
 
     async init(){
         
@@ -66,13 +72,10 @@ export class HostList extends Base{
         
         this.buildTableRows(this.hosts);
 
-       
-        
     }
 
-    render(){
-        this.target.innerHTML=template;
-        this.init();
+    getContent(){
+        return template;
     }
 
     buildTableRows(list){
@@ -129,7 +132,8 @@ export class HostList extends Base{
             
             h=h[0] || null;
 
-            this.target.dispatchEvent(new CustomEvent('changeView',{'detail':{"view":'ip','args':{"maclist":maclist,"eHost":h}},'bubbles':true}))
+            UI.EmitChangeView('ip',{"maclist":maclist,"eHost":h});
+           // this.target.dispatchEvent(new CustomEvent('changeView',{'detail':{"view":'ip','args':{"maclist":maclist,"eHost":h}},'bubbles':true}))
         }
 
         if(action=='del')
@@ -158,6 +162,7 @@ export class HostList extends Base{
                     "port_alias":h.pp_port_alias,
                     "config": h.host_ip ? 'STATIC' : 'DHCP',
                     "location":{"build":h.build,"floor":h.floor,"id":h.loc_id,"room":h.loc_name,"port":h.pp_port_code,"vlanid":h.vlanid},
+                    
                     }
                     
                     //se è virtuale

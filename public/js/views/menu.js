@@ -1,32 +1,45 @@
-import {Base} from './base.js'
+import {Base,UI} from './base.js'
+
 
 export class NavMenu extends Base {
 
-   
     
     constructor(target)
     {
+       
         super(target);
 
-        this.items=[
+        
 
-                {"text":'Il mio profilo',"view":"profile"},
-                {"text":'Richieste effettuate','view':'requests'},
-                {"text":'Aggiungi Nodo','view':'ip'},
-                {"text":'I miei nodi','view':'hostlist'},
-                {"text":'Wifi temporaneo','view':'WIFI'}
-            ]
-
+        this.target.querySelectorAll('a.navi').forEach(el=>{
+            el.addEventListener('click',ev=>{
+                ev.preventDefault();
+                UI.EmitChangeView(ev.target.dataset['route'])
+                this.target.querySelectorAll('a.navi').forEach(el=>el.className='');
+                el.className='navi selected';
+            })
+        })
         
     }
 
-    render(){
+
+
+    getContent(){
+
+        this.items=[
+
+            {"text":'Il mio profilo',"view":"profile"},
+            {"text":'Richieste effettuate','view':'requests'},
+            {"text":'Aggiungi Nodo','view':'ip'},
+            {"text":'I miei nodi','view':'hostlist'},
+            {"text":'Wifi temporaneo','view':'WIFI'}
+        ]
 
         let tpl=""
        
         this.items.forEach(i=>{
            
-            tpl+=`<div class="bordato"><a href="#" data-route="${i.view}">${i.text}</a></div>`
+            tpl+=`<div class="bordato"><a href="#" class="navi" data-route="${i.view}">${i.text}</a></div>`
 
         })
 
@@ -36,23 +49,13 @@ export class NavMenu extends Base {
                         ${tpl}
                      </div>
                      <style scoped>
-                        a.selected{
+                        a.navi.selected{
                             color:#E00;
                         }
                      </style>
                      `
 
-        
-        this.target.innerHTML=template;
-
-        this.target.querySelectorAll('a').forEach(el=>{
-            el.addEventListener('click',ev=>{
-                ev.preventDefault();
-                el.dispatchEvent(new CustomEvent('changeView',{'detail':{"view":ev.target.dataset['route']},'bubbles':true}))
-                this.target.querySelectorAll('a').forEach(el=>el.className='');
-                el.className='selected';
-            })
-        })
+        return template;
     }
 
 }

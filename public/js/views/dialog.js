@@ -101,11 +101,12 @@ const template=`
 `
 import {Base} from './base.js'
 export class Dialog extends Base{
-    constructor(target)
+    constructor(target,ctx)
     {
         super(target);
+        this.ctx=ctx;
         this.callback={"yes":null,"no":null};
-        this.render();
+        this.init();
     }
     showYesButton(cb=null)
     {
@@ -131,16 +132,20 @@ export class Dialog extends Base{
         this.$dlg.querySelector(".dlg-title").innerText=text;
     }
 
-    setContent(text)
+    setMessage(text)
     {
-        this.$content.innerHTML=text;
+        this.$message.innerHTML=text;
+    }
+
+    getContent(){
+        return template;
     }
     
-    render()
+    init()
     {
-        this.target.innerHTML=template;
+       
         this.$dlg=this.target.querySelector(".overlay")
-        this.$content=this.$dlg.querySelector('#dlgcontent');
+        this.$message=this.$dlg.querySelector('#dlgcontent');
         this.$dlg.querySelector(".dlg-close").addEventListener('click',ev=>{
             ev.preventDefault();
             this.hide();
@@ -155,14 +160,14 @@ export class Dialog extends Base{
                 if(this.callback[el.name])
                 {
                     var fn=this.callback[el.name]
-                    fn();
-                    
+                   
+                    fn.bind(this.ctx)(true);
+                   
                 }
 
                 this.hide();
             })
         });
-       
         
     }
 }
