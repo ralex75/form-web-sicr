@@ -27,8 +27,42 @@ const user={
         return axios.post("/user/list",{"search":search,"onlyauth":onlyauth},{cancelToken:token});
     },
 
-    current:function(){
-        return JSON.parse(localStorage.getItem("uinfo"));
+    unset:function(){
+        localStorage.removeItem("uinfo");
+    },
+    
+    get:function(){
+        var cuser= JSON.parse(localStorage.getItem("uinfo"))
+        if(cuser)
+        {
+        cuser.isAuthorized=false;
+        cuser.disciplinare=""
+        }
+        return cuser;
+    },
+
+    set:function(data)
+    {
+        localStorage.setItem("uinfo",JSON.stringify(data))
+    },
+
+    current:async function(uid){
+        
+        //user.unset();
+
+        var cuser=user.get();
+        
+        if(!cuser)
+        {
+            var res=await this.getProfile(uid);
+            user.set(res.data);
+            cuser=res.data;
+        }
+        
+        //FOR DEBUG
+        cuser.isAuthorized=false;
+        cuser.disciplinare=""
+        return cuser;
     },
 
     id:function() {

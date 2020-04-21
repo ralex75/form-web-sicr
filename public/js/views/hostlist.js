@@ -1,5 +1,4 @@
 const template=`
-<h1>I miei nodi</h1>
 <input type="text" class="search" placeholder="ricerca" />
 <h3 id="feedback">Nessun risultato</h3>
 <table>

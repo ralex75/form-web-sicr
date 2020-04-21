@@ -10,7 +10,7 @@ import services from './services.js'
 
 
 
-const showView=function({view,args}){
+const showView=async function({view,args}){
 
     var target=document.querySelector("#colonne_content")
    
@@ -18,7 +18,7 @@ const showView=function({view,args}){
     void target.offsetWidth;
     target.classList.add("fade-in");
 
-    //UI.cancelTimeout();
+    
 
     switch(view){
         
@@ -37,7 +37,7 @@ const showView=function({view,args}){
         case "result":
             view=new Result(target,args);
             //redirezione utente ad altra view se è view Result
-            UI.EmitChangeView('profile',null,2000);
+            //UI.EmitChangeView('profile',null,2000);
         break;
         default:
             view=new Base(target,args);
@@ -47,11 +47,38 @@ const showView=function({view,args}){
 
 }
 
-document.addEventListener('DOMContentLoaded',ev=>{
-    var menu=document.querySelector("#col_sin_menu")
-    new NavMenu(menu);
-    showView({'view':'requests'});
-    //showView({'view':'result','args':{'status':true}});
+const checkUserIsAuthorized=async function()
+{
+    var profile=await services.user.current('50699576-15eb-49c6-a645-c07c0de9c402');
+}
+
+
+document.addEventListener('DOMContentLoaded',async ev=>{
+
+    var user=await services.user.current('50699576-15eb-49c6-a645-c07c0de9c402');
+    if(user)
+    {
+        /*if(!user.isAuthorized || !user.disciplinare)
+        {
+            showView({'view':'result','args':{'value':user,'type':'user'}})
+        }
+        else{*/
+
+        if(user.isAuthorized && user.disciplinare)
+        {
+            var menu=document.querySelector("#col_sin_menu")
+            new NavMenu(menu);
+            //showView({'view':'profile'});
+        }
+
+        showView({'view':'profile'});
+       
+    }
+    else{
+        showView({'view':'result','args':{'value':user,'type':'user'}})
+    }
+   
+   
 })
 
 document.addEventListener(UI.EventList.ChangeView, ev=>{
@@ -65,7 +92,7 @@ document.addEventListener(UI.EventList.SaveRequest, ev=> {
     var {type,data}=ev.detail;
     console.log(ev);
 
-    var result={"status":false,"data":data};
+    var result={"status":false, "value":data, "type":"ip"};
    
     services.requests.save(type,data).then(res=>{
         result.status=false
@@ -76,3 +103,8 @@ document.addEventListener(UI.EventList.SaveRequest, ev=> {
     });
     
 })
+
+
+window.addEventListener("unload", function() {
+    services.user.unset();
+  });
