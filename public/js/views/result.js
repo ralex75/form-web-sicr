@@ -1,7 +1,7 @@
 const template=`
    
 
-    <p class="res-content"></p>
+    <div class="res-content">[CONTENT]</div>
 
     <style scoped>
         .error{
@@ -9,60 +9,36 @@ const template=`
         }
 
         .res-content{
-           padding:10px 0;
+           padding:20px;
+         
          
         }
     </stle>
 `
 
-import {Base,UI} from './base.js'
-import services from '../services.js'
+import {Base} from './base.js'
+
 
 export class Result extends Base{
-    
-    constructor(target,args)
-    {
-       
-        super(target,args);
-       
-        var {status, value, type}=args;
-        this.$cont=this.target.querySelector(".res-content");
         
-        if(status==undefined) status=true;
-       
-        if(!status)
-        {
-            //this.$cont.classList.add('error');
-            this.$cont.innerHTML=`<h4>Si è verificato un errore.</h4><u>Contattare il Centro di Calcolo</u>`
-        }
-        else{
-
-           
-            switch(type)
-            {
-                case 'user':
-                    this.displayUserProfileFeedback(value);
-                break;
-                case 'ip':
-                    this.displayUserRequestIPFeedback(value);
-                break;
-                case 'wifi':
-                    this.displayUserRequestWiFiFeedback(value);
-                break;
-            }
-            
-        }
-    }
-        
-    displayUserRequestIPFeedback(value)
+    displayUserRequestIPFeedback(data)
     {
+        var content=""
         if(data)
         {
-            this.$cont.innerHTML=`<h4>La sua richiesta è stata inserita correttamente.</h4>A breve riceverà una mail di riepilogo con i dati inseriti.`
+            content=`<h4>La sua richiesta è stata inserita correttamente.</h4>A breve riceverà una mail di riepilogo con i dati inseriti.`
         }
         else{
-            this.$cont.innerHTML=`<h4>Non ci sono state modifiche, la sua richiesta non è stata inserita.</h4>`
+            content=`<h4>Non ci sono state modifiche, la sua richiesta non è stata inserita.</h4>`
         }
+
+        return content
+    }
+
+    displayUserRequestWiFiFeedback(data)
+    {
+        var content=`<h4>La sua richiesta è stata inserita correttamente.</h4>A breve riceverà una mail di riepilogo con i dati inseriti.`
+        return content
     }
 
     displayUserProfileFeedback(user)
@@ -82,15 +58,46 @@ export class Result extends Base{
             }
         }
 
-        this.$cont.innerHTML=content;
+        return content;
+        
     }
 
-   
-
-
-    
 
     getContent(){
-        return template;
+
+
+        var {status, data}=this.args;
+        
+        var content="";
+        
+        if(status==undefined) status=true;
+       
+        
+        if(!status)
+        {
+           content=`<h4 class="error">Si è verificato un errore.</h4><u>Contattare il Centro di Calcolo</u>`
+        }
+        else{
+
+            
+            switch(data.type)
+            {
+                case 'USER':
+                    content=this.displayUserProfileFeedback(data);
+                break;
+                case 'IP':
+                    content=this.displayUserRequestIPFeedback(data);
+                break;
+                case 'WIFI':
+                    content=this.displayUserRequestWiFiFeedback(data);
+                break;
+            }
+         
+        }
+
+
+        var tem=template.replace('[CONTENT]',content);
+        console.log(tem);
+        return tem;
     }
 }

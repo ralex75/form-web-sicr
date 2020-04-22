@@ -6,15 +6,11 @@ const template=
     <div class="form_riga">
         <div class="form_col">
             <label for="build">Edificio</label><br>
-            <select id="build" name="build">
-            <option value="" selected disabled hidden>--- Seleziona Edificio -- </option>
-            </select>
+            <select id="build" name="build"></select>
         </div>
         <div class="form_col">
             <label for="floor">Piano</label><br>
-            <select id="floor" name="floor">
-            
-            </select>
+            <select id="floor" name="floor"></select>
         </div>
     </div> 
     <div class="form_riga">
@@ -29,6 +25,15 @@ const template=
         </div>
     </div> 
 
+    <style scoped>
+    select:-moz-focusring {
+        color: transparent;
+        text-shadow: 0 0 0 #000;
+    }
+    select {
+        background: transparent;
+    }
+    </style>
    
 `
 import {Base} from './base.js'
@@ -52,9 +57,9 @@ export class Location extends Base {
         
         this.$location=document.querySelector("#location")
         
-        this.defaultOption={'build':"<option selected disabled hidden> --- Seleziona Edificio --- </option>",
-                                  'floor':"<option selected disabled hidden> --- Seleziona Piano --- </option>",
-                                  'room':"<option selected disabled hidden> --- Seleziona Stanza --- </option>",
+        this.defaultOption={'build':"<option selected value='' disabled hidden> --- Seleziona Edificio --- </option>",
+                                  'floor':"<option selected value='' disabled hidden> --- Seleziona Piano --- </option>",
+                                  'room':"<option selected value='' disabled hidden> --- Seleziona Stanza --- </option>",
                                   'port':"<option selected value='' disabled hidden> --- Seleziona Porta --- </option>"}
         
 

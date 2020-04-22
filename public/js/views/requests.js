@@ -1,8 +1,8 @@
 const template=`
     
     <div class="req-actions">
-        <input type="text" placeholder="ricerca..." id="search" />
-        <label for="selreqtypes">Tipo</label>&nbsp;
+        <input type="text" placeholder="ricerca..." id="search" autocomplete="off" />
+        <label for="selreqtypes">Visualizza:</label>&nbsp;
         <select id="selreqtypes">
             <option selected value="ANY">Tutti</option>
             <option  value="IP">IP</option>
@@ -161,7 +161,7 @@ export class Requests extends Base{
             if(item.rtype=="IP")
             {
               var d=item.data;
-              var action={"create":"Nuovo nodo","update":"Aggiornamento dati del nodo","delete":"Eliminazione nodo"}
+              var action={"create":"Nuovo nodo","update":"Aggiornamento dati del nodo","delete":"Cancellazione nodo"}
               
               desc=`${action[d.action]}:  ` 
               var h=d.from || d.to;

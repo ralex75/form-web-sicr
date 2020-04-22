@@ -33,11 +33,11 @@ const user={
     
     get:function(){
         var cuser= JSON.parse(localStorage.getItem("uinfo"))
-        if(cuser)
+        /*if(cuser)
         {
         cuser.isAuthorized=false;
         cuser.disciplinare=""
-        }
+        }*/
         return cuser;
     },
 
@@ -60,13 +60,13 @@ const user={
         }
         
         //FOR DEBUG
-        cuser.isAuthorized=false;
-        cuser.disciplinare=""
+        //cuser.isAuthorized=false;
+        //cuser.disciplinare=""
         return cuser;
     },
 
     id:function() {
-        return user.current().uuid
+        return user.get().uuid
     }
 
 }
@@ -127,6 +127,7 @@ const REQ_TYPE={"IP":"IP","WIFI":"WIFI","ACCOUNT":"ACCOUNT"}
 const requests={
 
     save:function (type,data) {
+        debugger;
         return axios.post('/requests/save',{'uid':user.id(),'data':data,'type':type})
     },
 

@@ -4,7 +4,8 @@ export class UI{
     static EventList={'ChangeView':'ChangeView','SaveRequest':'SaveRequest'}
 
     static EmitChangeView(view,args=null,delay=0)
-    {   UI.cancelTimeout();
+    {   
+        UI.cancelTimeout();
         UI.timeout=setTimeout(()=>{
             document.dispatchEvent(new CustomEvent(UI.EventList.ChangeView,{'detail':{'view':view,'args':args},bubbles:true}))
         },delay)

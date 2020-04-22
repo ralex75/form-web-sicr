@@ -8,7 +8,7 @@ const template=`
 				 	<div class="form_riga">
 						<div class="form_col">
 						  <label for="macAddress">Mac Address</label><br>
-                          <input type="text" id="macAddress" placeholder="mac address">
+                          <input type="text" id="macAddress" autocomplete="off" placeholder="mac address">
                           <small>Error Message</small>		
 						</div>
 						<div class="form_col">
@@ -24,7 +24,7 @@ const template=`
 					<div class="form_riga">
 						<div class="form_col">
 						  <label for="hostName">Nome</label><br>
-                          <input type="text" id="hostName" placeholder="nome">
+                          <input type="text" id="hostName" autocomplete="off" placeholder="nome">
                           <small>Error Message</small>
 						</div>
 						<div class="form_col">

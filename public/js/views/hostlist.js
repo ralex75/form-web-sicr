@@ -30,6 +30,7 @@ const template=`
 
 
 import {Base,UI} from './base.js'
+import {Dialog} from './dialog.js'
 import services from '../services.js'
 
 export class HostList extends Base{
@@ -91,22 +92,26 @@ export class HostList extends Base{
                     hostName+="<br>VIRTUALE"
                 }
             }
-            rows+=`<tr>
-                    <td>${hostName}</td>
-                    <td>${h.ip ? h.ip :'DHCP'}</td>
-                    <td>${h.mac}</td>
-                    <td>${h.port_alias}</td>
-                    <td><a href="#" data-edit='{"mac":"${h.mac}","action":"edit"}'>Modifica</a> 
-                        <a href="#" data-edit='{"mac":"${h.mac}","action":"del"}'>Elimina</a>
-                   </tr>`
+            var tr=document.createElement("tr");
+            tr.innerHTML=`
+                        <td>${hostName}</td>
+                        <td>${h.ip ? h.ip :'DHCP'}</td>
+                        <td>${h.mac}</td>
+                        <td>${h.port_alias}</td>
+                        <td>
+                            <a href="#" data-edit='{"mac":"${h.mac}","action":"edit"}'>Modifica</a> 
+                            <a href="#" data-edit='{"mac":"${h.mac}","action":"del"}'>Elimina</a>
+                        </td>
+                        `
+            this.$tbody.appendChild(tr);
         })
 
 
 
 
-        this.$tbody.innerHTML=rows;
+        //this.$tbody.innerHTML=rows;
         //this.$table.style.display= rows.length>0 ? 'block' : 'none';
-        this.target.querySelector('#feedback').style.display = rows.length>0 ? 'none' : 'block';
+        this.target.querySelector('#feedback').style.display = list.length>0 ? 'none' : 'block';
         this.$tbody.querySelectorAll("a").forEach(el=>{
             el.addEventListener('click',ev=>{
                 ev.preventDefault();
@@ -123,23 +128,68 @@ export class HostList extends Base{
 
         if(!action) return;
         
+        var h=this.hosts.filter(h=>{return h.mac==mac});
+        h=h[0] || null;
+
+        this.selectedHost=h;
+
+        if(h)
+        {
+            h.fullname=function(){
+                return h.config!='DHCP' ? h.name+"."+h.domain : 'DHCP - '+h.mac;
+            }
+        }
+
         if(action=='edit')
         {
-           
-            var h=this.hosts.filter(h=>{return h.mac==mac});
-            var maclist=this.hosts.map(i=>i.mac);
             
-            h=h[0] || null;
-
+            var maclist=this.hosts.map(i=>i.mac);
             UI.EmitChangeView('ip',{"maclist":maclist,"eHost":h});
-           // this.target.dispatchEvent(new CustomEvent('changeView',{'detail':{"view":'ip','args':{"maclist":maclist,"eHost":h}},'bubbles':true}))
         }
 
         if(action=='del')
         {
+            this.showDialog(
+                            'Richiesta di conferma',
+                            `
+                                Si desidera davvero inviare richiesta per eliminare questo nodo?
+                                <h4>${h.fullname()}</h4>
+                            `
+ 
+                            )
             console.log("Delete item:",mac);
         }
     }
+
+     //DIALOG PROMPT
+     showDialog(title,message)
+     {
+        
+         var dlgplaceholder=this.target.querySelector(".dlg-placeholder");
+         if(!dlgplaceholder)
+         {
+            var search=this.target.querySelector(".search")
+            search.insertAdjacentHTML('afterend','<div class="dlg-placeholder"></div>');
+            dlgplaceholder=this.target.querySelector(".dlg-placeholder");
+         }
+        
+         var dlg=new Dialog(dlgplaceholder,this);
+         dlg.showYesButton(this.removeHost)
+         dlg.showNoButton()
+         dlg.setTitle(title);
+         dlg.setMessage(message)
+         dlg.show();
+ 
+     }
+
+     removeHost(){
+         var data={'from':this.selectedHost,
+                    'to':null,
+                    'action':'delete'}
+
+         UI.EmitSaveRequest('IP',data);
+     }
+    
 
     getHosts(){
 

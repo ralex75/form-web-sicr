@@ -4,9 +4,9 @@ import {Profile} from './views/profile.js'
 import {HostList} from './views/hostlist.js'
 import {Requests} from './views/requests.js'
 import {IP} from './views/ip.js'
+import {WIFI} from './views/wifi.js'
 import {Base,UI} from './views/base.js'
 import services from './services.js'
-//import {Requests} from './views/requests.js'
 
 
 
@@ -19,14 +19,17 @@ const showView=async function({view,args}){
     target.classList.add("fade-in");
 
     
-
-    switch(view){
+    switch(view.toLowerCase()){
         
         case "profile":
             view=new Profile(target,args)
         break;
         case "ip":
             view=new IP(target,args);
+        break;
+        case "wifi":
+           
+            view=new WIFI(target,args);
         break;
         case "hostlist":
             view=new HostList(target,args);
@@ -37,7 +40,7 @@ const showView=async function({view,args}){
         case "result":
             view=new Result(target,args);
             //redirezione utente ad altra view se è view Result
-            //UI.EmitChangeView('profile',null,2000);
+            if(args.status) UI.EmitChangeView('profile',null,2000);
         break;
         default:
             view=new Base(target,args);
@@ -47,42 +50,40 @@ const showView=async function({view,args}){
 
 }
 
-const checkUserIsAuthorized=async function()
-{
-    var profile=await services.user.current('50699576-15eb-49c6-a645-c07c0de9c402');
+
+const handleError=(err)=>{
+    showView({'view':'result','args':{"status":false,"data":err}})
 }
+
 
 
 document.addEventListener('DOMContentLoaded',async ev=>{
 
-    var user=await services.user.current('50699576-15eb-49c6-a645-c07c0de9c402');
-    if(user)
-    {
-        /*if(!user.isAuthorized || !user.disciplinare)
-        {
-            showView({'view':'result','args':{'value':user,'type':'user'}})
-        }
-        else{*/
-
+  
+    try{
+        
+        var user=await services.user.current('50699576-15eb-49c6-a645-c07c0de9c402');
         if(user.isAuthorized && user.disciplinare)
         {
+            
             var menu=document.querySelector("#col_sin_menu")
-            new NavMenu(menu);
-            //showView({'view':'profile'});
+            menu=new NavMenu(menu);
+         
         }
 
-        showView({'view':'profile'});
-       
+        UI.EmitChangeView('profile');
+
     }
-    else{
-        showView({'view':'result','args':{'value':user,'type':'user'}})
+    catch(exc)
+    {
+        handleError(exc);
     }
    
    
 })
 
 document.addEventListener(UI.EventList.ChangeView, ev=>{
-    console.log("ChangeView:",ev);
+    
     ev.preventDefault();
     showView(ev.detail);
 })
@@ -90,17 +91,22 @@ document.addEventListener(UI.EventList.ChangeView, ev=>{
 document.addEventListener(UI.EventList.SaveRequest, ev=> {
     
     var {type,data}=ev.detail;
-    console.log(ev);
-
-    var result={"status":false, "value":data, "type":"ip"};
    
-    services.requests.save(type,data).then(res=>{
-        result.status=false
-    }).catch(err=>{
-        result.status=false
-    }).finally(_=>{
-        showView({'view':'result',"args":result});
-    });
+    var result={"status":false, "data":ev.detail};
+
+    try{
+        services.requests.save(type,data).then(res=>{
+            result.status=true
+        }).catch(err=>{
+            result.status=false
+        }).finally(_=>{
+            UI.EmitChangeView('result',result);
+        });
+    }
+    catch(exc)
+    {
+        UI.EmitChangeView('result',result);
+    }
     
 })
 

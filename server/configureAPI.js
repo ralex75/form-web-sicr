@@ -58,7 +58,6 @@ module.exports = app => {
   
   var uid=req.headers["x-uuid"] || req.params.uid;
   
- 
   if(!uid){
       return res.sendStatus(401)
   }
@@ -87,10 +86,12 @@ module.exports = app => {
   var onlyauth=req.body.onlyauth;
 
   try{
+
     if(keywords)
     {
       users = await getUserInfoByAny(keywords,onlyauth);
     }
+    
   }
   catch(exc)
   {

@@ -9,30 +9,50 @@ export class NavMenu extends Base {
        
         super(target);
 
-        
+        document.addEventListener(UI.EventList.ChangeView,ev=>{
+           
+            var view=ev.detail.view;
+            this.target.querySelectorAll('a.navi').forEach(el=>
+                {
+                   
+                    el.className='navi'
+                    if(el.dataset['route']==view)
+                    {
+                        el.className='navi selected';
+                    }
+            });
+           
+        })
 
         this.target.querySelectorAll('a.navi').forEach(el=>{
             el.addEventListener('click',ev=>{
                 ev.preventDefault();
                 UI.EmitChangeView(ev.target.dataset['route'])
-                this.target.querySelectorAll('a.navi').forEach(el=>el.className='');
-                el.className='navi selected';
+                /*this.target.querySelectorAll('a.navi').forEach(el=>el.className='');
+                el.className='navi selected';*/
             })
         })
         
     }
 
-
+    /*select(item)
+    {
+        this.target.querySelectorAll('a.navi').forEach(el=>{
+            if(el.dataset['route']==item){
+                el.click();
+            }
+        })
+    }*/
 
     getContent(){
 
         this.items=[
 
             {"text":'Il mio profilo',"view":"profile"},
-            {"text":'Richieste effettuate','view':'requests'},
+            {"text":'Richieste inviate','view':'requests'},
             {"text":'Aggiungi Nodo','view':'ip'},
             {"text":'I miei nodi','view':'hostlist'},
-            {"text":'Wifi temporaneo','view':'WIFI'}
+            {"text":'Wifi temporaneo','view':'wifi'}
         ]
 
         let tpl=""

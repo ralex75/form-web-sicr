@@ -62,7 +62,7 @@ export class Profile extends Base{
                 //link al disciplinare
             }
         }
-debugger;
+
        if(content!="")
        {
            name.insertAdjacentHTML('beforeend',content);
@@ -70,7 +70,7 @@ debugger;
     }
     
     getContent(){
-        debugger;
+        
         var user = services.user.get();
 
         console.log(user);
