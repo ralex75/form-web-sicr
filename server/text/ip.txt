@@ -1,0 +1,30 @@
+
+<b>[ACTION]</b>
+
+<b>Dettagli della richiesta IP</b>
+
+====================   gestore del nodo  ===================
+Nome               = [NAME]
+Cognome            = [SURNAME]
+Email              = [EMAIL]
+Telefono           = [PHONE]
+
+====================     responsabile    ====================
+Nome               = 
+Cognome            = 
+Email              = 
+
+====================  ubicazione del nodo ===================
+Edificio           = [BUILD]
+Piano              = [FLOOR]
+Stanza             = [ROOM]
+Presa di rete      = [PORT]
+
+====================  dati richiesta ip  ====================
+Mac Address        = [H_MAC]
+Tipo               = Personal computer
+Identificativo     = [H_NAME]
+Configurazione     = [CONFIG]
+Commenti           = [NOTE]
+
+[ADDITIONAL_DATA]

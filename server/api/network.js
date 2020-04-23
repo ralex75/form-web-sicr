@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var {nqdb}=require("../db");
+var {nqdb}=require("./db");
 
 //check if exists
 router.get("/exists/:val",(req,res)=>{

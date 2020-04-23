@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var {sendMail}=require('./mailer');
-var {nqdb:db}=require("../db");
+var {nqdb:db}=require("./db");
 //var helper=require("./helper.js");
 
 router.post('/list',(req,res)=>{
@@ -57,6 +57,7 @@ router.post('/save', (req,res)=>{
   
     const now=moment().format('YYYY-MM-DD:HH:mm:ss');
     
+    //isValidData(type,data);
 
     db.one("insert into user_requests (uid, req_date, data, rtype,status) VALUES($1,$2,$3,$4,'SUBMITTED') RETURNING id",[uid,now,data,type])
     .then(data => {
@@ -74,6 +75,24 @@ router.post('/save', (req,res)=>{
     
 })
 
+var isValidData=function(type,data)
+{
+
+    if(!type) return isvalid;
+    
+    var isvalid=true;
+
+    switch(type.toLowerCase())
+    {
+        case "ip":
+                var requiredFields=['action','from','to'];
+                
+            break;
+        case "wifi":
+
+            break;
+    }
+}
 
 
 

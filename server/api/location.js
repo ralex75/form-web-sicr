@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var {nqdb}=require("../db");
+var {nqdb}=require("./db");
 
 //get floors
 router.get("/:build/floors",(req,res)=>{

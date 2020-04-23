@@ -3,6 +3,8 @@ const {getUser} = require('./api/user')
 const location = require('./api/location')
 const network = require('./api/network')
 const requests = require('./api/requests')
+const {ReadRequests}=require('./dispatcher/dispatcher');
+
 //const {readAllRequests} = require('./handler');
 //const history = require('connect-history-api-fallback');
 const cors=require('cors')
@@ -19,39 +21,10 @@ module.exports = app => {
   app.use('/requests',requests)
 
   
+  setInterval(()=>{
+    ReadRequests();
+  },5000)
 
-
-
-  //app.use(histo)
-
- /*app.use('/auth/:uid?',async (req,res,next)=>{
-    
-    var uid=req.headers["x-cf"];
-    if(uid)
-    {
-        uid=uid.split(":")
-        uid=uid[uid.length-1];
-    }
-    else{
-        uid=req.params.uid;
-    }
-    
-    if(!uid){
-        return res.sendStatus(401)
-    }
-
-
-    try{
-      var user = await getUserInfo(uid);
-    }
-    catch(exc)
-    {
-      return res.status(500).json("Auth Server Error")
-    }
-
-    res.json(user)
-
- })*/
 
  app.use('/auth/:uid?',async (req,res,next)=>{
    
