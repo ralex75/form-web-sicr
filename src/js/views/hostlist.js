@@ -35,11 +35,7 @@ import services from '../services.js'
 
 export class HostList extends Base{
 
-    constructor(target)
-    {
-        super(target);
-        this.init();
-    }
+    
 
     async init(){
         

@@ -61,7 +61,8 @@ document.addEventListener('DOMContentLoaded',async ev=>{
   
     try{
         
-        var user=await services.user.current();
+        var user=await services.user.current('50699576-15eb-49c6-a645-c07c0de9c402');
+      
         if(user.isAuthorized && user.disciplinare)
         {
             
@@ -91,7 +92,7 @@ document.addEventListener(UI.EventList.SaveRequest, ev=> {
     
     var {type,data}=ev.detail;
    
-    var result={"status":false, "data":ev.detail,"next":"requests"};
+    var result={"status":false, "data":ev.detail, "next":"requests"};
 
     try{
         services.requests.save(type,data).then(res=>{

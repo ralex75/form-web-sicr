@@ -1,6 +1,7 @@
 
 
-export class UI{
+export class UI {
+
     static EventList={'ChangeView':'ChangeView','SaveRequest':'SaveRequest'}
 
     static EmitChangeView(view,args=null,delay=0)
@@ -27,7 +28,6 @@ export class UI{
         UI.timeout=null;
     }
 
-
 }
 
 
@@ -37,7 +37,11 @@ export class Base{
         this.args=args;
         this.target=target;
         this.render();
+        this.init();
     }
+
+    init()
+    {}
 
     getName(){
         return this.constructor.name;

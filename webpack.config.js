@@ -19,7 +19,7 @@ module.exports = {
       path: path.resolve(__dirname, 'dist'),
     },
     devServer: {
-      port:1234,
+      port:3000,
       contentBase:path.join(__dirname,"dist"),
       before: function(app, server, compiler) {
         configureAPI(app);

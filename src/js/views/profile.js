@@ -44,11 +44,9 @@ import services from '../services.js'
 
 export class Profile extends Base{
     
-    constructor(target,args)
+    init()
     {
-        super(target,args);
-
-        var name=target.querySelector(".prof_intest")
+        var name=this.target.querySelector(".prof_intest")
         var content="";
         if(!this.user.isAuthorized)
         {

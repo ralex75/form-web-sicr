@@ -132,12 +132,6 @@ import services from '../services.js'
 
 export class IP extends Base{
   
-    constructor(target,args)
-    {
-        super(target,args);
-        this.init();
-    }
-
     getContent(){
         return template;
     }

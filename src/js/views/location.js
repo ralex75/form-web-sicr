@@ -42,12 +42,7 @@ import services from '../services.js'
 
 export class Location extends Base {
     
-    constructor(target,args)
-    {
-        super(target);
-        this.args=args;
-        this.init();
-    }
+    
 
     init(){
 

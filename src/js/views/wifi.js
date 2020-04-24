@@ -119,10 +119,9 @@ import {Base,UI} from './base.js'
 
 export class WIFI extends Base {
 
-    constructor(target,args)
+    init()
     {
-       super(target,args);
-
+      
        this.$from=this.target.querySelector("[name=from]");
        this.$to=this.target.querySelector("[name=to]");
 

@@ -4,11 +4,8 @@ import {Base,UI} from './base.js'
 export class NavMenu extends Base {
 
     
-    constructor(target)
+    init()
     {
-       
-        super(target);
-
         document.addEventListener(UI.EventList.ChangeView,ev=>{
            
             var view=ev.detail.view;
@@ -35,14 +32,7 @@ export class NavMenu extends Base {
         
     }
 
-    /*select(item)
-    {
-        this.target.querySelectorAll('a.navi').forEach(el=>{
-            if(el.dataset['route']==item){
-                el.click();
-            }
-        })
-    }*/
+   
 
     getContent(){
 

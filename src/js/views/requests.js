@@ -85,11 +85,10 @@ const DATE_FORMAT="DD/MM/YYYY HH:mm"
 
 export class Requests extends Base{
 
-    constructor(target,args)
+    init()
     {
-        super(target,args);
-
-       
+        var target=this.target;
+        
         this.$table=target.querySelector('#tbreq');
         this.$tbody=this.$table.querySelector(".tbreq-tbody");
         this.$search=target.querySelector("#search")
