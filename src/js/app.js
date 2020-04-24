@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
   
     try{
         
-        var user=await services.user.current('50699576-15eb-49c6-a645-c07c0de9c402');
+        var user=await services.user.current();
         if(user.isAuthorized && user.disciplinare)
         {
             
