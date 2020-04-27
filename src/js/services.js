@@ -15,15 +15,20 @@ function checkUserAuth(fail=null){
 
 const user={
 
-    getProfile:function(uid){
+    read: function(uid){
+       
        var path="/auth";
        if(uid)
          path+=(`/${uid}`);
 
-       return axios.get(path)
+       return new Promise((resolve,reject)=>{
+            axios.get(path).then(res=>resolve(res.data))
+                           .catch(err=>reject(err));
+       });
+      
     },
 
-    list:function(search,onlyauth=true,token){
+    list:function(search,onlyauth,token){
         return axios.post("/user/list",{"search":search,"onlyauth":onlyauth},{cancelToken:token});
     },
 
@@ -31,14 +36,9 @@ const user={
         localStorage.removeItem("uinfo");
     },
     
-    get:function(){
-        var cuser= JSON.parse(localStorage.getItem("uinfo"))
-        /*if(cuser)
-        {
-        cuser.isAuthorized=false;
-        cuser.disciplinare=""
-        }*/
-        return cuser;
+    get:function()
+    {
+        return JSON.parse(localStorage.getItem("uinfo"));
     },
 
     set:function(data)
@@ -90,8 +90,21 @@ const locations={
         return axios.get(`/loc/byport/${portcode}`)
     },
 
-  
+}
 
+const host={
+    map:function(h){
+        return {
+            "name":h.host_name ? h.host_name : "",
+            "domain":h.host_domain ? h.host_domain : "roma1.infn.it",
+            "ip":h.host_ip ? h.host_ip : "",
+            "mac":h.host_mac.toUpperCase(),
+            "port":h.pp_port_code,
+            "port_alias":h.pp_port_alias,
+            "config": h.host_vm ? "STATICVM" : h.host_ip ? 'STATIC' : 'DHCP',
+            "location":{"build":h.build,"floor":h.floor,"id":h.loc_id,"room":h.loc_name,"port":h.pp_port_code,"vlanid":h.vlanid},
+        }
+    }
 }
 
 const net={
@@ -104,13 +117,14 @@ const net={
         return axios.get(`/net/lookup/${value}`)
     },
 
-    getHost:function(value) {
-        return axios.get(`/net/hosts/${value}`)
+    getHost: function(value) {
+        return  axios.get(`/net/hosts/${value}`)
+    
     },
 
-    getHostList:function(){
-        var usr=user.get();
-        return axios.get(`/net/hostlist/${usr.cf}`)
+    getHostList:function(uid){
+       
+        return axios.get(`/net/hostlist/${uid}`)
     },
 
     getHostsPortLink:function(port){
@@ -128,7 +142,6 @@ const REQ_TYPE={"IP":"IP","WIFI":"WIFI","ACCOUNT":"ACCOUNT"}
 const requests={
 
     save:function (type,data) {
-        debugger;
         return axios.post('/requests/save',{'uid':user.id(),'data':data,'type':type})
     },
 
@@ -153,6 +166,7 @@ export default {
     checkUserAuth,
     locations,
     user,
-    net
+    net,
+    host
 
 }

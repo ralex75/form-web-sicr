@@ -11,6 +11,7 @@ require("@babel/core").transform("code", {
 
 module.exports = {
     mode:'development',
+    devtool: 'inline-source-map',
     entry: [
       './src/js/app.js',
     ],

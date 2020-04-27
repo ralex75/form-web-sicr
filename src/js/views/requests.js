@@ -19,12 +19,6 @@ const template=`
         </tr>
     </thead>
     <tbody class="tbreq-tbody">
-    
-    <tr v-for="(item,index) in items" :key="index">
-    <td>{{item.id}}</td>
-    <td>{{item.reqdate}}</td>
-    <td>{{item.desc}}</td>
-    </tr>
     </tbody>
     </table>
 
@@ -72,6 +66,9 @@ const template=`
         background-color:#5DADE2; 
     }
 
+    .hide{
+        display:none;
+    }
 
 
     </style>
@@ -133,20 +130,22 @@ export class Requests extends Base{
     async getRequests()
     {
        this.items=[]
+       
 
        try{
             
             var resp=await services.requests.list(false,this.$types.value)
             this.items=this.mapItems(resp.data);
-            this.buildRows(this.items);
+            //this.buildRows(this.items);
        }
        catch(exc)
        {
            this.setFeedbackMessage('error','si è verificato un errore...')
            console.log("Errore:",exc);
        }
-      
-       
+
+        
+       this.buildRows(this.items);
 
     }
 
@@ -196,7 +195,8 @@ export class Requests extends Base{
             this.$tbody.appendChild(tr);    
         })
 
-     
+        var className=items && items.length>0 ? '' :'hide';
+        this.$table.className=className;
 
     }
 

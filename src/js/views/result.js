@@ -25,14 +25,26 @@ export class Result extends Base{
     {
        
         var content=""
-        if(data.data)
+        
+        if(data)
         {
             content=`<h4>La sua richiesta è stata inserita correttamente.</h4>A breve riceverà una mail di riepilogo con i dati inseriti.`
+
+            //o è aggiornamento o è un nuovo nodo
+            var host=data.to || data.from;
+            if(host.useMacBusy)
+            {
+                content+=`<br><br><h4>Come gia' segnalato nel form di richiesta:</h4>
+                          il mac address selezionato ${ host.mac } è già in uso.
+                          <h4><u>Seguira' pertanto comunicazione del Servizio Impianti Calcolo e Reti</u></h4>
+                          `
+            }
+
         }
         else{
-            content=`<h4>Non ci sono state modifiche, la sua richiesta non è stata inserita.</h4>`
+          content=`<h4>Non ci sono state modifiche, la sua richiesta non è stata inserita.</h4>`
         }
-
+    
         return content
     }
 
@@ -67,21 +79,20 @@ export class Result extends Base{
     getContent(){
 
        
-        var {status, data}=this.args;
-        
+        var {status, reqdata}=this.args; 
         var content="";
-        
-        if(status==undefined) status=true;
        
-      
         if(!status)
         {
+           
            content=`<h4 class="error">Si è verificato un errore.</h4><u>Contattare il Centro di Calcolo</u>`
+
         }
         else{
 
-            
-            switch(data.type)
+            var {type,data} = reqdata;
+
+            switch(type)
             {
                 case 'USER':
                     content=this.displayUserProfileFeedback(data);
@@ -98,7 +109,6 @@ export class Result extends Base{
 
 
         var tem=template.replace('[CONTENT]',content);
-        console.log(tem);
         return tem;
     }
 }

@@ -1,4 +1,4 @@
-const template=`
+var template=`
 
     <div class="prof_intest" >
     <p>[NAME] [SURNAME]</p>
@@ -36,6 +36,11 @@ const template=`
         font-size:21px;
         margin:10px 0;
     }
+
+    .error u{
+        color:red;
+    }
+
     </style>
 `
 
@@ -55,7 +60,7 @@ export class Profile extends Base{
         else{
             if(!this.user.disciplinare)
             {
-                content=`<div><b>Attenzione<b><u>Il disciplinare non è stato ancora accettato</u>.</div>`
+                content=`<div><b>Attenzione<b>, <b class="error"><u>il disciplinare non è stato ancora accettato</u>.</b></div>`
                 //TO DO
                 //link al disciplinare
             }
@@ -72,17 +77,18 @@ export class Profile extends Base{
         var user = services.user.get();
 
         console.log(user);
-        var ctemplate=template;
+      
        
         for(var k in user)
         {
             var field='['+k.toUpperCase()+']';
             var value=user[k];
-            ctemplate=ctemplate.replace(field,value)
+            template=template.replace(field,value)
         }
 
         this.user=user;
 
-        return ctemplate;
+      
+        return template;
     }
 }

@@ -49,8 +49,7 @@ const template=`
 				 	<div class="form_riga">
 						<div class="form_col_long">
 						  <label for="note">Note</label><br>
-							<textarea id="notes" name="notes" rows="5" >
-							</textarea>		
+						  <textarea id="notes" name="notes" rows="5" value=""></textarea>		
 						</div>
 					</div>	
 				</div>	
@@ -121,6 +120,11 @@ const template=`
 
    }
 
+   textarea{
+       padding:10px;
+       border:2px solid #F0F0F0;
+    }
+
   
 </style>
 `
@@ -130,8 +134,10 @@ import {Location} from './location.js'
 import {Dialog} from './dialog.js'
 import services from '../services.js'
 
+
 export class IP extends Base{
   
+    //restituisce il template
     getContent(){
         return template;
     }
@@ -141,15 +147,31 @@ export class IP extends Base{
         return this.$config.value=='DHCP';
     }
 
+    validateHostName()
+    {
+        var value=this.$hostname.value.trim();
+        if(!value.match(/^([0-9A-Za-z_-])+$/))
+        {
+            this.setError(this.$hostname,"Il campo non è valido.")
+        }
+        else{
+            this.reset(this.$hostname);
+        }
+
+        return this.$hostname.parentElement.className.indexOf("error")<0;
+    }
 
     validateFields()
     {
+        //inizializza tutti i campi errore
         this.$form.querySelectorAll("small").forEach(e=>{
            
             e.innerText="";
             e.parentElement.className='form_col';
         })
         
+
+        //legge valore macaddress
         var value=this.$hostmac.value.trim();
 
         if(!value.match(this.validators['mac']))
@@ -176,23 +198,13 @@ export class IP extends Base{
        
         if(!this.modeIsDHCP())
         {
-            
-            value=this.$hostname.value;
-            console.log(value);
-            if(!value.match(/^([0-9A-Za-z_-])+$/))
-            {
-               this.setError(this.$hostname,"Il campo non è valido.")
-            }
-            else{
-               this.reset(this.$hostname);
-            }
+            this.validateHostName();
         }
         else{
             this.reset(this.$hostname);
         }
  
         //errore porta non selezionata
-       
         if(!this.selectedPort)
         {
             this.setError(this.$location.getPortRef(),"Porta non selezionata.")
@@ -211,6 +223,7 @@ export class IP extends Base{
 
         var errors=[];
        
+        //legge tutti i campi errore che sono stati settati
         this.$form.querySelectorAll("small").forEach(e=>{
             if(e.innerText)
             {
@@ -264,6 +277,7 @@ export class IP extends Base{
         curr.config=this.$config.value;
         curr.port=this.selectedPort.port_code;
         curr.notes=this.$notes.value.trim();
+        debugger;
         curr.useMacBusy=useMacBusy;
 
         if(!this.modeIsDHCP())
@@ -314,8 +328,7 @@ export class IP extends Base{
     async init(){
 
         var trg=this.target;
-
-        
+ 
         this.eHost=null;
         this.selectedPort=null;
         
@@ -324,6 +337,15 @@ export class IP extends Base{
 
         //il nodo di edit
         this.eHost=this.args ? this.args.eHost : null;
+
+        /*if(this.args && this.args.mac)
+        {
+           
+            var resp=await services.net.getHost(this.args.mac);
+            this.eHost=services.host.map(resp.data);
+
+        }*/
+
        
         this.$form=trg.querySelector("form");
         this.$hostmac=trg.querySelector("#macAddress")
@@ -337,6 +359,7 @@ export class IP extends Base{
 
         if(this.eHost)
         {
+          
             console.log(this.eHost)
             this.$hostmac.value=this.eHost.mac;
             this.$hostname.value=this.eHost.name;
@@ -366,6 +389,10 @@ export class IP extends Base{
             else{
                 this.setSuccess(this.$hostmac);
             }
+        })
+
+        this.$hostname.addEventListener('change',ev=>{
+            this.validateHostName();
         })
         
 
@@ -459,8 +486,9 @@ export class IP extends Base{
 
        
         var dlgplace=this.target.querySelector("#dialogPlaceHolder")
-        var dlg=new Dialog(dlgplace,this);
-        dlg.showYesButton(this.submitForm)
+        var dlg=new Dialog(dlgplace);
+        //callback anonymous function non serve il .bind(this)
+        dlg.showYesButton((val)=>{this.submitForm(val)});
         dlg.showNoButton(()=>{this.setError(this.$hostmac,"Il mac address risulta già registrato.")})
         dlg.setTitle(title);
         dlg.setMessage(message)
@@ -475,7 +503,6 @@ export class IP extends Base{
         var validFields=this.validateFields();
 
         if(!validFields) return;
-
 
         var dataIsChanged=this.eHost ? false :true;
         
@@ -501,10 +528,11 @@ export class IP extends Base{
         }
        
         if(!dataIsChanged){
-            return UI.ShowResultView(true,{"type":"IP"});
+
+            //richiesta senza dati non salva
+            return UI.EmitSaveRequest("IP");
         }
        
-
         
         //check nome duplicato
         if(!this.modeIsDHCP())

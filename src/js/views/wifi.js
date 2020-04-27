@@ -30,7 +30,7 @@ const template=`
             font-size: 16px;
             border: 1px solid #DDD;
             width:260px;
-            color:#999;
+            
             text-align:center;
             box-sizing: border-box;
 

@@ -25,6 +25,12 @@ const template=`
  thead a{
      color:#FFFFFF;
  }
+
+ div.grid{
+     display:grid;
+     grid-template-columns: 100px auto;
+     grid-gap: 10px;
+ }
 </style>
 `
 
@@ -95,7 +101,7 @@ export class HostList extends Base{
                         <td>${hostName}</td>
                         <td>${h.ip ? h.ip :'DHCP'}</td>
                         <td>${h.mac}</td>
-                        <td>${h.port_alias}</td>
+                        <td><a href="#" data-edit='{"mac":"${h.mac}","action":"view"}'>${h.port_alias}</a></td>
                         <td>
                             <a href="#" data-edit='{"mac":"${h.mac}","action":"edit"}'>Modifica</a> 
                             <a href="#" data-edit='{"mac":"${h.mac}","action":"del"}'>Elimina</a>
@@ -115,9 +121,11 @@ export class HostList extends Base{
                 ev.preventDefault();
                
                 this.editItemHanlder(ev.target.dataset['edit']);
-            } )
+            })
         })
     }
+
+    
 
     editItemHanlder(args){
 
@@ -131,37 +139,41 @@ export class HostList extends Base{
 
         this.selectedHost=h;
 
-        if(h)
+        switch(action)
         {
-            h.fullname=function(){
-                return h.config!='DHCP' ? h.name+"."+h.domain : 'DHCP - '+h.mac;
-            }
-        }
+            case 'edit':
+                UI.EmitChangeView('ip',{"eHost":h});
+            break;
+            case 'del':
+                this.showDialog(
+                    'Richiesta di conferma',
+                    `
+                        Si desidera davvero inviare la richiesta di eliminare questo nodo?
+                        <h4>${
+                               h.config!='DHCP' ? h.name+"."+h.domain : 'DHCP - '+h.mac
+                            }</h4>`,this.removeHost.bind(this),()=>{})
+            break;
+            case 'view':
+                var title=`Locazione presa - ${h.port_alias}`
+                var {build,floor,room} = h.location;
 
-        if(action=='edit')
-        {
-            
-            UI.EmitChangeView('ip',{"eHost":h});
-        }
+                var msg=`<div class="grid">
+                         <div>Edificio:</div><div>${build}</div>
+                         <div>Piano:</div><div>${floor}</div>
+                         <div>Stanza:</div><div>${room}</div>
+                         </div>
+                        `
+                this.showDialog(title,msg)
+            break;
 
-        if(action=='del')
-        {
-            this.showDialog(
-                            'Richiesta di conferma',
-                            `
-                                Si desidera davvero inviare richiesta per eliminare questo nodo?
-                                <h4>${h.fullname()}</h4>
-                            `
- 
-                            )
-            console.log("Delete item:",mac);
         }
+       
     }
 
      //DIALOG PROMPT
-     showDialog(title,message)
+     showDialog(title,message,yesCallback,noCallback)
      {
-        
+       
          var dlgplaceholder=this.target.querySelector(".dlg-placeholder");
          if(!dlgplaceholder)
          {
@@ -170,9 +182,14 @@ export class HostList extends Base{
             dlgplaceholder=this.target.querySelector(".dlg-placeholder");
          }
         
-         var dlg=new Dialog(dlgplaceholder,this);
-         dlg.showYesButton(this.removeHost)
-         dlg.showNoButton()
+         var dlg=new Dialog(dlgplaceholder);
+         
+         if(yesCallback)
+            dlg.showYesButton(yesCallback)
+         
+         if(noCallback)
+            dlg.showNoButton(noCallback)
+
          dlg.setTitle(title);
          dlg.setMessage(message)
          dlg.show();
@@ -193,37 +210,18 @@ export class HostList extends Base{
         //var uinfo=JSON.parse(localStorage.getItem("uinfo"));
         //if(!uinfo) return;
         //this.pending=true;
+        var usr=services.user.get();
+
         return new Promise((resolve,reject)=>{
-        services.net.getHostList('RGGLSN75M17H501N').then(res=>{
-            var _hosts=[];
-            
-            res.data.map(h=>{
-                var host={
 
-                    "name":h.host_name ? h.host_name : "",
-                    "domain":h.host_domain ? h.host_domain : "roma1.infn.it",
-                    "ip":h.host_ip ? h.host_ip : "",
-                    "mac":h.host_mac,
-                    "port":h.pp_port_code,
-                    "port_alias":h.pp_port_alias,
-                    "config": h.host_ip ? 'STATIC' : 'DHCP',
-                    "location":{"build":h.build,"floor":h.floor,"id":h.loc_id,"room":h.loc_name,"port":h.pp_port_code,"vlanid":h.vlanid},
-                    
-                    }
-                    
-                    //se è virtuale
-                    host['config']= h.host_vm ? "STATICVM" : host['config'];
-                   
+        services.net.getHostList(usr.cf).then(res=>{
+                var _hosts=[];
+                
+                res.data.map(h=>_hosts.push(services.host.map(h)));
+                
+                resolve(_hosts);
 
-                _hosts.push(host);
-
-            })
-            
-            resolve(_hosts);
-
-        }).finally(res=>{
-                //this.pending=false;
-        });
+            });
         })
     }
 

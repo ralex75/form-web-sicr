@@ -6,7 +6,7 @@ export class NavMenu extends Base {
     
     init()
     {
-        document.addEventListener(UI.EventList.ChangeView,ev=>{
+        document.addEventListener(UI.EventNames.ChangeView,ev=>{
            
             var view=ev.detail.view;
             this.target.querySelectorAll('a.navi').forEach(el=>

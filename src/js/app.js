@@ -9,8 +9,7 @@ import {Base,UI} from './views/base.js'
 import services from './services.js'
 
 
-
-const showView=async function({view,args}){
+const showView=function({view,args}){
 
     var target=document.querySelector("#colonne_content")
    
@@ -20,6 +19,7 @@ const showView=async function({view,args}){
 
     
     switch(view.toLowerCase()){
+        
         
         case "profile":
             view=new Profile(target,args)
@@ -39,11 +39,10 @@ const showView=async function({view,args}){
         case "result":
             view=new Result(target,args);
             //redirezione utente ad altra view se è view Result
-            if(args.status) UI.EmitChangeView(args.next || 'profile',null,2000);
+            UI.EmitChangeView(args.next || 'profile',null,2000);
         break;
         default:
             view=new Base(target,args);
-           
     }
 
 
@@ -51,17 +50,21 @@ const showView=async function({view,args}){
 
 
 const handleError=(err)=>{
-    showView({'view':'result','args':{"status":false,"data":err}})
+    return showView({'view':'result','args':{'status':false}})
 }
 
 
-
+//listener DOM Loaded
 document.addEventListener('DOMContentLoaded',async ev=>{
 
   
     try{
         
-        var user=await services.user.current('50699576-15eb-49c6-a645-c07c0de9c402');
+        //legge informazioni utente
+        var user=await services.user.read('50699576-15eb-49c6-a645-c07c0de9c402');
+
+        //memorizza
+        services.user.set(user);
       
         if(user.isAuthorized && user.disciplinare)
         {
@@ -82,35 +85,48 @@ document.addEventListener('DOMContentLoaded',async ev=>{
    
 })
 
-document.addEventListener(UI.EventList.ChangeView, ev=>{
+//listener cambio view
+document.addEventListener(UI.EventNames.ChangeView, ev=>{
     
     ev.preventDefault();
     showView(ev.detail);
+
 })
 
-document.addEventListener(UI.EventList.SaveRequest, ev=> {
-    
+
+//salva richiesta
+document.addEventListener(UI.EventNames.SaveRequest, async ev=> {
+   
     var {type,data}=ev.detail;
    
-    var result={"status":false, "data":ev.detail, "next":"requests"};
+    var result={"status":true, "reqdata":ev.detail, "next":"hostlist"};
 
-    try{
-        services.requests.save(type,data).then(res=>{
-            result.status=true
-        }).catch(err=>{
-            result.status=false
-        }).finally(_=>{
-            UI.EmitChangeView('result',result);
-        });
-    }
-    catch(exc)
+   
+    if(data)
     {
-        UI.EmitChangeView('result',result);
+        
+        try
+        {
+            await services.requests.save(type,data)
+            result.next="requests";
+        }
+        catch(exc)
+        {
+            result.status=false;
+            result.next="profile";
+            console.log("exc:",exc);
+        }
+
     }
+    
+   
+    //mostra risultati
+    UI.EmitChangeView('result',result);
     
 })
 
 
+//distrugge dati utente nel browser
 window.addEventListener("unload", function() {
     services.user.unset();
-  });
+});

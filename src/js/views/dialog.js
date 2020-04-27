@@ -7,8 +7,8 @@ const template=`
                 DIALOG
             </div>
             <div class="actions">
-                <a href="#" name="yes" class="yes"><span>&#10003;</span> Si</a>
-                <a href="#" name="no" class="no"><span>&#215;</span> No</a>
+                <a href="#" name="yes" data-value="true" class="yes"><span>&#10003;</span> Si</a>
+                <a href="#" name="no" data-value="false" class="no"><span>&#215;</span> No</a>
             </div>
         </div>
     </div>
@@ -62,11 +62,12 @@ const template=`
 
   div.actions
   {
-      display:flex;
+      display:none;
       align-items:flex-end;
       justify-content:space-around;
       border-top:1px solid #DDD;
       padding:20px 0 0 0;
+     
   }
   a.yes,a.no{
       display:none;
@@ -78,19 +79,22 @@ const template=`
   }
 
   a.yes.show,a.no.show{
-    display:block;
+    display:flex;
+    align-items:center;
+    justify-content: center;
+    
   }
 
   a.yes span{
       color:#0D0;
-      font-size:20px;
-     
+      font-size:30px;
+      margin:0 6px;
   }
   a.no span{
     color:#D00;
-    font-size:20px;
-   
-}
+    font-size:36px;
+    margin:0 6px;
+ }
   
   #dlgcontent{
       padding-top:10px;
@@ -101,23 +105,26 @@ const template=`
 `
 import {Base} from './base.js'
 export class Dialog extends Base{
-    constructor(target,ctx)
-    {
-        super(target);
-        this.ctx=ctx;
-        this.callback={"yes":null,"no":null};
-        this.init();
-    }
+   
     showYesButton(cb=null)
     {
-        this.callback['yes']=cb;
-        this.$dlg.querySelector("a.yes").className='yes show';
+        this.showButton('yes',cb);
     }
     showNoButton(cb=null)
     {
-        this.callback['no']=cb;
-        this.$dlg.querySelector("a.no").className='no show';
+        this.showButton('no',cb);
     }
+
+    showButton(butName,cb)
+    {
+        var el=this.$dlg.querySelector(`a.${butName}`);
+        this.callback[butName]=cb;
+        el.className=`${butName} show`;
+        el.parentElement.style.display='flex';
+    }
+
+    
+
     show()
     {
         this.$dlg.className= 'overlay show';
@@ -137,19 +144,27 @@ export class Dialog extends Base{
         this.$message.innerHTML=text;
     }
 
+    setContext(ctx){
+        this.ctx=ctx;
+    }
+
     getContent(){
         return template;
     }
     
     init()
     {
-       
+        
+        this.callback={"yes":null,"no":null};
+
         this.$dlg=this.target.querySelector(".overlay")
         this.$message=this.$dlg.querySelector('#dlgcontent');
         this.$dlg.querySelector(".dlg-close").addEventListener('click',ev=>{
             ev.preventDefault();
             this.hide();
         })
+
+        
 
         this.$dlg.querySelectorAll("div.actions > a").forEach(el => {
            
@@ -160,8 +175,13 @@ export class Dialog extends Base{
                 if(this.callback[el.name])
                 {
                     var fn=this.callback[el.name]
-                   
-                    fn.bind(this.ctx)(true);
+                    if(this.ctx)
+                    {
+                        fn=fn.bind(this.ctx);
+                    }
+                    
+                    fn(el.dataset.value)
+                    
                    
                 }
 
