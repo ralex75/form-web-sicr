@@ -131,4 +131,3 @@ var handleRequest = function (r) {
         });
     });
 };
-exports.ReadRequests();
