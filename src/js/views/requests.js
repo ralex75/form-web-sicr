@@ -132,17 +132,17 @@ export class Requests extends Base{
        this.items=[]
        
 
-       try{
+       //try{
             
             var resp=await services.requests.list(false,this.$types.value)
             this.items=this.mapItems(resp.data);
             //this.buildRows(this.items);
-       }
+       /*}
        catch(exc)
        {
            this.setFeedbackMessage('error','si è verificato un errore...')
            console.log("Errore:",exc);
-       }
+       }*/
 
         
        this.buildRows(this.items);

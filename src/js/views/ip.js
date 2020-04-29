@@ -131,7 +131,7 @@ const template=`
 
 import {Base, UI} from './base.js'
 import {Location} from './location.js'
-import {Dialog} from './dialog.js'
+import {Dialog} from '../components/dialog.js'
 import services from '../services.js'
 
 
@@ -155,7 +155,7 @@ export class IP extends Base{
             this.setError(this.$hostname,"Il campo non è valido.")
         }
         else{
-            this.reset(this.$hostname);
+            this.setSuccess(this.$hostname);
         }
 
         return this.$hostname.parentElement.className.indexOf("error")<0;
@@ -277,7 +277,6 @@ export class IP extends Base{
         curr.config=this.$config.value;
         curr.port=this.selectedPort.port_code;
         curr.notes=this.$notes.value.trim();
-        debugger;
         curr.useMacBusy=useMacBusy;
 
         if(!this.modeIsDHCP())
@@ -315,23 +314,27 @@ export class IP extends Base{
     }
 
     getHosts(){
-        return new Promise((resolve)=>{
+        return new Promise((resolve,reject)=>{
             services.net.getHostList().then(res=>{
                 var list=res.data;
                 
                 resolve(list.map(e=>e.host_mac));
+            }).catch(err=>{
+                return reject(err);
             })
         })
        
     }
 
-    async init(){
+     async init(){
 
+        
         var trg=this.target;
  
         this.eHost=null;
         this.selectedPort=null;
-        
+       
+            
         this.usermaclist=await this.getHosts();
         this.validators={"mac": /^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/}
 
@@ -345,7 +348,7 @@ export class IP extends Base{
             this.eHost=services.host.map(resp.data);
 
         }*/
-
+       
        
         this.$form=trg.querySelector("form");
         this.$hostmac=trg.querySelector("#macAddress")
@@ -356,6 +359,7 @@ export class IP extends Base{
         this.$notes=trg.querySelector("#notes")
       
         var location= null;
+
 
         if(this.eHost)
         {
@@ -492,7 +496,7 @@ export class IP extends Base{
         dlg.showNoButton(()=>{this.setError(this.$hostmac,"Il mac address risulta già registrato.")})
         dlg.setTitle(title);
         dlg.setMessage(message)
-        dlg.show();
+        dlg.showHide();
 
     }
 

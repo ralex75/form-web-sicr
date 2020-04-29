@@ -1,5 +1,6 @@
 
 
+
 export class UI {
 
     static EventNames={'ChangeView':'ChangeView','SaveRequest':'SaveRequest'}
@@ -11,6 +12,7 @@ export class UI {
             document.dispatchEvent(new CustomEvent(UI.EventNames.ChangeView,{'detail':{'view':view,'args':args},bubbles:true}))
         },delay)
     }
+
 
     static ShowResultView(status=true,data="")
     {   debugger;
@@ -39,6 +41,7 @@ export class Base{
         this.render();
         this.init();
     }
+
 
     init()
     {}

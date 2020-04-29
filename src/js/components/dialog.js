@@ -1,20 +1,32 @@
 const template=`
-    <div class='overlay'>
-        <div class="dialog">
+    <section class='dialog'>
+        <div class="dlg-content">
             <a href="#" class="dlg-close">&#x2573;</a>
             <h3 class="dlg-title"></h3>
-            <div id="dlgcontent" >
+            <div class="dlg-message">
                 DIALOG
             </div>
-            <div class="actions">
+            <div class="dlg-actions">
                 <a href="#" name="yes" data-value="true" class="yes"><span>&#10003;</span> Si</a>
                 <a href="#" name="no" data-value="false" class="no"><span>&#215;</span> No</a>
             </div>
         </div>
-    </div>
+    </section>
 
 <style scoped>
-  div.dialog{
+
+  .dialog::before{
+    content:'';
+    width:100%;
+    height:100%;
+    position:fixed;
+    top:0;
+    left:0;
+    background-color:rgba(10,10,10,0.5);
+    z-index:1;
+  }
+
+  .dialog .dlg-content{
     width:600px;
     min-height:100px;
     position:absolute;
@@ -25,6 +37,16 @@ const template=`
     border:0px solid #DDD;
     padding:20px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    z-index:10;
+   
+  }
+
+  .dialog .dlg-content,.dialog::before{
+    display:none;
+  }
+
+  .dialog.show .dlg-content,.dialog.show::before{
+    display:block;
   }
 
   h3.dlg-title{
@@ -34,6 +56,11 @@ const template=`
       
   }
 
+.dlg-message{
+    padding-top:10px;
+    min-height:100px;
+}
+
   a.dlg-close{
      float:right;
      font-size:20px;
@@ -41,44 +68,30 @@ const template=`
      opacity:0.7;
      
   }
+
   a.dlg-close:hover{
     opacity:1;
   }
 
-  div.overlay.show{
-      display:block;
-  }
-
-  div.overlay{
-      position:fixed;
-      top:0;
-      left:0;
-      width:100%;
-      height:100%;
-      background-color:rgba(10,10,10,0.5);
-      z-index:1;
-      display:none;
-  }
-
-  div.actions
+  .dlg-actions
   {
       display:none;
       align-items:flex-end;
       justify-content:space-around;
       border-top:1px solid #DDD;
       padding:20px 0 0 0;
-     
   }
-  a.yes,a.no{
+
+
+  .dlg-actions a{
       display:none;
       border:1px solid #DDD;
       padding:10px 20px;
       width:120px;
       text-align:center;
-     
   }
 
-  a.yes.show,a.no.show{
+  .dlg-actions a.show{
     display:flex;
     align-items:center;
     justify-content: center;
@@ -96,20 +109,17 @@ const template=`
     margin:0 6px;
  }
   
-  #dlgcontent{
-      padding-top:10px;
-      min-height:100px;
-  }
 
 </style>
 `
-import {Base} from './base.js'
+import {Base} from '../views/base.js'
 export class Dialog extends Base{
    
     showYesButton(cb=null)
     {
         this.showButton('yes',cb);
     }
+
     showNoButton(cb=null)
     {
         this.showButton('no',cb);
@@ -123,25 +133,20 @@ export class Dialog extends Base{
         el.parentElement.style.display='flex';
     }
 
+    showHide()
+    {
+        this.$dlg.classList.toggle('show');
+    }
     
-
-    show()
-    {
-        this.$dlg.className= 'overlay show';
-    }
-    hide()
-    {
-        this.$dlg.className='overlay';
-    }
 
     setTitle(text)
     {
-        this.$dlg.querySelector(".dlg-title").innerText=text;
+        this.$dlg.querySelector(".dlg-title").innerHTML=text;
     }
 
     setMessage(text)
     {
-        this.$message.innerHTML=text;
+        this.$dlg.querySelector(".dlg-message").innerHTML=text;
     }
 
     setContext(ctx){
@@ -157,16 +162,13 @@ export class Dialog extends Base{
         
         this.callback={"yes":null,"no":null};
 
-        this.$dlg=this.target.querySelector(".overlay")
-        this.$message=this.$dlg.querySelector('#dlgcontent');
+        this.$dlg=this.target.querySelector(".dialog")
         this.$dlg.querySelector(".dlg-close").addEventListener('click',ev=>{
             ev.preventDefault();
-            this.hide();
+            this.showHide();
         })
 
-        
-
-        this.$dlg.querySelectorAll("div.actions > a").forEach(el => {
+        this.$dlg.querySelectorAll(".dlg-actions > a").forEach(el => {
            
             el.addEventListener('click',ev=>{
                
@@ -174,6 +176,7 @@ export class Dialog extends Base{
              
                 if(this.callback[el.name])
                 {
+                    
                     var fn=this.callback[el.name]
                     if(this.ctx)
                     {
@@ -185,7 +188,7 @@ export class Dialog extends Base{
                    
                 }
 
-                this.hide();
+                this.showHide();
             })
         });
         

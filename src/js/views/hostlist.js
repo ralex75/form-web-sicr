@@ -36,7 +36,7 @@ const template=`
 
 
 import {Base,UI} from './base.js'
-import {Dialog} from './dialog.js'
+import {Dialog} from '../components/dialog.js'
 import services from '../services.js'
 
 export class HostList extends Base{
@@ -192,7 +192,7 @@ export class HostList extends Base{
 
          dlg.setTitle(title);
          dlg.setMessage(message)
-         dlg.show();
+         dlg.showHide();
  
      }
 

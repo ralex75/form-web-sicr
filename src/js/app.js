@@ -39,7 +39,10 @@ const showView=function({view,args}){
         case "result":
             view=new Result(target,args);
             //redirezione utente ad altra view se è view Result
-            UI.EmitChangeView(args.next || 'profile',null,2000);
+            if(args.status)
+            {
+                UI.EmitChangeView(args.next || 'profile',null, 2000);
+            }
         break;
         default:
             view=new Base(target,args);
@@ -50,9 +53,25 @@ const showView=function({view,args}){
 
 
 const handleError=(err)=>{
+    console.log(err);
+    //DUMP ERROR to file
+    services.user.unset();
+    //TO DO
+
+    //show error
     return showView({'view':'result','args':{'status':false}})
 }
 
+
+window.addEventListener('error', function(event) { 
+    handleError(event);
+})
+
+window.addEventListener('unhandledrejection', function(event) {
+    //console.error('Unhandled rejection (promise: ', event.promise, ', reason: ', event.reason, ').');
+    //document.querySelector("#col_sin_menu").innerHTML="";
+    handleError(event);
+});
 
 //listener DOM Loaded
 document.addEventListener('DOMContentLoaded',async ev=>{
