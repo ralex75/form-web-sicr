@@ -125,6 +125,13 @@ const template=`
        border:2px solid #F0F0F0;
     }
 
+
+ div.grid{
+    display:grid;
+    grid-template-columns: 160px auto;
+    grid-gap: 10px;
+}
+
   
 </style>
 `
@@ -149,16 +156,51 @@ export class IP extends Base{
 
     validateHostName()
     {
+        var err="";
         var value=this.$hostname.value.trim();
         if(!value.match(/^([0-9A-Za-z_-])+$/))
         {
-            this.setError(this.$hostname,"Il campo non è valido.")
+            err="Il campo non è valido."
+        }
+       
+
+        return err;
+    }
+
+    validateHostMac()
+    {
+        var err="";
+        //legge valore macaddress
+        var value=this.$hostmac.value.trim();
+
+        if(!value.match(this.validators['mac']))
+        {
+            err="Il campo non è valido.";
         }
         else{
-            this.setSuccess(this.$hostname);
+            
+            if(this.usermaclist.indexOf(value)>-1)
+            {
+                var eValue=this.eHost ? this.eHost.mac : "";
+                if(value!=eValue)
+                {
+                    err="Il mac inserito appartiene ad un altro tuo nodo."
+                }
+              
+            }
         }
 
-        return this.$hostname.parentElement.className.indexOf("error")<0;
+        return err;
+    }
+
+    handleFieldError(input,err)
+    {
+        if(err){
+            this.setError(input,err);
+        }
+        else{
+            this.setSuccess(input);
+        }
     }
 
     validateFields()
@@ -168,37 +210,18 @@ export class IP extends Base{
            
             e.innerText="";
             e.parentElement.className='form_col';
+
         })
-        
 
-        //legge valore macaddress
-        var value=this.$hostmac.value.trim();
-
-        if(!value.match(this.validators['mac']))
-        {
-            this.setError(this.$hostmac,"Il campo non è valido.")
-        }
-        else{
-            if(this.usermaclist.indexOf(value)>-1)
-            {
-                var eValue=this.eHost ? this.eHost.mac : "";
-                if(value!=eValue)
-                {
-                    this.setError(this.$hostmac,"Il mac inserito appartiene ad un altro tuo nodo.")
-                }
-                else{
-                    this.reset(this.$hostmac);
-                }
-            }
-            else{
-                this.reset(this.$hostmac);
-            }
-       
-        }
-       
+        //host mac address
+        var err=this.validateHostMac();
+        this.handleFieldError(this.$hostmac,err);
+      
+        //host name 
         if(!this.modeIsDHCP())
         {
-            this.validateHostName();
+            err = this.validateHostName();
+            this.handleFieldError(this.$hostname,err);
         }
         else{
             this.reset(this.$hostname);
@@ -218,6 +241,7 @@ export class IP extends Base{
             {
                 this.setError(this.$location.getPortRef(),"La porta selezionata risulta occupata")
             }
+
         }
 
 
@@ -225,11 +249,13 @@ export class IP extends Base{
        
         //legge tutti i campi errore che sono stati settati
         this.$form.querySelectorAll("small").forEach(e=>{
-            if(e.innerText)
+            if(e.parentElement.className.indexOf('error')>-1)
             {
                 errors.push(e.innerText);
             }
         })
+
+      
 
         console.log("Form errors first level is valid:",errors.length==0);
 
@@ -238,11 +264,12 @@ export class IP extends Base{
         return errors.length==0;
     }
 
-    setSuccess(input)
+    setSuccess(input,msg)
     {
+       
        var parent= input.parentElement;
        const small=parent.querySelector("small")
-       small.innerText="";
+       small.innerText=msg;
        parent.className='form_col success';
       
     }
@@ -269,7 +296,7 @@ export class IP extends Base{
         return this.$config.value;
     }
 
-    submitForm(useMacBusy){
+    submitForm(){
        
   
         var curr={}
@@ -277,7 +304,7 @@ export class IP extends Base{
         curr.config=this.$config.value;
         curr.port=this.selectedPort.port_code;
         curr.notes=this.$notes.value.trim();
-        curr.useMacBusy=useMacBusy;
+        curr.useMacBusy=this.useMacBusy;
 
         if(!this.modeIsDHCP())
         {
@@ -309,9 +336,34 @@ export class IP extends Base{
                 action:action
             }
 
+            console.log("Save")
 
-        UI.EmitSaveRequest('IP',data);
+        var html=this.getReport(data.to);
+
+        this.showDialog("Richiesta di Conferma",html);
+        //UI.EmitSaveRequest('IP',data);
     }
+
+    getReport(data)
+    {
+        var html=`
+                    <div class="grid">
+                    <div>Mac Address:</div><div>${data.mac}</div>`
+        
+                   
+        if(data.config!='DHCP')
+          html+=`<div>Nome:</div><div>${data.name}</div>`
+                    
+                    
+                   
+        html+=`<div>Porta:</div><div>${data.port}</div>`
+        html+=`</div>`
+        
+        html+="<h4>Si vuole procedere con l'invio della richiesta?</h4>"
+
+        return html
+    }
+
 
     getHosts(){
         return new Promise((resolve,reject)=>{
@@ -341,6 +393,7 @@ export class IP extends Base{
         //il nodo di edit
         this.eHost=this.args ? this.args.eHost : null;
 
+        this.useMacBusy=false;
         /*if(this.args && this.args.mac)
         {
            
@@ -484,36 +537,37 @@ export class IP extends Base{
 
     }
 
+    acceptUseMacBusy(){
+        this.useMacBusy=true;
+        this.setSuccess(this.$hostmac,"Hai confermato l'intenzione di voler utilizzare questo mac address");
+        //this.$hostmac.disabled=true;
+    }
+
+    
+    
+
      //DIALOG PROMPT
-    showDialog(title,message)
+    showDialog(title,message,okCallback=null,noCallback=null)
     {
 
        
         var dlgplace=this.target.querySelector("#dialogPlaceHolder")
         var dlg=new Dialog(dlgplace);
         //callback anonymous function non serve il .bind(this)
-        dlg.showYesButton((val)=>{this.submitForm(val)});
-        dlg.showNoButton(()=>{this.setError(this.$hostmac,"Il mac address risulta già registrato.")})
+        dlg.showYesButton(okCallback);
+        dlg.showNoButton(noCallback)
         dlg.setTitle(title);
         dlg.setMessage(message)
         dlg.showHide();
 
     }
 
-
-    async handleSubmit(){
+    dataIsChanged(){
         
-        //validazione primo livello, campi vuoti o non corretti
-        var validFields=this.validateFields();
+        var isChanged=this.eHost ? false : true;
 
-        if(!validFields) return;
-
-        var dataIsChanged=this.eHost ? false :true;
-        
-        //verifica cambiamenti
-        if(!dataIsChanged)
+        if(this.eHost)
         {
-            
             var data={}
             data.name=this.$hostname.value;
             data.domain=this.$hostdomain.value;
@@ -525,19 +579,32 @@ export class IP extends Base{
             {
                 if(data[k]!=this.eHost[k])
                 {
-                    dataIsChanged=true;
+                    isChanged=true;
                 }
             }
-           
         }
+
+        return isChanged;
+    }
+
+
+    async handleSubmit(){
+        
+        //validazione primo livello, campi vuoti o non corretti
+        var validFields=this.validateFields();
+
+      
+        if(!validFields) return;
+
+        var _dataIsChanged=this.dataIsChanged();
+
        
-        if(!dataIsChanged){
+        if(!_dataIsChanged){
 
             //richiesta senza dati non salva
             return UI.EmitSaveRequest("IP");
         }
        
-        
         //check nome duplicato
         if(!this.modeIsDHCP())
         {
@@ -560,11 +627,37 @@ export class IP extends Base{
             if(duplicateName) return;
         }
 
-         //check mac duplicato
+      
+        var duplicateMac=false;
+
+        if(!this.useMacBusy)
+        {
+            duplicateMac=await this.isMacDuplicated();
+        }
+       
+
+        if(duplicateMac) return;
+
+        console.log("FormIsValid:",!(duplicateMac || duplicateName))
+
+        this.submitForm(false);
+
+        
+
+        
+        
+
+    
+    }
+
+    async isMacDuplicated(){
+        //check mac duplicato
         var mac=this.$hostmac.value;
         
+
         var duplicateMac = await this.checkDuplicatedMacAddress(mac);
 
+        
         //se duplicato e non è quello di edit
         if(duplicateMac)
         {
@@ -578,19 +671,15 @@ export class IP extends Base{
                 
                 //controlla che il macaddress inserito non sia uno di quelli dell'utente
                 //this.setError(this.$hostmac,"Il mac address risulta già registrato.")
-
+                var okCb=()=>{this.acceptUseMacBusy(); this.handleSubmit()};
+                var noCb=()=>{this.setError(this.$hostmac,"Il mac address risulta già registrato.")};
+                var msg="<b>Il mac address inserito risulta già registrato</b>. <br><br> Si intende utilizzarlo?"
                 //this.showDialog('<h3>Attenzione</h3>Il mac address risulta già registrato. Si intende utilizzarlo?')
-                this.showDialog('Richiesta conferma','<b>Il mac address inserito risulta già registrato</b>. <br><br> Si intende utilizzarlo?');
+                this.showDialog('Richiesta conferma',msg,okCb,noCb)
             }
         }
 
+        return duplicateMac;
 
-        if(duplicateMac) return;
-
-        console.log("FormIsValid:",!(duplicateMac || duplicateName))
-
-        this.submitForm(false);
-        
     }
 }
-                
