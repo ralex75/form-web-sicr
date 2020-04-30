@@ -31,6 +31,11 @@ const template=`
      grid-template-columns: 100px auto;
      grid-gap: 10px;
  }
+
+ div.grid div.c2{
+    color:#4697b8;
+}
+
 </style>
 `
 
@@ -158,9 +163,9 @@ export class HostList extends Base{
                 var {build,floor,room} = h.location;
 
                 var msg=`<div class="grid">
-                         <div>Edificio:</div><div>${build}</div>
-                         <div>Piano:</div><div>${floor}</div>
-                         <div>Stanza:</div><div>${room}</div>
+                         <div>Edificio:</div><div class="c2">${build}</div>
+                         <div>Piano:</div><div class="c2">${floor}</div>
+                         <div>Stanza:</div><div class="c2">${room}</div>
                          </div>
                         `
                 this.showDialog(title,msg)

@@ -55,11 +55,11 @@ const showView=function({view,args}){
 const handleError=(err)=>{
     console.log(err);
     //DUMP ERROR to file
-    services.user.unset();
+    //services.user.unset();
     //TO DO
 
     //show error
-    return showView({'view':'result','args':{'status':false}})
+    //return showView({'view':'result','args':{'status':false}})
 }
 
 

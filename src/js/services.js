@@ -124,7 +124,10 @@ const net={
     },
 
     getHostList:function(uid){
-       
+        if(!uid)
+        {
+            uid=user.get().cf;
+        }
         return axios.get(`/net/hostlist/${uid}`)
     },
 

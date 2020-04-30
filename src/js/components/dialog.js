@@ -86,9 +86,13 @@ const template=`
   .dlg-actions a{
       display:none;
       border:1px solid #DDD;
-      padding:10px 20px;
+      padding:6px 20px;
       width:120px;
       text-align:center;
+  }
+
+  .dlg-actions a:hover{
+      border-color:#4697b8;
   }
 
   .dlg-actions a.show{
@@ -100,13 +104,15 @@ const template=`
 
   a.yes span{
       color:#0D0;
-      font-size:30px;
-      margin:0 6px;
+      font-size:36px;
+      margin:0 3px;
+     
   }
   a.no span{
     color:#D00;
     font-size:36px;
     margin:0 6px;
+   
  }
   
 
@@ -117,12 +123,18 @@ export class Dialog extends Base{
    
     showYesButton(cb=null)
     {
+        if(cb)
         this.showButton('yes',cb);
+
+        return this;
     }
 
     showNoButton(cb=null)
     {
+        if(cb)
         this.showButton('no',cb);
+
+        return this;
     }
 
     showButton(butName,cb)
@@ -142,15 +154,19 @@ export class Dialog extends Base{
     setTitle(text)
     {
         this.$dlg.querySelector(".dlg-title").innerHTML=text;
+
+        return this;
     }
 
     setMessage(text)
     {
         this.$dlg.querySelector(".dlg-message").innerHTML=text;
+        return this;
     }
 
     setContext(ctx){
         this.ctx=ctx;
+        return this;
     }
 
     getContent(){
