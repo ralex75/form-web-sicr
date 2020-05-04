@@ -2,6 +2,20 @@ const template=`
 
     <h1>Dettagli della richiesta ID - [ID]</h1>
    
+    
+`
+
+const style=`
+    <style scoped>
+        div.alert-box{
+            margin:0 auto;
+            text-align:center;
+            background-color: #ffbb33; /* Red */
+            color:#FFF;
+            padding:10px;
+            line-height:13px;
+        }
+    </style>
 `
 
 /*class TemplateIPBuilder{
@@ -61,13 +75,28 @@ export class RequestDetails extends Base {
             else{
                 html+=this.singleTemplateIP(req.data);
             }
+
+
+            
+            if(req.data.to && req.data.to.useMacBusy)
+            {
+
+                    html+=`   <div class="alert-box">
+                              <h4>Come gia' segnalato nel form di richiesta:</h4>
+                              il mac address selezionato ${ req.data.to.mac } è già in uso.
+                              <h4><u>Seguira' pertanto comunicazione del Servizio Impianti Calcolo e Reti</u></h4>
+                              </div>
+                              `
+            
+            }
+
         }
         else{
             html+=`<h3>Periodo di navigazione temporaneo</h3>`
             html+=this.singleTemplateWifi(req.data);
         }
 
-        this.target.innerHTML+=html;
+        this.target.innerHTML+=html+style;
     }
 
     fullName(h)
