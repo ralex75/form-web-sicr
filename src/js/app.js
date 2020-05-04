@@ -54,12 +54,16 @@ const showView=function({view,args}){
 
 const handleError=(err)=>{
     console.log(err);
-    //DUMP ERROR to file
-    //services.user.unset();
+   
+    //rimuove info utente
+    services.user.unset();
     //TO DO
+     //DUMP ERROR to file ?
 
+    //rimuove pannello di navigazione
+    document.querySelector("#col_sin_menu").innerHTML="";
     //show error
-    //return showView({'view':'result','args':{'status':false}})
+    return showView({'view':'result','args':{'status':false}})
 }
 
 

@@ -4,14 +4,22 @@ const template=`
         <div class="form_intest">
           Periodo di navigazione
         </div>
-        <div class="form_riga">
+        <div class="form_riga row">
           <div class="form_col">
-            <label for="fromdate">Inizio</label><br>
-            <input class="datet" id="datef" name="from" required type="date" />  
+            <label>Inizio</label>
+            <div class="cont">
+                <input type="text" />
+                <div class="calpick"></div>
+                <input type="date" id="from">
+            </div>
           </div>
           <div class="form_col">
-            <label for="todate">Fine</label><br>
-            <input class="datet" name="to" required  type="date" />  
+          <label>Fine</label>
+            <div class="cont">
+                <input type="text" />
+                <div class="calpick"></div>
+                <input type="date" id="to">
+            </div> 
           </div>
      
         </div>
@@ -23,73 +31,69 @@ const template=`
 			</div>		
   </form> 
        
-        <style scoped>
+<style scoped>
         
-        .datet{
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #DDD;
-            width:260px;
-            
-            text-align:center;
-            box-sizing: border-box;
+*{
+  box-sizing: border-box;
 
-          }
-          input::-webkit-inner-spin-button,input::-webkit-clear-button
-          {
-            opacity: 0;
-          }
-        /*
-          input::-webkit-inner-spin-button,input::-webkit-clear-button
-          {
-            opacity: 0;
-          }
-          
-          
-          input::-webkit-calendar-picker-indicator{
-           
-            color: rgba(0, 0, 0, 0);
-            
-            width:30px;
-            height:30px;
-           
-            z-index:1;
-            opacity: 1;
-         
-            
-           
-            background-image: url('img/calendar.png');
-            
-            background-repeat: no-repeat;
-            background-size: cover;
-            
-          }*/
+}
+.row{
+  display: flex;
+}
+.calpick{
 
-          input[type="date"]::-webkit-calendar-picker-indicator {
-            background: transparent;
-           
-            color: transparent;
-            cursor: default;
-            height: 50px;
-            
-            
-           
-            position: absolute;
-            
-            width: 260px;
-        }
-        
-   /*     
-        
-          div.cal img{
-            position: absolute;
-            top:10px;
-            right:14px;
-            width: 40px;
-            height: 40px;
-            opacity: 0;
-          }
-*/
+position: absolute;
+width:30px;
+height: 100%; 
+background-image: url('../img/calendar.png');
+background-repeat: no-repeat;
+background-position: center center;
+right: 1px;
+
+}
+div.cont {
+position: absolute;
+display: flex;
+align-items: center;
+width:160px;
+height: 30px;
+padding:16px 1px;
+border: 1px solid #DDD;
+}
+
+div.cont:hover{
+    border-color:lightblue;
+}
+
+input[type=text] {
+    position: absolute;
+    border: 0;
+    width: 99%;
+    padding: 6px 0 6px 10px;
+    margin:1px;
+    outline: none;
+    right: 0px;
+}
+
+input[type=date] {
+ 
+ position: absolute;
+ opacity: 0;
+ width: 100%;
+ height: 100%;
+ right: 0px;
+
+}
+
+input::-webkit-calendar-picker-indicator {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    right: 0px;
+    
+}       
+  
          
 
 .form_pied{
@@ -111,7 +115,7 @@ const template=`
       outline:0;
       transition: 0.5s ease-in-out;
   } 
-      </style>
+  </style>
 
 `
 
@@ -121,11 +125,37 @@ export class WIFI extends Base {
 
     init()
     {
-      
-       this.$from=this.target.querySelector("[name=from]");
-       this.$to=this.target.querySelector("[name=to]");
-
        this.$form=this.target.querySelector("form");
+      
+       this.$from=this.target.querySelector("#from");
+       this.$to=this.target.querySelector("#to");
+
+       var date=moment().format("YYYY-MM-DD");
+
+       /*this.$from.min=date;
+       this.$from.value=date;
+      
+       this.$to.min=date;
+       this.$to.value=date;*/
+
+       //this.$from.previousElementSibling.previousElementSibling.value=moment(date).format('DD-MM-YYYY');
+
+       this.target.querySelectorAll('[type=date]').forEach(el=>{
+          el.min=date;
+          el.value=date;
+          this.setDate(el,date);
+          el.addEventListener('change',ev=>{
+            if(ev.target.value)
+            {
+              this.setDate(el,ev.target.value);
+            }
+          })
+        })
+
+        //this.$from.previousElementSibling.previousElementSibling.value=moment(date).format('DD-MM-YYYY');
+        //this.setDate(this.$from,moment(date).format('DD-MM-YYYY'));
+
+       /*
 
         var date=moment().format('YYYY-MM-DD');
      
@@ -146,7 +176,7 @@ export class WIFI extends Base {
             this.$to.min=ev.target.value;
             this.$to.value=ev.target.value;
           }
-        });
+        });*/
 
         
         this.$form.addEventListener('submit',ev=>{
@@ -156,6 +186,20 @@ export class WIFI extends Base {
        
       
 
+    }
+
+    setDate(el,value)
+    {
+      
+      var d_it=moment(value).format("DD-MM-YYYY");
+      var d_en=moment(value).format("YYYY-MM-DD");
+      el.parentElement.querySelector("input[type=text]").value=d_it;
+      if(el.id=='from')
+      {
+        this.$to.parentElement.querySelector("input[type=text]").value=d_it;
+        this.$to.min=d_en;
+        this.$to.value=d_en;
+      }
     }
 
     submitForm(){
