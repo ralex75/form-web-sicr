@@ -3,6 +3,8 @@ import {Result} from './views/result.js'
 import {Profile} from './views/profile.js'
 import {HostList} from './views/hostlist.js'
 import {Requests} from './views/requests.js'
+import {RequestDetails} from './views/reqdetails.js'
+
 import {IP} from './views/ip.js'
 import {WIFI} from './views/wifi.js'
 import {Base,UI} from './views/base.js'
@@ -35,6 +37,9 @@ const showView=function({view,args}){
         break;
         case "requests":
             view=new Requests(target,args);
+        break;
+        case "reqdetails":
+            view=new RequestDetails(target,args);
         break;
         case "result":
             view=new Result(target,args);

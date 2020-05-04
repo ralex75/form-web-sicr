@@ -161,6 +161,10 @@ const requests={
             payload['type']=type;
         }
         return axios.post(baseURL,payload)
+    },
+
+    get:function(rid){
+        return axios.get(`/requests/${rid}`);
     }
 }
 

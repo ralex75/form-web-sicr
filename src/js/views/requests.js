@@ -191,8 +191,14 @@ export class Requests extends Base{
             tr.innerHTML=`
                 <td>${i.id}</td>
                 <td>${i.reqdate}</td>
-                <td>${i.desc}</td>`;
+                <td><a href="#" data-rid="${i.id}">${i.desc}</a></td>`;
             this.$tbody.appendChild(tr);    
+        })
+
+        this.$tbody.querySelectorAll("[data-rid]").forEach(el=>{
+            el.addEventListener('click',()=>{
+                UI.EmitChangeView('reqdetails',{"rid":el.dataset.rid})
+            });
         })
 
         var className=items && items.length>0 ? '' :'hide';

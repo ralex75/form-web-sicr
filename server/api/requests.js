@@ -4,6 +4,13 @@ var {sendMail}=require('./mailer');
 var {nqdb:db}=require("./db");
 //var helper=require("./helper.js");
 
+router.get("/:id",(req,res)=>{
+    db.one("select * from user_requests where id=$1",req.params.id)
+    .then(data=>{
+        res.json(data);
+    })
+})
+
 router.post('/list',(req,res)=>{
     
     var uid=req.body.uid;
@@ -48,6 +55,8 @@ router.post('/list',(req,res)=>{
         res.status(500).json({"err":err})
     })
 });
+
+
 
 router.post('/save', (req,res)=>{
     
