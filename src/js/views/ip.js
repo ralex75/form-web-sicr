@@ -406,7 +406,7 @@ export class IP extends Base{
 
         })
 
-        //console.log("formdata:",this.formdata);
+       
         
         //il nodo di edit se si tratta di modifica
         this.eHost=null;
@@ -442,6 +442,9 @@ export class IP extends Base{
 
         this.formdata.port=location.getPortRef();
     
+        document.addEventListener("NoFreePorts",ev=>{
+            this.setError(this.formdata.port,"Non ci sono porte libere selezionabili.")
+        })
 
         //registrazione eventi form
 
@@ -453,6 +456,9 @@ export class IP extends Base{
             this.formdata['domain'].disabled=disabled;
             this.reset(this.formdata['name']);
             this.reset(this.formdata['port']);
+
+            var mac= this.eHost ? this.eHost.mac : null;
+            UI.EmitEvent('ConfigChanged',{"config":ev.target.value,"mac":mac});
         })
 
         //cambio mac 

@@ -13,6 +13,11 @@ export class UI {
         },delay)
     }
 
+    static EmitEvent(name,args=null,bubbles=true)
+    {
+        document.dispatchEvent(new CustomEvent(name,{'detail':args,bubbles:bubbles}))
+    }
+
 
     static ShowResultView(status=true,data="")
     {   debugger;
