@@ -3,7 +3,6 @@ import axios from "axios"
 //axios.defaults.baseURL = 'http://webapp-dev.roma1.infn.it';
 axios.defaults.baseURL = 'http://localhost:3000/';
 
-
 function checkUserAuth(fail=null){
    
    if(fail)
@@ -20,6 +19,9 @@ const user={
        var path="/auth";
        if(uid)
          path+=(`/${uid}`);
+  
+       //SALVARE HEADER UID in LOCALE--- IN PROD C'E' SHIB HEAD UID
+       axios.defaults.headers.common['uid'] = uid;
 
        return new Promise((resolve,reject)=>{
             axios.get(path).then(res=>resolve(res.data))
@@ -33,7 +35,6 @@ const user={
     },
 
     unset:function(){
-        debugger;
         localStorage.removeItem("uinfo");
     },
     
@@ -55,7 +56,7 @@ const user={
         
         if(!cuser)
         {
-            var res=await this.getProfile(uid);
+            var res=await this.read(uid);
             user.set(res.data);
             cuser=res.data;
         }
@@ -128,7 +129,8 @@ const net={
         {
             uid=user.get().cf;
         }
-        return axios.get(`/net/hostlist/${uid}`)
+        //return axios.get(`/net/hostlist/${uid}`)
+        return axios.get(`/net/hostlist`)
     },
 
     getHostsPortLink:function(port){

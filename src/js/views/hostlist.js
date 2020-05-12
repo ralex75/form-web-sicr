@@ -219,7 +219,8 @@ export class HostList extends Base{
 
         return new Promise((resolve,reject)=>{
 
-        services.net.getHostList(usr.cf).then(res=>{
+        //services.net.getHostList(usr.cf).then(res=>{
+        services.net.getHostList().then(res=>{
                 var _hosts=[];
                 
                 res.data.map(h=>_hosts.push(services.host.map(h)));

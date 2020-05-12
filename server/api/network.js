@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var {nqdb}=require("./db");
+const {authToken} =require('./auth')
 
 //check if exists
 router.get("/exists/:val",(req,res)=>{
@@ -63,8 +64,10 @@ router.get("/lookup/:name",async (req,res)=>{
 
 
 //lista nodi
-router.get("/hostlist/:uid",(req,res)=>{
-    var uid=req.params.uid.toLowerCase();
+router.get("/hostlist/:uid?",authToken,(req,res)=>{
+    //var uid=req.params.uid.toLowerCase();
+    var uid=req.params.uid || req.user;
+    
     nqdb.any(`select loc_id ,loc_building as "build",loc_floor as "floor",loc_name,host_full_name,host_ip, host_name,host_domain,upper(host_mac) as \"host_mac\", host_is_vm as \"host_vm\", pp_port_code,pp_port_alias,sw_port_vlanid as \"vlanid\" from vw_network_status_ex_3 where lower(admin_cf)='${uid}' order by loc_building,loc_name,pp_port_alias`).then(data=>{
         res.status(200).json(data);
     }).catch(err=>{
@@ -78,8 +81,9 @@ router.get("/port/:port/hosts",(req,res)=>{
     var port=req.params.port;
     //nqdb.any(`select host_full_name, upper(host_mac) as \"mac\",admin_cf as \"cf\" from vw_network_status_ex_3 where pp_port_code='${port}' and host_mac is not null`).then(data=>{
         //query=`select host_full_name, upper(host_mac) as "mac",admin_cf as "cf",sw_port_vlanid as "vlanid", admin_is_authorized as "userIsAuth" from vw_network_status_ex_3 where pp_port_code='${port}' and host_mac is not null`
-        query=`select host_full_name, upper(host_mac) as "mac",admin_cf as "cf",sw_port_vlanid as "vlanid", admin_is_authorized as "userIsAuth" from vw_network_status_ex_3 where pp_port_code='${port}'`
-        nqdb.any(query).then(data=>{
+    query=`select host_full_name, upper(host_mac) as "mac",admin_cf as "cf",sw_port_vlanid as "vlanid", admin_is_authorized as "userIsAuth" from vw_network_status_ex_3 where pp_port_code='${port}'`
+    
+    nqdb.any(query).then(data=>{
         res.status(200).json(data);
     }).catch(err=>{
         console.log(err)
