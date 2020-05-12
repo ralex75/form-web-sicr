@@ -1,7 +1,6 @@
 var template=`
 
-    <div id="udata">
-    </div>
+    <div id="udata"></div>
 
     <style scoped>
     .prof_intest div{
@@ -24,81 +23,59 @@ export class Profile extends Base{
     
     init()
     {
-       if(!this.args)
-       {
-           
-            services.user.read().then(user=>{
-                this.fillUserData(user);
-            })
-        }
-        else{
-            this.fillUserData(this.args);
-        }
-
+       this.fillUserData()
     }
 
-    fillUserData(user){
+    async fillUserData(){
+
+        let user = this.args || await services.user.read();
+        var content="";
+
+        content = !user.isAuthorized ? `<div><b>Attenzione</b>, il suo stato risulta: <b class="error"><u>NON AUTORIZZATO</u>.</b></div>`
+                                     : !user.disciplinare ? `<div><b>Attenzione<b>, <b class="error"><u>il disciplinare non è stato ancora accettato</u>.</b></div>` 
+                                     : ""
 
         var html=`<div class="prof_intest" >
-        <p>[NAME] [SURNAME]</p>
+        <p>${user.name} ${user.surname}</p>
         
+        ${content}
         </div>
        
         <div class="prof_lab">
         <p>E-mail</p>
         </div>
         <div class="prof_val">
-        <p>[EMAIL]</p>
+        <p>${user.email}</p>
         </div>
         <div class="prof_lab">
         <p>Telefono</p>
         </div>
         <div class="prof_val">
-        <p>[PHONE]</p>
+        <p>${user.phone}</p>
         </div>
         <div class="prof_lab">
         <p>Ruolo</p>
         </div>
         <div class="prof_val">
-        <p>[ROLE]</p>
+        <p>${user.role}</p>
         </div>
         <div class="prof_lab">
         <p>Scadenza</p>
         </div>
         <div class="prof_val">
-        <p>[EXPIRATION]</p>
+        <p>${user.expiration}</p>
         </div>`
        
-      
+      /*
         for(var k in user)
         {
             var field='['+k.toUpperCase()+']';
             var value=user[k];
             html=html.replace(field,value)
-        }
+        }*/
 
         this.target.querySelector("#udata").insertAdjacentHTML('afterbegin',html);
 
-        
-        var name=this.target.querySelector(".prof_intest")
-        var content="";
-        if(!user.isAuthorized)
-        {
-            content=`<div><b>Attenzione</b>, il suo stato risulta: <b class="error"><u>NON AUTORIZZATO</u>.</b></div>`
-        }
-        else{
-            if(!user.disciplinare)
-            {
-                content=`<div><b>Attenzione<b>, <b class="error"><u>il disciplinare non è stato ancora accettato</u>.</b></div>`
-                //TO DO
-                //link al disciplinare
-            }
-        }
-
-       if(content!="")
-       {
-           name.insertAdjacentHTML('beforeend',content);
-       }
 
     }
     

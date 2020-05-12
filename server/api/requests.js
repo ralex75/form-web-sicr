@@ -4,6 +4,7 @@ var {sendMail}=require('./mailer');
 var {nqdb:db}=require("./db");
 //var helper=require("./helper.js");
 
+
 //rid: request ID
 router.get("/:rid",(req,res)=>{
     
@@ -22,6 +23,7 @@ router.post('/list',(req,res)=>{
     var query=`select id, req_date, conf_date, notific_date, process_date, exc, rtype, data from user_requests`;
     var params={};
 
+    console.log("req:",req.userid);
 
     if(uid || type)
     {
@@ -48,6 +50,8 @@ router.post('/list',(req,res)=>{
     
     
     query+=" order by id desc limit 20";
+
+    console.log("query:",query);
 
     db.query(query,Object.values(params)).then(data=>{
         res.json(data);

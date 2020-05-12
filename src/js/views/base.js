@@ -15,7 +15,7 @@ export class UI {
 
 
     static ShowResultView(status=true,data="")
-    {   debugger;
+    {   
         UI.EmitChangeView('result',{"status":status,"data":data});
     }
 
@@ -55,9 +55,6 @@ export class Base{
         return "<h1>NOT IMPLEMENTED</h1>"
     }
 
-    /*render(){
-        this.target.innerHTML=this.getContent();
-    }*/
 
     render(){
         this.target.innerHTML= this.getContent();

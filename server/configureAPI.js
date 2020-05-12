@@ -15,20 +15,18 @@ module.exports = app => {
   app.use(cors())
 
   //app.use('/auth',auth.router)
-  app.use('/loc',location)
-  app.use('/net',network)
-  app.use('/requests',requests)
+  app.use('/loc', location)
+  app.use('/net', authToken, network)
+  app.use('/requests', authToken, requests)
 
   
   setInterval(()=>{
     //ReadRequests();
   },5000)
 
-app.use('*',authToken,(req,res,next)=>{
-    next();
-})
 
- app.use('/auth/:uid?', async (req,res,next)=>{
+
+ app.use('/auth/:uid?',authToken, async (req,res,next)=>{
   
   var user=null;
 
@@ -42,10 +40,6 @@ app.use('*',authToken,(req,res,next)=>{
     console.log("exc:",exc)
     return res.status(500).json("Auth Server Error")
   }
-
-  //resres.header('uid',req.user);
-  //console.log(res.headers["uid"]);
-
 
   res.json(user)
 
