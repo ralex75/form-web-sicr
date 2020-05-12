@@ -24,14 +24,17 @@ module.exports = app => {
     //ReadRequests();
   },5000)
 
+app.use('*',authToken,(req,res,next)=>{
+    next();
+})
 
- app.use('/auth/:uid?',authToken, async (req,res,next)=>{
+ app.use('/auth/:uid?', async (req,res,next)=>{
   
   var user=null;
 
   try{
    
-    var user = await getUser(req.user);
+    var user = await getUser(req.userid);
   
   }
   catch(exc)
@@ -40,13 +43,11 @@ module.exports = app => {
     return res.status(500).json("Auth Server Error")
   }
 
-  res.header('uid',req.user);
+  //resres.header('uid',req.user);
   //console.log(res.headers["uid"]);
 
-  res.send(user)
 
-
-  //res.json(user)
+  res.json(user)
 
 })
 

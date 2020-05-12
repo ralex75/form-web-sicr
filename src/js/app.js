@@ -89,10 +89,10 @@ document.addEventListener('DOMContentLoaded',async ev=>{
     try{
         
         //legge informazioni utente
-        var user=await services.user.read('50699576-15eb-49c6-a645-c07c0de9c402');
+        var user=await services.user.read();
 
         //memorizza
-        services.user.set(user);
+        //services.user.set(user);
       
         if(user.isAuthorized && user.disciplinare)
         {
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
          
         }
 
-        UI.EmitChangeView('profile');
+        UI.EmitChangeView('profile',user);
 
     }
     catch(exc)

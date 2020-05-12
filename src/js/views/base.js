@@ -55,7 +55,11 @@ export class Base{
         return "<h1>NOT IMPLEMENTED</h1>"
     }
 
-    render(){
+    /*render(){
         this.target.innerHTML=this.getContent();
+    }*/
+
+    render(){
+        this.target.innerHTML= this.getContent();
     }
 }

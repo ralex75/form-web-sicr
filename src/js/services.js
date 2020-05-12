@@ -14,14 +14,9 @@ function checkUserAuth(fail=null){
 
 const user={
 
-    read: function(uid){
+    read: function(){
        
        var path="/auth";
-       if(uid)
-         path+=(`/${uid}`);
-  
-       //SALVARE HEADER UID in LOCALE--- IN PROD C'E' SHIB HEAD UID
-       axios.defaults.headers.common['uid'] = uid;
 
        return new Promise((resolve,reject)=>{
             axios.get(path).then(res=>resolve(res.data))
@@ -124,12 +119,7 @@ const net={
     
     },
 
-    getHostList:function(uid){
-        if(!uid)
-        {
-            uid=user.get().cf;
-        }
-        //return axios.get(`/net/hostlist/${uid}`)
+    getHostList:function(){
         return axios.get(`/net/hostlist`)
     },
 
@@ -148,16 +138,16 @@ const REQ_TYPE={"IP":"IP","WIFI":"WIFI","ACCOUNT":"ACCOUNT"}
 const requests={
 
     save:function (type,data) {
-        return axios.post('/requests/save',{'uid':user.id(),'data':data,'type':type})
+        return axios.post('/requests/save',{'data':data,'type':type})
     },
 
     list:function (all=false,type='ANY') {
         var baseURL="/requests/list"
         var payload={}
-        if(!all)
+        /*if(!all)
         {
             payload['uid']=user.id();
-        }
+        }*/
         if(type!='ANY')
         {
             payload['type']=type;

@@ -1,33 +1,6 @@
 var template=`
 
-    <div class="prof_intest" >
-    <p>[NAME] [SURNAME]</p>
-    
-    </div>
-   
-    <div class="prof_lab">
-    <p>E-mail</p>
-    </div>
-    <div class="prof_val">
-    <p>[EMAIL]</p>
-    </div>
-    <div class="prof_lab">
-    <p>Telefono</p>
-    </div>
-    <div class="prof_val">
-    <p>[PHONE]</p>
-    </div>
-    <div class="prof_lab">
-    <p>Ruolo</p>
-    </div>
-    <div class="prof_val">
-    <p>[ROLE]</p>
-    </div>
-    <div class="prof_lab">
-    <p>Scadenza</p>
-    </div>
-    <div class="prof_val">
-    <p>[EXPIRATION]</p>
+    <div id="udata">
     </div>
 
     <style scoped>
@@ -51,14 +24,70 @@ export class Profile extends Base{
     
     init()
     {
+       if(!this.args)
+       {
+           
+            services.user.read().then(user=>{
+                this.fillUserData(user);
+            })
+        }
+        else{
+            this.fillUserData(this.args);
+        }
+
+    }
+
+    fillUserData(user){
+
+        var html=`<div class="prof_intest" >
+        <p>[NAME] [SURNAME]</p>
+        
+        </div>
+       
+        <div class="prof_lab">
+        <p>E-mail</p>
+        </div>
+        <div class="prof_val">
+        <p>[EMAIL]</p>
+        </div>
+        <div class="prof_lab">
+        <p>Telefono</p>
+        </div>
+        <div class="prof_val">
+        <p>[PHONE]</p>
+        </div>
+        <div class="prof_lab">
+        <p>Ruolo</p>
+        </div>
+        <div class="prof_val">
+        <p>[ROLE]</p>
+        </div>
+        <div class="prof_lab">
+        <p>Scadenza</p>
+        </div>
+        <div class="prof_val">
+        <p>[EXPIRATION]</p>
+        </div>`
+       
+      
+        for(var k in user)
+        {
+            var field='['+k.toUpperCase()+']';
+            var value=user[k];
+            html=html.replace(field,value)
+        }
+
+        this.target.querySelector("#udata").insertAdjacentHTML('afterbegin',html);
+
+        
         var name=this.target.querySelector(".prof_intest")
         var content="";
-        if(!this.user.isAuthorized)
+        if(!user.isAuthorized)
         {
             content=`<div><b>Attenzione</b>, il suo stato risulta: <b class="error"><u>NON AUTORIZZATO</u>.</b></div>`
         }
         else{
-            if(!this.user.disciplinare)
+            if(!user.disciplinare)
             {
                 content=`<div><b>Attenzione<b>, <b class="error"><u>il disciplinare non è stato ancora accettato</u>.</b></div>`
                 //TO DO
@@ -70,25 +99,10 @@ export class Profile extends Base{
        {
            name.insertAdjacentHTML('beforeend',content);
        }
+
     }
     
     getContent(){
-        
-        var user = services.user.get();
-
-        console.log(user);
-      
-       
-        for(var k in user)
-        {
-            var field='['+k.toUpperCase()+']';
-            var value=user[k];
-            template=template.replace(field,value)
-        }
-
-        this.user=user;
-
-      
         return template;
     }
 }

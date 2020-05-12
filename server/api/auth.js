@@ -4,13 +4,13 @@
 
 function authToken(req,res,next){
     console.log(req.headers);
-    var uid=req.headers["x-uuid"] || req.headers["uid"] || req.params.uid;
+    var uid=req.headers["x-uuid"] || '50699576-15eb-49c6-a645-c07c0de9c402';
 
     if(!uid){
       return res.sendStatus(401)
     }
   
-    req.user=uid;
+    req.userid=uid;
   
     next();
   }

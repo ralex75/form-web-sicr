@@ -64,11 +64,14 @@ router.get("/lookup/:name",async (req,res)=>{
 
 
 //lista nodi
-router.get("/hostlist/:uid?",authToken,(req,res)=>{
+router.get("/hostlist",authToken,async (req,res)=>{
     //var uid=req.params.uid.toLowerCase();
-    var uid=req.params.uid || req.user;
+    const {getUser} = require('./user')
     
-    nqdb.any(`select loc_id ,loc_building as "build",loc_floor as "floor",loc_name,host_full_name,host_ip, host_name,host_domain,upper(host_mac) as \"host_mac\", host_is_vm as \"host_vm\", pp_port_code,pp_port_alias,sw_port_vlanid as \"vlanid\" from vw_network_status_ex_3 where lower(admin_cf)='${uid}' order by loc_building,loc_name,pp_port_alias`).then(data=>{
+    let user=await getUser(req.userid);
+    const uid=user.cf;
+
+    nqdb.any(`select loc_id ,loc_building as "build",loc_floor as "floor",loc_name,host_full_name,host_ip, host_name,host_domain,upper(host_mac) as \"host_mac\", host_is_vm as \"host_vm\", pp_port_code,pp_port_alias,sw_port_vlanid as \"vlanid\" from vw_network_status_ex_3 where lower(admin_cf)=lower('${uid}') order by loc_building,loc_name,pp_port_alias`).then(data=>{
         res.status(200).json(data);
     }).catch(err=>{
         console.log(err)
