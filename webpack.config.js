@@ -26,8 +26,14 @@ module.exports = {
       publicPath: `/`,
       before: function(app, server, compiler) {
         configureAPI(app);
+       
       },
-      historyApiFallback:true
+      after:function(app,server,compiler){
+        app.get('*', function(req, res) {
+          res.redirect("/");
+        });
+      }
+   
     },
     module: {
       rules: [

@@ -53,7 +53,7 @@ router.post('/list',(req,res)=>{
     
     query+=" order by id desc limit 20";
 
-    console.log("query:",query);
+    //console.log("query:",query);
 
     db.query(query,Object.values(params)).then(data=>{
         res.json(data);

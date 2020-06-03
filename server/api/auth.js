@@ -3,7 +3,7 @@
 
 
 function authToken(req,res,next){
-    console.log(req.headers);
+   
     var uid=req.headers["x-uuid"] || '50699576-15eb-49c6-a645-c07c0de9c402';
 
     if(!uid){
