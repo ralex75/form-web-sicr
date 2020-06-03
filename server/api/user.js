@@ -87,15 +87,15 @@ var parseLDAPUserInfo=function (user) {
        
         //controllo se autorizzato
         _isMemberOf = Array.isArray(isMemberOf) ? isMemberOf.join(";") : isMemberOf;
-        if(_isMemberOf.indexOf("roma1")>-1)
-        {
-            cuser["isAuthorized"]=true;
-        }
-
-        var roles={"d":"dipendente","o":"ospite","a":"associato"}
-        var role=""
         
-        //trova il ruolo 
+
+        var role=""
+
+        //valid roles
+        var roles={"d":"dipendente","o":"ospite","a":"associato"}
+       
+        
+        //find user role 
         _isMemberOf.split(";").filter(r=>r.startsWith("i:infn:")).forEach(e=>{
             var match=roleReg.exec(e);
             if(match){
@@ -106,7 +106,10 @@ var parseLDAPUserInfo=function (user) {
             }
         })
         
+        cuser["roma1Member"]=_isMemberOf.indexOf("roma1")>-1;
         cuser["role"]=role
+        cuser["isAuthorized"]=cuser["role"]!="" && cuser["roma1Member"];
+        
 
     }
 
@@ -120,9 +123,6 @@ var parseLDAPUserInfo=function (user) {
 }
 
 
-/*getUserInfo('50699576-15eb-49c6-a645-c07c0de9c402').then(res=>{
-    console.log(res);
-})*/
 
 module.exports={getUser}
 

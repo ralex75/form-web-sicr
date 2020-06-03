@@ -1,5 +1,6 @@
 const template=`
 <div id="dialogPlaceHolder"></div>
+<a href="#hostlist" id="goBack">&lt Indietro</a>
 <form>
 				<div class="form_sez">
 					<div class="form_intest">
@@ -395,6 +396,11 @@ export class IP extends Base{
 
         
         var trg=this.target;
+
+        
+
+       
+        trg.querySelector("#goBack").style.display = window.location.hash=='#hosts' ? 'block' : 'none';
 
         this.$form=trg.querySelector("form");
 

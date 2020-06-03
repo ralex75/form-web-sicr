@@ -10,6 +10,9 @@ import {WIFI} from './views/wifi.js'
 import {Base,UI} from './views/base.js'
 import services from './services.js'
 
+//application data
+window.Application={"user":null};
+
 
 const showView=function({view,args}){
 
@@ -32,7 +35,7 @@ const showView=function({view,args}){
         case "wifi":
             view=new WIFI(target,args);
         break;
-        case "hostlist":
+        case "hosts":
             view=new HostList(target,args);
         break;
         case "requests":
@@ -60,13 +63,12 @@ const showView=function({view,args}){
 const handleError=(err)=>{
     console.log(err);
    
-    //rimuove info utente
-    services.user.unset();
     //TO DO
      //DUMP ERROR to file ?
 
-    //rimuove pannello di navigazione
-    document.querySelector("#col_sin_menu").innerHTML="";
+    //rimuove pannello di navigazione ?
+    //document.querySelector("#col_sin_menu").innerHTML="";
+   
     //show error
     return showView({'view':'result','args':{'status':false}})
 }
@@ -82,6 +84,8 @@ window.addEventListener('unhandledrejection', function(event) {
     handleError(event);
 });
 
+
+
 //listener DOM Loaded
 document.addEventListener('DOMContentLoaded',async ev=>{
 
@@ -90,9 +94,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         
         //legge informazioni utente
         var user=await services.user.read();
-
-        //memorizza
-        //services.user.set(user);
+       
       
         if(user.isAuthorized && user.disciplinare)
         {
@@ -102,7 +104,12 @@ document.addEventListener('DOMContentLoaded',async ev=>{
          
         }
 
-        UI.EmitChangeView('profile',user);
+        //salva info utente
+       
+        window.Application.user=user;
+
+        //default route
+        window.location.hash='#profile';
 
     }
     catch(exc)

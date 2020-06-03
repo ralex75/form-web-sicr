@@ -1,7 +1,8 @@
 const template=`
 
-    <h1>Dettagli della richiesta ID - [ID]</h1>
-   
+    <div class='request-header'>
+    <h1>Dettagli della richiesta ID - [ID]</h1><a href="#requests" id="goBack">&lt Indietro</a>
+   <div>
     
 `
 
@@ -14,6 +15,11 @@ const style=`
             color:#FFF;
             padding:10px;
             line-height:13px;
+        }
+        .request-header{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
         }
     </style>
 `
@@ -47,19 +53,41 @@ import services from '../services.js'
 
 export class RequestDetails extends Base {
 
+   
     init(){
+
 
         this.getRequest();
         this.configMAP={"STATIC":"Indirizzo IP fisso",
                     "STATICVM":"Indirizzo IP per macchina virtuale",
                     "DHCP":"Indirizzo IP dinamico"}
+
+       
+    }
+
+    goBack(){
+       console.log("goback")     
     }
 
     async getRequest()
     {
+        var req=null;
+        try{
+            var res=await services.requests.get(this.args.rid);
+            req=res.data;
+        }
+        catch(exc)
+        {
+           
+            return document.location="#requests"
+        }
+       
+
         
-        var res=await services.requests.get(this.args.rid);
-        var req=res.data;
+        /*if(!req){
+            
+            UI.EmitChangeView("requests");
+        }*/
         //this.target.innerHTML+=JSON.stringify(req.data);
         var html="";
       
@@ -97,6 +125,14 @@ export class RequestDetails extends Base {
         }
 
         this.target.innerHTML+=html+style;
+
+        var goBack=this.target.querySelector("#goBack");
+       
+        goBack.addEventListener('click',ev=>{
+         
+            ev.preventDefault();
+            UI.EmitChangeView("requests");
+        })
     }
 
     fullName(h)
@@ -197,6 +233,11 @@ export class RequestDetails extends Base {
 
     getContent(){
        
+        /*var {hash}=window.location;
+        
+        
+        this.args={"rid":hash.split("/")[1]};
+        if(!this.args.rid) UI.EmitChangeView("requests");*/
        
         return template.replace("[ID]",this.args.rid);
       

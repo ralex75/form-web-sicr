@@ -11,6 +11,8 @@ router.get("/:rid",(req,res)=>{
     db.one("select * from user_requests where id=$1",req.params.rid)
     .then(data=>{
         res.json(data);
+    }).catch(err=>{
+        res.status(500).json({"err":err})
     })
 })
 

@@ -23,9 +23,11 @@ module.exports = {
     devServer: {
       port:3000,
       contentBase:path.join(__dirname,"dist"),
+      publicPath: `/`,
       before: function(app, server, compiler) {
         configureAPI(app);
-      }
+      },
+      historyApiFallback:true
     },
     module: {
       rules: [
