@@ -52,12 +52,18 @@ const getUserLDAP=async function(query){
                                 var usr={};
                                 var schac=ejson.schacpersonaluniqueid;
                                 schac= Array.isArray(schac) ? schac[schac.length-1] : schac;
-                                schac = schac.split(":");
+                               
                                 usr.uuid=ejson.infnUUID;
+                                usr.cf=ejson.infnUUID;
                                 usr.isMemberOf=ejson.isMemberOf;
-                                usr.cf=schac[schac.length-1];
+
+                                if(schac)
+                                {
+                                 schac = schac.split(":");
+                                 usr.cf=schac[schac.length-1];
+                                }
+
                                 usr.email=ejson.mail;
-                                
                                 usr.name=ejson.givenname;
                                 usr.surname=ejson.sn;
                                 usr.source="LDAP";

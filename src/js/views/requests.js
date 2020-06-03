@@ -191,7 +191,7 @@ export class Requests extends Base{
             tr.innerHTML=`
                 <td>${i.id}</td>
                 <td>${i.reqdate}</td>
-                <td><a href="#" data-rid="${i.id}">${i.desc}</a></td>`;
+                <td><a href="#requests" data-rid="${i.id}">${i.desc}</a></td>`;
             this.$tbody.appendChild(tr);    
         })
 

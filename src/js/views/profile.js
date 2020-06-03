@@ -28,7 +28,9 @@ export class Profile extends Base{
 
     async fillUserData(){
 
-        let user = this.args || await services.user.read();
+      
+        var user=window.Application.user;
+        //let user = this.args || await services.user.read();
         var content="";
 
         content = !user.isAuthorized ? `<div><b>Attenzione</b>, il suo stato risulta: <b class="error"><u>NON AUTORIZZATO</u>.</b></div>`
