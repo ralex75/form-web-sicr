@@ -37,7 +37,7 @@ const template=
     </style>
    
 `
-import {Base} from './base.js'
+import {Base,UI} from './base.js'
 import services from '../services.js'
 
 export class Location extends Base {
@@ -69,12 +69,20 @@ export class Location extends Base {
 
         this.buildOptions(this.$builds,[{'txt':'Marconi','value':'MARCONI'},{'txt':'Fermi','value':'Fermi'}])
 
+        document.addEventListener('ConfigChanged',ev=>{
+            this.configChangedArgs=ev.detail;
+           
+            this.enableDisablePorts();
+        })
+
         if(this.args)
         {
             
            this.initLocation();
            
         }
+
+       
     }
 
     async initLocation()
@@ -93,21 +101,108 @@ export class Location extends Base {
         return this.$ports;
     }
 
+    enableDisablePorts()
+    {
+        if(!this.ports) return;
+
+        var options=this.$ports.options;
+        var disabledCount=0;
+
+       for(var i=0;i<options.length;i++){
+           var disabled=this.isDisabled(options[i]);
+           options[i].disabled=disabled;
+           if(disabled)
+           {
+               disabledCount++;
+           }
+       }
+
+       
+       this.$ports.disabled= (disabledCount==(this.$ports.options.length-1));
+       
+       if(this.$ports.disabled)
+       {
+           UI.EmitEvent("NoFreePorts");
+       }
+        
+    }
+
+    isDisabled(o){
+
+        
+        if(!o || !o.value) return;
+
+        var port=this.ports.filter(p=>p.port_code==o.value)
+     
+        port=port && port[0];
+
+        var _invalid=port.vlanid==null;
+        
+        var {config,mac}=this.configChangedArgs;
+        
+        if(!_invalid)
+        {
+            //nodo e porta devono essere DHCP altrimenti controlla se è occupata (port.busy)
+            if(!(port.vlanid==113 && config=='DHCP'))
+            {
+                
+                //non ci sono nodi sulla porta
+                _invalid=!(port.auth_hosts.length==0);
+            
+                //se c'è 1 nodo deve essere quello corrente (quello di EDIT) altrimenti invalida
+                if(_invalid && mac)
+                {
+                    _invalid=!(port.auth_hosts.length==1 && port.auth_hosts[0]==mac.toLowerCase());
+                }
+                
+                //check se config virtuale e porta non è DHCP
+                if(_invalid)
+                {
+                    if(config== 'STATICVM')
+                    {
+                        if(port.vlanid!=113)
+                        {
+                            _invalid=false;
+                        }
+                    }
+                }
+            
+
+            }
+
+        }
+    
+        
+
+        return _invalid;
+    
+        
+        
+    }
+
     buildOptions(select,data=[])
     {   
         
         select.innerHTML=this.defaultOption[select.name];
 
         var options="";
-        
+       
         data.forEach(d=>{
-            options+=`<option value='${d.value}'>${d.txt}</option>`;
+
+            options+=`<option  value='${d.value}'>${d.txt}</option>`;
         })
 
         select.innerHTML+=options;
         select.disabled = select.options.length<2;
+
+        if(select.name=='port' && !select.disabled)
+        {
+            this.enableDisablePorts();
+        }
  
     }
+
+    
 
     getFloors(){
        
@@ -140,6 +235,7 @@ export class Location extends Base {
             this.ports=res.data;
             var data=this.mapPortData(res.data)
             this.buildOptions(this.$ports,data);
+
         })
 
     }
