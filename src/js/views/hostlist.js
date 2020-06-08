@@ -46,7 +46,6 @@ import services from '../services.js'
 
 export class HostList extends Base{
 
-    
 
     async init(){
         
@@ -60,7 +59,6 @@ export class HostList extends Base{
 
        
         this.$search=this.target.querySelector("input[type=text]");
-         
         
 
         this.$search.addEventListener('keyup',ev=>{
@@ -87,8 +85,6 @@ export class HostList extends Base{
 
     buildTableRows(list){
         
-       
-
         this.$tbody.innerHTML="";
 
         list.forEach(h=>{
@@ -212,14 +208,8 @@ export class HostList extends Base{
 
     getHosts(){
 
-        //var uinfo=JSON.parse(localStorage.getItem("uinfo"));
-        //if(!uinfo) return;
-        //this.pending=true;
-        var usr=services.user.get();
-
         return new Promise((resolve,reject)=>{
 
-        //services.net.getHostList(usr.cf).then(res=>{
         services.net.getHostList().then(res=>{
                 var _hosts=[];
                 

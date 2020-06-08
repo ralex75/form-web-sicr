@@ -24,29 +24,6 @@ const style=`
     </style>
 `
 
-/*class TemplateIPBuilder{
-   
-}
-class TemplateWifiBuilder{
-   
-}
-
-class TemplateBuilder{
-   static initialize(type,data)
-   {
-        switch(type)
-        {
-            case "IP":
-            return new TemplateIPBuilder(data);
-            break;
-            case "WIFI":
-            return new TemplateIPBuilder(data);
-            break;            
-        }
-   }
-}*/
-
-
 
 import {Base,UI} from './base.js'
 import services from '../services.js'
@@ -65,9 +42,6 @@ export class RequestDetails extends Base {
        
     }
 
-    goBack(){
-       console.log("goback")     
-    }
 
     async getRequest()
     {
@@ -83,12 +57,6 @@ export class RequestDetails extends Base {
         }
        
 
-        
-        /*if(!req){
-            
-            UI.EmitChangeView("requests");
-        }*/
-        //this.target.innerHTML+=JSON.stringify(req.data);
         var html="";
       
         if(req.rtype=="IP")
@@ -232,12 +200,6 @@ export class RequestDetails extends Base {
 
 
     getContent(){
-       
-        /*var {hash}=window.location;
-        
-        
-        this.args={"rid":hash.split("/")[1]};
-        if(!this.args.rid) UI.EmitChangeView("requests");*/
        
         return template.replace("[ID]",this.args.rid);
       
