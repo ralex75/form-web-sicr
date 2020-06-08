@@ -1,14 +1,8 @@
 import {NavMenu} from './views/menu.js'
-import {Result} from './views/result.js'
-import {Profile} from './views/profile.js'
-import {HostList} from './views/hostlist.js'
-import {Requests} from './views/requests.js'
-import {RequestDetails} from './views/reqdetails.js'
 
-import {IP} from './views/ip.js'
-import {WIFI} from './views/wifi.js'
 import {Base,UI} from './views/base.js'
 import services from './services.js'
+import {router} from './router.js'
 
 //application data
 window.Application={"user":null};
@@ -35,8 +29,15 @@ const handleError=(err)=>{
     //document.querySelector("#col_sin_menu").innerHTML="";
    
     //show error
-    return showView({'view':'result','args':{'status':false}})
+    //return showView({'view':'result','args':{'status':false}})
 }
+
+window.addEventListener('hashchange', ev=>{
+           
+    var view=window.location.hash.substr(1);
+    router({'view':view});
+
+})
 
 
 //listener DOM Loaded
@@ -45,6 +46,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
      //legge informazioni utente
     var user=await services.user.read();
     
+    window.location.hash="";
     //salva info utente
     window.Application.user=user;
 
@@ -62,6 +64,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         //default route
         window.location.hash='#profile';
 
+
     }
     catch(exc)
     {
@@ -70,56 +73,15 @@ document.addEventListener('DOMContentLoaded',async ev=>{
    
 })
 
-const showView=function({view,args}){
-    
-    var target=document.querySelector("#colonne_content")
-   
-    target.classList.remove("fade-in");
-    void target.offsetWidth;
-    target.classList.add("fade-in");
 
-    
-    switch(view.toLowerCase()){
-        
-        
-        case "profile":
-            view=new Profile(target,args)
-        break;
-        case "ip":
-            view=new IP(target,args);
-        break;
-        case "wifi":
-            view=new WIFI(target,args);
-        break;
-        case "hosts":
-            view=new HostList(target,args);
-        break;
-        case "requests":
-            view=new Requests(target,args);
-        break;
-        case "reqdetails":
-            view=new RequestDetails(target,args);
-        break;
-        case "result":
-            view=new Result(target,args);
-            //redirezione utente ad altra view se è view Result
-            if(args.status)
-            {
-                UI.EmitChangeView(args.next || 'profile',null, 2000);
-            }
-        break;
-        default:
-            view=new Base(target,args);
-    }
-
-
-}
 
 //listener cambio view
 document.addEventListener(UI.ApplicationEvents.ChangeView, ev=>{
     
     ev.preventDefault();
-    showView(ev.detail);
+    //showView(ev.detail);
+
+    router(ev.detail)
 
 })
 

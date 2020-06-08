@@ -6,9 +6,13 @@ export class NavMenu extends Base {
     
     init()
     {
-        this.lastroute=this.routes[0];
-        window.location.hash="";
+        /*this.lastroute=this.routes[0];
+        window.location.hash="";*/
        
+        window.addEventListener('hashchange', ev=>{
+            this.highlightSelectedMenu()
+        });
+        /*
         window.addEventListener('hashchange', ev=>{
            
            
@@ -25,17 +29,19 @@ export class NavMenu extends Base {
             this.lastroute=route;
             this.highlightSelectedMenu()
             UI.EmitChangeView(route.view)
-        })
+        })*/
 
     }
 
     highlightSelectedMenu()
     {
+       
         this.target.querySelectorAll('a.navi').forEach(el=>{
-           
+        
             el.className= window.location.hash.indexOf(el.hash)>-1 ? 'navi selected' : 'navi';
 
         })
+        
     }
 
    
