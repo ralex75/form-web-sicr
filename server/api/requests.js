@@ -25,7 +25,7 @@ router.post('/list',(req,res)=>{
     var query=`select id, req_date, conf_date, notific_date, process_date, exc, rtype, data from user_requests`;
     var params={};
 
-    console.log("req:",req.userid);
+    //console.log("req:",req.userid);
 
     if(uid || type)
     {
