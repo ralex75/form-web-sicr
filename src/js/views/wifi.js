@@ -45,7 +45,7 @@ const template=`
 position: absolute;
 width:30px;
 height: 100%; 
-background-image: url('../img/calendar.png');
+background-image: url('/img/calendar.png');
 background-repeat: no-repeat;
 background-position: center center;
 right: 1px;

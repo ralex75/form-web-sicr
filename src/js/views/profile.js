@@ -67,13 +67,6 @@ export class Profile extends Base{
         <p>${user.expiration}</p>
         </div>`
        
-      /*
-        for(var k in user)
-        {
-            var field='['+k.toUpperCase()+']';
-            var value=user[k];
-            html=html.replace(field,value)
-        }*/
 
         this.target.querySelector("#udata").insertAdjacentHTML('afterbegin',html);
 

@@ -1,6 +1,6 @@
 const template=`
 <div id="dialogPlaceHolder"></div>
-<a href="#hostlist" id="goBack">&lt Indietro</a>
+<a href="#hostlist" id="goBack" style="text-decoration:underline;">Torna indietro</a>
 <form>
 				<div class="form_sez">
 					<div class="form_intest">

@@ -1,8 +1,9 @@
 const template=`
 
-    <div class='request-header'>
-    <h1>Dettagli della richiesta ID - [ID]</h1><a href="#requests" id="goBack">&lt Indietro</a>
-   <div>
+   
+    <h1>Dettagli della richiesta ID - [ID]</h1>
+    <a href="#requests" id="goBack" style="text-decoration:underline;">Torna indietro</a>
+   
     
 `
 
@@ -19,7 +20,7 @@ const style=`
         .request-header{
             display:flex;
             align-items:center;
-            justify-content:space-between;
+            /*justify-content:space-between;*/
         }
     </style>
 `
@@ -112,29 +113,29 @@ export class RequestDetails extends Base {
     {
         var html=`
             <table>
-                <thead>
-                    <td></td>
-                    <td>Da</td>
-                    <td>A</td>
+                <thead id="table_intest">
+                    <td id="table_intest"></td>
+                    <td id="table_intest">Da</td>
+                    <td id="table_intest">A</td>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Configurazione</td>
+                        <td><div class="prof_lab">Configurazione</div></td>
                         <td>${this.configMAP[data.from.config]}</td>
                         <td>${this.configMAP[data.to.config]}</td>
                     </tr>
                     <tr>
-                        <td>Nome</td>
+                        <td><div class="prof_lab">Nome</div></td>
                         <td>${this.fullName(data.from)}</td>
                         <td>${this.fullName(data.to)}</td>
                     </tr>
                     <tr>
-                        <td>Mac Address</td>
+                        <td><div class="prof_lab" style="width:160px;">Mac Address</div></td>
                         <td>${data.from.mac}</td>
                         <td>${data.to.mac}</td>
                     </tr>
                     <tr>
-                        <td>Porta</td>
+                        <td><div class="prof_lab">Porta</div></td>
                         <td>${data.from.port}</td>
                         <td>${data.to.port}</td>
                     </tr>
@@ -150,21 +151,25 @@ export class RequestDetails extends Base {
         var curr=data.to || data.from;
         var html=`
             <table>
+            <thead id="table_intest">
+                <td id="table_intest">&nbsp;</td>
+                <td id="table_intest"></td>
+           </thead>
                 <tbody>
                     <tr>
-                        <td>Configurazione</td>
+                        <td><div class="prof_lab">Configurazione</div></td>
                         <td>${this.configMAP[curr.config]}</td>
                     </tr>
                     <tr>
-                        <td>Nome</td>
+                        <td><div class="prof_lab">Nome</div></td>
                         <td>${this.fullName(curr)}</td>
                      </tr>
                     <tr>
-                        <td>Mac Address</td>
+                        <td><div class="prof_lab" style="width:160px;">Mac Address</div></td>
                         <td>${curr.mac}</td>
                     </tr>
                     <tr>
-                        <td>Porta</td>
+                        <td><div class="prof_lab">Porta</div></td>
                         <td>${curr.port}</td>
                     </tr>
                 </tbody>
@@ -180,8 +185,8 @@ export class RequestDetails extends Base {
         var FORMAT="DD-MM-YYYY"
         var html=`<table>
                     <tr>
-                        <td>Inizio</td>
-                        <td>Fine</td>
+                        <td id="table_intest">Inizio</td>
+                        <td id="table_intest">Fine</td>
                     </tr>
                     <tr>
                           
