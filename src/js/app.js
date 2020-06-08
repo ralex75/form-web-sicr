@@ -14,8 +14,66 @@ import services from './services.js'
 window.Application={"user":null};
 
 
-const showView=function({view,args}){
+window.addEventListener('error', function(event) { 
+    handleError(event);
+})
 
+window.addEventListener('unhandledrejection', function(event) {
+    //console.error('Unhandled rejection (promise: ', event.promise, ', reason: ', event.reason, ').');
+    //document.querySelector("#col_sin_menu").innerHTML="";
+    handleError(event);
+});
+
+
+handleError=(err)=>{
+    console.log(err);
+   
+    //TO DO
+     //DUMP ERROR to file ?
+
+    //rimuove pannello di navigazione ?
+    //document.querySelector("#col_sin_menu").innerHTML="";
+   
+    //show error
+    return showView({'view':'result','args':{'status':false}})
+}
+
+
+//listener DOM Loaded
+document.addEventListener('DOMContentLoaded',async ev=>{
+
+     //legge informazioni utente
+    var user=await services.user.read();
+    
+    //salva info utente
+    window.Application.user=user;
+
+    try{
+        
+       
+        if(user.isAuthorized && user.disciplinare)
+        {
+            
+            var menu=document.querySelector("#col_sin_menu")
+            menu=new pages.NavMenu(menu);
+        
+        }
+
+        
+
+        //default route
+        window.location.hash='#profile';
+
+    }
+    catch(exc)
+    {
+        handleError(exc);
+    }
+   
+})
+
+showView=function({view,args}){
+    
     var target=document.querySelector("#colonne_content")
    
     target.classList.remove("fade-in");
@@ -59,69 +117,8 @@ const showView=function({view,args}){
 
 }
 
-
-const handleError=(err)=>{
-    console.log(err);
-   
-    //TO DO
-     //DUMP ERROR to file ?
-
-    //rimuove pannello di navigazione ?
-    //document.querySelector("#col_sin_menu").innerHTML="";
-   
-    //show error
-    return showView({'view':'result','args':{'status':false}})
-}
-
-
-window.addEventListener('error', function(event) { 
-    handleError(event);
-})
-
-window.addEventListener('unhandledrejection', function(event) {
-    //console.error('Unhandled rejection (promise: ', event.promise, ', reason: ', event.reason, ').');
-    //document.querySelector("#col_sin_menu").innerHTML="";
-    handleError(event);
-});
-
-
-
-//listener DOM Loaded
-document.addEventListener('DOMContentLoaded',async ev=>{
-
-  
-    try{
-        
-        //legge informazioni utente
-        var user=await services.user.read();
-       
-      
-        if(user.isAuthorized && user.disciplinare)
-        {
-            
-            var menu=document.querySelector("#col_sin_menu")
-            menu=new NavMenu(menu);
-         
-        }
-
-        //salva info utente
-       
-        window.Application.user=user;
-
-        //default route
-        window.location.hash='#profile';
-
-    }
-    catch(exc)
-    {
-        handleError(exc);
-    }
-   
-   
-})
-
 //listener cambio view
-document.addEventListener(UI.EventNames.ChangeView, ev=>{
+document.addEventListener(UI.ApplicationEvents.ChangeView, ev=>{
     
     ev.preventDefault();
     showView(ev.detail);
@@ -130,7 +127,7 @@ document.addEventListener(UI.EventNames.ChangeView, ev=>{
 
 
 //salva richiesta
-document.addEventListener(UI.EventNames.SaveRequest, async ev=> {
+document.addEventListener(UI.ApplicationEvents.SaveRequest, async ev=> {
    
     var {type,data}=ev.detail;
    
@@ -159,9 +156,3 @@ document.addEventListener(UI.EventNames.SaveRequest, async ev=> {
     UI.EmitChangeView('result',result);
     
 })
-
-
-//distrugge dati utente nel browser
-window.addEventListener("unload", function() {
-    services.user.unset();
-});

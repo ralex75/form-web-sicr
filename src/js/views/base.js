@@ -3,13 +3,13 @@
 
 export class UI {
 
-    static EventNames={'ChangeView':'ChangeView','SaveRequest':'SaveRequest'}
+    static ApplicationEvents={'ChangeView':'ChangeView','SaveRequest':'SaveRequest'}
 
     static EmitChangeView(view,args=null,delay=0)
     {   
         UI.cancelTimeout();
         UI.timeout=setTimeout(()=>{
-            document.dispatchEvent(new CustomEvent(UI.EventNames.ChangeView,{'detail':{'view':view,'args':args},bubbles:true}))
+            document.dispatchEvent(new CustomEvent(UI.ApplicationEvents.ChangeView,{'detail':{'view':view,'args':args},bubbles:true}))
         },delay)
     }
 
@@ -26,7 +26,7 @@ export class UI {
 
     static EmitSaveRequest(type,data)
     {
-        document.dispatchEvent(new CustomEvent(UI.EventNames.SaveRequest,{'detail':{'type':type,'data':data},bubbles:true}))
+        document.dispatchEvent(new CustomEvent(UI.ApplicationEvents.SaveRequest,{'detail':{'type':type,'data':data},bubbles:true}))
     }
 
     static cancelTimeout()
