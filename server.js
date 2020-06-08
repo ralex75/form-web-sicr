@@ -12,6 +12,11 @@ app.get("/",(req,res)=>{
     res.sendFile(__dirname+"/index.html")
 })
 
+//404  to default page
+app.get('*', function(req, res){
+    res.redirect("/");
+  });
+
 app.listen(PORT,()=>{
     console.log("Server listening on port:"+PORT)
 })
