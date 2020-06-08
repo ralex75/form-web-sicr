@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
     var user=await services.user.read();
     
     window.location.hash="";
+    
     //salva info utente
     window.Application.user=user;
 
