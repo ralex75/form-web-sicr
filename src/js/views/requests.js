@@ -74,8 +74,9 @@ const template=`
     </style>
 `
 
-import {Base,UI} from './base.js'
+import {Base} from './base.js'
 import services from '../services.js'
+import {Router} from '../router.js'
 
 
 const DATE_FORMAT="DD/MM/YYYY HH:mm"
@@ -197,7 +198,7 @@ export class Requests extends Base{
 
         this.$tbody.querySelectorAll("[data-rid]").forEach(el=>{
             el.addEventListener('click',()=>{
-                UI.EmitChangeView('reqdetails',{"rid":el.dataset.rid})
+                Router.changeView('reqdetails',{"rid":el.dataset.rid})
             });
         })
 

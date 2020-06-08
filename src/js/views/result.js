@@ -108,7 +108,7 @@ export class Result extends Base{
         }
 
 
-        var tem=template.replace('[CONTENT]',content);
-        return tem;
+        var tmp=template.replace('[CONTENT]',content);
+        return tmp;
     }
 }

@@ -120,6 +120,7 @@ input::-webkit-calendar-picker-indicator {
 `
 
 import {Base,UI} from './base.js'
+import {ApplicationEventBus} from '../app.js'
 
 export class WIFI extends Base {
 
@@ -209,7 +210,7 @@ export class WIFI extends Base {
         to:this.$to.value,
       }
       
-      UI.EmitSaveRequest("WIFI",data);
+      ApplicationEventBus.EmitSaveRequest("WIFI",data);
     }
 
     getContent()

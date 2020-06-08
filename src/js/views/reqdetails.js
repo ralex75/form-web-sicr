@@ -26,8 +26,9 @@ const style=`
 `
 
 
-import {Base,UI} from './base.js'
+import {Base} from './base.js'
 import services from '../services.js'
+import {Router} from '../router.js'
 
 export class RequestDetails extends Base {
 
@@ -100,7 +101,7 @@ export class RequestDetails extends Base {
         goBack.addEventListener('click',ev=>{
          
             ev.preventDefault();
-            UI.EmitChangeView("requests");
+            Router.changeView("requests")
         })
     }
 
