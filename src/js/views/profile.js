@@ -17,7 +17,6 @@ var template=`
 `
 
 import {Base} from './base.js'
-import services from '../services.js'
 
 export class Profile extends Base{
     

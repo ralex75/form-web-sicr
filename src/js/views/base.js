@@ -1,6 +1,3 @@
-
-
-
 export class UI {
 
     static ApplicationEvents={'ChangeView':'ChangeView','SaveRequest':'SaveRequest'}

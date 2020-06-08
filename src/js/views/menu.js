@@ -14,12 +14,8 @@ export class NavMenu extends Base {
            
             var view=window.location.hash.substr(1);
             
-            //var route= this.routes.filter(i=>{return i.view.indexOf(view)>-1})[0] || this.lastroute;
-            //var route= this.routes.filter(i=>{return i.view.indexOf(view)>-1})[0] || this.lastroute;
-            
             var route= this.routes.filter(i=>{return view==i.view})[0];
             
-           
             if(!route)
             {
                 route=this.lastroute;
@@ -31,9 +27,6 @@ export class NavMenu extends Base {
             UI.EmitChangeView(route.view)
         })
 
-        
-       
-        
     }
 
     highlightSelectedMenu()

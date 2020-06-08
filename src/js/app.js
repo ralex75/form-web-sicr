@@ -25,7 +25,7 @@ window.addEventListener('unhandledrejection', function(event) {
 });
 
 
-handleError=(err)=>{
+const handleError=(err)=>{
     console.log(err);
    
     //TO DO
@@ -55,11 +55,9 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         {
             
             var menu=document.querySelector("#col_sin_menu")
-            menu=new pages.NavMenu(menu);
+            menu=new NavMenu(menu);
         
         }
-
-        
 
         //default route
         window.location.hash='#profile';
@@ -72,7 +70,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
    
 })
 
-showView=function({view,args}){
+const showView=function({view,args}){
     
     var target=document.querySelector("#colonne_content")
    
