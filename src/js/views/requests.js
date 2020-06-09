@@ -77,6 +77,7 @@ const template=`
 import {Base} from './base.js'
 import services from '../services.js'
 import {Router} from '../router.js'
+import {Application} from '../app.js'
 
 
 const DATE_FORMAT="DD/MM/YYYY HH:mm"
@@ -152,32 +153,42 @@ export class Requests extends Base{
 
     mapItems(list)
     {
-       
+        var types=Application.RequestTypes;
         var items=[];
         list.forEach(item => {
                   
             var desc=""
-            if(item.rtype=="WIFI")
+            switch (item.rtype)
             {
-               var format=DATE_FORMAT.split(" ")[0];
-               desc=`WiFi temporaneo dal ${moment(item.data.from).format(format)} al ${moment(item.data.to).format(format)}`;
+                case types.WIFI:
+                 var format=DATE_FORMAT.split(" ")[0];
+                 desc=`WiFi temporaneo dal ${moment(item.data.from).format(format)} al ${moment(item.data.to).format(format)}`;
+                break;
+                case types.IP:
+                    var d=item.data;
+                    var action={"create":"Nuovo nodo","update":"Aggiornamento dati del nodo","delete":"Cancellazione nodo"}
+                    desc=`${action[d.action]}:  ` 
+                    var h=d.from || d.to;
+                    desc+= h.name ? h.name+"."+h.domain : "DHCP - "+h.mac
+                break;
+                case types.ACCOUNT:
+                  var d=item.data;
+                  desc="Creazione Account di Posta INFN";
+                break;
+
             }
-            if(item.rtype=="IP")
-            {
-              var d=item.data;
-              var action={"create":"Nuovo nodo","update":"Aggiornamento dati del nodo","delete":"Cancellazione nodo"}
-              
-              desc=`${action[d.action]}:  ` 
-              var h=d.from || d.to;
-              desc+= h.name ? h.name+"."+h.domain : "DHCP - "+h.mac
-               
-            }
+            
+            
             var i={
               "id":item.id,
               "reqdate":moment(item.req_date).format(DATE_FORMAT),
-              "desc": desc 
+              "desc": desc,
+              "type":item.rtype
             }
+
+            if(desc!="")
             items.push(i);
+
           });
 
           return items;
@@ -189,10 +200,11 @@ export class Requests extends Base{
 
         items.forEach(i=>{
             var tr=document.createElement("tr")
+        
             tr.innerHTML=`
                 <td>${i.id}</td>
                 <td>${i.reqdate}</td>
-                <td><a href="#requests" data-rid="${i.id}">${i.desc}</a></td>`;
+                <td>${i.type=='IP' ? `<a href="#requests" data-rid="${i.id}">${i.desc}</a>` : `${i.desc}`}</td>`;
             this.$tbody.appendChild(tr);    
         })
 

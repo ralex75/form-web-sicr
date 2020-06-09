@@ -17,18 +17,33 @@ var template=`
 `
 
 import {Base} from './base.js'
+import {Application} from '../app.js'
+import services from '../services.js'
+import moment from 'moment'
 
 export class Profile extends Base{
     
     init()
     {
+      
        this.fillUserData()
+
+    }
+
+    emptyOrDefault(value){
+        return value ? value : "--"
     }
 
     async fillUserData(){
 
       
         var user=window.Application.user;
+
+       
+        var resp=await services.requests.list(false,Application.RequestTypes.ACCOUNT);
+
+        let requests=resp.data;
+        
         //let user = this.args || await services.user.read();
         var content="";
 
@@ -46,13 +61,13 @@ export class Profile extends Base{
         <p>E-mail</p>
         </div>
         <div class="prof_val">
-        <p>${user.email}</p>
+        <p class="email">${user.email}</p>
         </div>
         <div class="prof_lab">
         <p>Telefono</p>
         </div>
         <div class="prof_val">
-        <p>${user.phone}</p>
+        <p>${this.emptyOrDefault(user.phone)}</p>
         </div>
         <div class="prof_lab">
         <p>Ruolo</p>
@@ -69,7 +84,42 @@ export class Profile extends Base{
        
 
         this.target.querySelector("#udata").insertAdjacentHTML('afterbegin',html);
+        
+        if(!user.email || user.email.indexOf("@roma1.infn.it")<0)
+        {
+            var req=requests[0];
+            var diff=3;
+            var link=``
+           
+            if(req)
+            {
+               
+                diff=moment(moment().format('YYYY-MM-DD')).diff(moment(req.req_date).format("YYYY-MM-DD"),'days')
+                console.log("Date Diff:",diff);
+            }
 
+            if(diff<9)
+            {
+                link="Richiesta inviata, account di Posta in lavorazione..."
+            }
+            else
+            {
+                link=`<input type="button" value="Richiedi Creazione Account di Posta" />`
+            }
+
+            this.target.querySelector(".email").innerHTML=link;
+
+            let ctrl=this.target.querySelector(".email input")
+
+            if(ctrl)
+            {
+                ctrl.addEventListener("click",ev=>{
+                    Application.SaveRequest(Application.RequestTypes.ACCOUNT,user);
+                })
+            }
+          
+            
+        }
 
     }
     

@@ -6,7 +6,7 @@ import {RequestDetails} from './views/reqdetails.js'
 
 import {IP} from './views/ip.js'
 import {WIFI} from './views/wifi.js'
-import {Base,UI} from './views/base.js'
+
 
 let lastValidRoute="";
 

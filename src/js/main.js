@@ -32,6 +32,7 @@ const handleError=(err)=>{
 
 window.addEventListener('hashchange', ev=>{
     var view=window.location.hash.substr(1);
+   
     Router.go(view);
 })
 
@@ -45,6 +46,14 @@ document.addEventListener('DOMContentLoaded',async ev=>{
  
         //inizializza app
         Application.Init(user);
+
+        if(window.location.hash!='#profile')
+        {
+            window.location.hash='#profile';
+        }
+        else
+
+            Router.go("Profile");
     }
     catch(exc)
     {

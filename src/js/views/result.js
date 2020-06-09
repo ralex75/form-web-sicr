@@ -17,6 +17,7 @@ const template=`
 `
 
 import {Base} from './base.js'
+import {Application} from '../app.js'
 
 
 export class Result extends Base{
@@ -54,25 +55,10 @@ export class Result extends Base{
         return content
     }
 
-    displayUserProfileFeedback(user)
+    displayUserAccountFeedback(user)
     {
-        var content="";
-       
-        if(!user.isAuthorized)
-        {
-            content=`<h4>Attenzione<h4> Il suo stato risulta: <b class="error">NON AUTORIZZATO.</b>`
-        }
-        else{
-            if(!user.disciplinare)
-            {
-                content=`<h4>Attenzione<h4> Il disciplinare non è stato ancora accettato.`
-                //TO DO
-                //link al disciplinare
-            }
-        }
-
-        return content;
-        
+        var content=`<h4>La sua richiesta è stata inserita correttamente.</h4>A breve riceverà una mail di riepilogo con i dati inseriti.`
+        return content
     }
 
 
@@ -91,16 +77,17 @@ export class Result extends Base{
         else{
 
             var {type,data} = reqdata;
+            var types=Application.RequestTypes;
 
             switch(type)
             {
-                case 'USER':
-                    content=this.displayUserProfileFeedback(data);
+                case types.ACCOUNT:
+                    content=this.displayUserAccountFeedback(data);
                 break;
-                case 'IP':
+                case types.IP:
                     content=this.displayUserRequestIPFeedback(data);
                 break;
-                case 'WIFI':
+                case types.WIFI:
                     content=this.displayUserRequestWiFiFeedback(data);
                 break;
             }

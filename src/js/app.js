@@ -20,10 +20,10 @@ const Init=(user)=>{
         
         }
 
-        window.location.hash="";
+        //window.location.hash="";
 
         //default route
-        window.location.hash='#profile';
+        //window.location.hash='#profile';
     
 }
 
