@@ -198,7 +198,7 @@ export class Requests extends Base{
 
         this.$tbody.querySelectorAll("[data-rid]").forEach(el=>{
             el.addEventListener('click',()=>{
-                Router.changeView('reqdetails',{"rid":el.dataset.rid})
+                Router.go('reqdetails',{"rid":el.dataset.rid})
             });
         })
 

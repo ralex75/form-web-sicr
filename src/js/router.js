@@ -10,14 +10,14 @@ import {Base,UI} from './views/base.js'
 
 let lastValidRoute="";
 
-const route=({view,args})=>{
+const go=(view,args)=>{
     
         var target=document.querySelector("#colonne_content")
        
         target.classList.remove("fade-in");
         void target.offsetWidth;
         target.classList.add("fade-in");
-        debugger;
+       
         switch(view.toLowerCase()){
             
             case "profile":
@@ -43,7 +43,11 @@ const route=({view,args})=>{
                 
                 if(args.status)
                 {
-                    Router.changeView(args.next || 'profile',null, 2000);
+                    clearTimeout(timeout);
+                    timeout=setTimeout(()=>{
+                        var view=args.next || 'profile'
+                        window.location.hash=`#${view}`;
+                    },2000)
                 }
             break;
             default:
@@ -58,19 +62,17 @@ const route=({view,args})=>{
 
 let timeout=null;
 
-const changeView=(view,args,delay=0)=>{
+/*const changeView=(view,args,delay=0)=>{
 
     clearTimeout(timeout);
     timeout=setTimeout(()=>{
-        debugger;
-        route({"view":view,"args":args});
+        go({"view":view,"args":args});
     },delay)
-   
-}
+}*/
 
 const Router={
-    route,
-    changeView
+    go
+    //changeView
 }
 
 export {Router};

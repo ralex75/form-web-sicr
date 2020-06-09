@@ -101,7 +101,8 @@ export class RequestDetails extends Base {
         goBack.addEventListener('click',ev=>{
          
             ev.preventDefault();
-            Router.changeView("requests")
+            Router.go("requests")
+            
         })
     }
 

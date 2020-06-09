@@ -37,8 +37,9 @@ const template=
     </style>
    
 `
-import {Base,UI} from './base.js'
+import {Base} from './base.js'
 import services from '../services.js'
+import {Application } from '../app.js';
 
 export class Location extends Base {
     
@@ -69,9 +70,11 @@ export class Location extends Base {
 
         this.buildOptions(this.$builds,[{'txt':'Marconi','value':'MARCONI'},{'txt':'Fermi','value':'Fermi'}])
 
+        //In ascolto per cambio configurazione (DHCP=>Statico=>Statico Virtuale)
         document.addEventListener('ConfigChanged',ev=>{
             this.configChangedArgs=ev.detail;
            
+            //Abilita o Disabilita le porte
             this.enableDisablePorts();
         })
 
@@ -122,7 +125,7 @@ export class Location extends Base {
        
        if(this.$ports.disabled)
        {
-           UI.EmitEvent("NoFreePorts");
+           Application.EmitEvent("NoFreePorts");
        }
         
     }

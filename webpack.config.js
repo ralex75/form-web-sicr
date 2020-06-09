@@ -14,7 +14,7 @@ module.exports = {
     //mode:'production',
     devtool: 'inline-source-map',
     entry: [
-      './src/js/app.js',
+      './src/js/main.js',
     ],
     output: {
       filename: 'bundle.js',

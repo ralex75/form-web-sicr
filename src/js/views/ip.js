@@ -9,7 +9,7 @@ const template=`
 				 	<div class="form_riga">
 						<div class="form_col">
 						  <label for="mac">Mac Address</label><br>
-                          <input type="text" name="mac" data-attr="formdata" autocomplete="off" placeholder="mac address">
+                          <input type="text" name="mac" data-attr="formdata" autocomplete="off" maxlength="17"  placeholder="mac address">
                           <small>Error Message</small>		
 						</div>
 						<div class="form_col">
@@ -141,7 +141,8 @@ div.grid div.c2{
 </style>
 `
 
-import {Base, UI} from './base.js'
+import {Base} from './base.js'
+import {Application} from '../app.js'
 import {Location} from './location.js'
 import {Dialog} from '../components/dialog.js'
 import services from '../services.js'
@@ -342,8 +343,9 @@ export class IP extends Base{
         var html=this.getReport(data.to);
 
         this.showDialog("Richiesta di Conferma",html,()=>{
-            console.log("Send FOrm:",data)
-            UI.EmitSaveRequest('IP',data);
+            console.log("Send Form:",data)
+            Application.SaveRequest(Application.RequestTypes.IP,data);
+            //UI.EmitSaveRequest('IP',data);
         },()=>{});
         //UI.EmitSaveRequest('IP',data);
     }
@@ -448,6 +450,7 @@ export class IP extends Base{
 
         this.formdata.port=location.getPortRef();
     
+        //mostra errore se non ci sono porte libere selezionabili
         document.addEventListener("NoFreePorts",ev=>{
             this.setError(this.formdata.port,"Non ci sono porte libere selezionabili.")
         })
@@ -464,7 +467,8 @@ export class IP extends Base{
             this.reset(this.formdata['port']);
 
             var mac= this.eHost ? this.eHost.mac : null;
-            UI.EmitEvent('ConfigChanged',{"config":ev.target.value,"mac":mac});
+            //Invia Evento a Location
+            Application.EmitEvent('ConfigChanged',{"config":ev.target.value,"mac":mac});
         })
 
         //cambio mac 
@@ -615,7 +619,7 @@ export class IP extends Base{
 
             //return this.showDialog("Richiesta di Conferma","<h4>Non ci sono state modifiche</h4><h3>La sua richiesta non verrà inserita.<h3><br>Si desidera procedere?");
             //richiesta senza dati non salva
-            return UI.EmitSaveRequest("IP");
+            return Application.SaveRequest("IP")
         }
       
         //check nome duplicato
@@ -637,9 +641,6 @@ export class IP extends Base{
             }
         }
 
-        
-
-      
         var duplicateMac=false;
 
         if(!this.useMacBusy)

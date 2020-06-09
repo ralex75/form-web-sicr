@@ -1,29 +1,14 @@
 import {NavMenu} from './views/menu.js'
-
-import {Base,UI} from './views/base.js'
 import services from './services.js'
 import {Router} from './router.js'
 
 //application data
 window.Application={"user":null};
 
-export class ApplicationEventBus{
-    
-    static types={'SaveRequest':'SaveRequest'}
-    static EmitEvent(eventName,args)
-    {
-        document.dispatchEvent(new CustomEvent(eventName,{detail:args,bubbles:true}))
-    } 
-    static EmitSaveRequest(type,data)
-    {
-        ApplicationEventBus.EmitEvent(ApplicationEventBus.types.SaveRequest,{'type':type,'data':data})
-    } 
-}
 
-class Application
-{
-    static Init(user){
-        
+const Init=(user)=>{
+    
+  
         //salva info utente
         window.Application.user=user;
  
@@ -40,15 +25,19 @@ class Application
         //default route
         window.location.hash='#profile';
     
-    }
+}
 
-    static async SaveRequest({type,data}){
+const EmitEvent=(name,args=null,bubbles=true)=>{
+    document.dispatchEvent(new CustomEvent(name,{'detail':args,bubbles:bubbles}))
+}
+
+const SaveRequest=async (type,data)=>{
         
         var success=false;
-
+       
         if(data)
         {
-            
+           
             try
             {
                 await services.requests.save(type,data)
@@ -61,72 +50,24 @@ class Application
 
         }
 
-        return success;
+        var result={"status":success, "reqdata":{'type':type,'data':data}, "next":"requests"};
 
-    }
+        Router.go("result",result);
+
 }
 
+const RequestTypes={"WIFI":"WIFI","IP":"IP","ACCOUNT":"ACCOUNT"}
 
-
-window.addEventListener('error', function(event) { 
-    handleError(event);
-})
-
-window.addEventListener('unhandledrejection', function(event) {
-    //console.error('Unhandled rejection (promise: ', event.promise, ', reason: ', event.reason, ').');
-    //document.querySelector("#col_sin_menu").innerHTML="";
-    handleError(event);
-});
-
-
-const handleError=(err)=>{
-    console.log(err);
-   
-    
-    //TO DO
-     //DUMP ERROR to file ?
-
-    //rimuove pannello di navigazione ?
-    //document.querySelector("#col_sin_menu").innerHTML="";
-   
-    //show error
-    //return showView({'view':'result','args':{'status':false}})
-    
-    Router.changeView('result',{'status':false})
+const Application={
+    Init,
+    SaveRequest,
+    EmitEvent,
+    RequestTypes
 }
 
-window.addEventListener('hashchange', ev=>{
-    var view=window.location.hash.substr(1);
-    Router.changeView(view);
-})
+export {Application}
 
 
-//listener DOM Loaded
-document.addEventListener('DOMContentLoaded',async ev=>{
 
-    try{
-        //legge informazioni utente
-        var user=await services.user.read();
- 
-        //inizializza app
-        Application.Init(user);
-    }
-    catch(exc)
-    {
-        handleError(exc);
-    }
-   
-})
 
-//salva richiesta
-document.addEventListener(ApplicationEventBus.types.SaveRequest, async ev=> {
-   
-    var reqdata=ev.detail;
 
-    var success=await Application.SaveRequest(reqdata);
-
-    var result={"status":success, "reqdata":reqdata, "next":"requests"};
-
-    Router.changeView("result",result);
-   
-})
