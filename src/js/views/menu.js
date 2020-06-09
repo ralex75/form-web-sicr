@@ -1,4 +1,6 @@
 import {Base,UI} from './base.js'
+import { Router } from '../router.js';
+import {Application} from '../app.js'
 
 
 export class NavMenu extends Base {
@@ -6,30 +8,19 @@ export class NavMenu extends Base {
     
     init()
     {
-        /*this.lastroute=this.routes[0];
-        window.location.hash="";*/
+       
        
         window.addEventListener('hashchange', ev=>{
             this.highlightSelectedMenu()
         });
-        /*
-        window.addEventListener('hashchange', ev=>{
-           
-           
-            var view=window.location.hash.substr(1);
-            
-            var route= this.routes.filter(i=>{return view==i.view})[0];
-            
-            if(!route)
-            {
-                route=this.lastroute;
-                return window.location.hash=`#${route.view}`;
-            }
 
-            this.lastroute=route;
-            this.highlightSelectedMenu()
-            UI.EmitChangeView(route.view)
-        })*/
+        console.log("SelectedLang:",Application.language.current)
+        
+        this.target.querySelector("#changeLang").addEventListener("click",ev=>{
+            Application.language.current="SPA";
+        })
+
+        this.highlightSelectedMenu()
 
     }
 
@@ -68,6 +59,7 @@ export class NavMenu extends Base {
 
          
         var template=`<div class=\"divisione\">
+                        <input type="button" id="changeLang" value="ChangeLang" />
                         <p><span class=\"divisione_title\">Account e Rete</span></p>
                         ${tpl}
                      </div>

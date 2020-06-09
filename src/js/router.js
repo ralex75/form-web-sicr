@@ -12,6 +12,8 @@ let lastValidRoute="";
 
 const go=(view,args)=>{
     
+        //if(lastValidRoute.toLowerCase()==view.toLowerCase()) return; 
+
         var target=document.querySelector("#colonne_content")
        
         target.classList.remove("fade-in");
@@ -55,7 +57,7 @@ const go=(view,args)=>{
                 return window.location.hash=`#${view}`;
                 
         }
-
+       
         lastValidRoute=view;
 
 }
@@ -70,9 +72,16 @@ let timeout=null;
     },delay)
 }*/
 
+
+
 const Router={
-    go
+    go,
+    lastValidRoute
     //changeView
 }
+
+document.addEventListener("languageChanged",ev=>{
+    Router.go(lastValidRoute);    
+})
 
 export {Router};

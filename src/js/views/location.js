@@ -39,7 +39,7 @@ const template=
 `
 import {Base} from './base.js'
 import services from '../services.js'
-import {Application } from '../app.js';
+import {Application} from '../app.js';
 
 export class Location extends Base {
     

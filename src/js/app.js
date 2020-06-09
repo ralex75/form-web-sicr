@@ -3,15 +3,17 @@ import services from './services.js'
 import {Router} from './router.js'
 
 //application data
-window.Application={"user":null};
+window.Application={"user":null,"lang":"ITA"};
 
 
 const Init=(user)=>{
     
-  
+
         //salva info utente
         window.Application.user=user;
- 
+
+       
+       
         if(user.isAuthorized && user.disciplinare)
         {
             
@@ -20,14 +22,12 @@ const Init=(user)=>{
         
         }
 
-        //window.location.hash="";
-
-        //default route
-        //window.location.hash='#profile';
+       
     
 }
 
 const EmitEvent=(name,args=null,bubbles=true)=>{
+   
     document.dispatchEvent(new CustomEvent(name,{'detail':args,bubbles:bubbles}))
 }
 
@@ -58,11 +58,24 @@ const SaveRequest=async (type,data)=>{
 
 const RequestTypes={"WIFI":"WIFI","IP":"IP","ACCOUNT":"ACCOUNT"}
 
+const language={
+    set current(lang){
+        window.Application.lang=lang;
+        EmitEvent("languageChanged")
+    },
+    get current(){
+        return window.Application.lang;
+    }
+   
+}
+
+
 const Application={
     Init,
     SaveRequest,
     EmitEvent,
-    RequestTypes
+    RequestTypes,
+    language
 }
 
 export {Application}

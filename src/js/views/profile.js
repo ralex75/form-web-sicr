@@ -82,8 +82,9 @@ export class Profile extends Base{
         <p>${user.expiration}</p>
         </div>`
        
-
-        this.target.querySelector("#udata").insertAdjacentHTML('afterbegin',html);
+        console.log("Profile")
+       
+        this.target.querySelector("#udata").innerHTML=html;
         
         if(!user.email || user.email.indexOf("@roma1.infn.it")<0)
         {
@@ -96,6 +97,7 @@ export class Profile extends Base{
                
                 diff=moment(moment().format('YYYY-MM-DD')).diff(moment(req.req_date).format("YYYY-MM-DD"),'days')
                 console.log("Date Diff:",diff);
+
             }
 
             if(diff<9)

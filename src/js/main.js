@@ -31,8 +31,8 @@ const handleError=(err)=>{
 }
 
 window.addEventListener('hashchange', ev=>{
-    var view=window.location.hash.substr(1);
    
+    var view=window.location.hash.substr(1);
     Router.go(view);
 })
 
@@ -41,19 +41,26 @@ window.addEventListener('hashchange', ev=>{
 document.addEventListener('DOMContentLoaded',async ev=>{
 
     try{
+        
         //legge informazioni utente
         var user=await services.user.read();
  
         //inizializza app
         Application.Init(user);
 
-        if(window.location.hash!='#profile')
+        Application.language.current="ENG";
+
+       
+        Router.go("profile");
+
+        //debugger;
+        /*if(window.location.hash!='#profile')
         {
             window.location.hash='#profile';
         }
         else
+            Router.go("Profile");*/
 
-            Router.go("Profile");
     }
     catch(exc)
     {
@@ -61,6 +68,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
     }
    
 })
+
 
 //salva richiesta
 /*document.addEventListener(ApplicationEventBus.types.SaveRequest, async ev=> {

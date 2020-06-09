@@ -136,8 +136,8 @@ export class Requests extends Base{
 
        //try{
             
-            var resp=await services.requests.list(false,this.$types.value)
-            this.items=this.mapItems(resp.data);
+        var resp=await services.requests.list(false,this.$types.value)
+        this.items=this.mapItems(resp.data);
             //this.buildRows(this.items);
        /*}
        catch(exc)
