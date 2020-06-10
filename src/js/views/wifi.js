@@ -2,11 +2,11 @@ const template=`
    <form>
       <div class="form_sez" style="height:200px;">
         <div class="form_intest">
-          Periodo di navigazione
+          [header]
         </div>
         <div class="form_riga row">
           <div class="form_col">
-            <label>Inizio</label>
+            <label>[from]</label>
             <div class="cont">
                 <input type="text" />
                 <div class="calpick"></div>
@@ -14,7 +14,7 @@ const template=`
             </div>
           </div>
           <div class="form_col">
-          <label>Fine</label>
+          <label>[to]</label>
             <div class="cont">
                 <input type="text" />
                 <div class="calpick"></div>
@@ -26,7 +26,7 @@ const template=`
       </div>
       <div class="form_sez">
 					<div class="form_pied cbutton">
-					  <input type="submit" class="button_m" value="INVIA" />
+					  <input type="submit" class="button_m" value="[send]" />
 					</div>	
 			</div>		
   </form> 
@@ -189,15 +189,33 @@ export class WIFI extends Base {
 
     }
 
+    locale(){
+      return {
+              "ITA":{"form":{"header":"Periodo di navigazione","from":"Inizio","to":"Fine","send":"Invia","format":"DD-MM-YYYY"}},
+                    
+              "ENG":{"form":{"header":"Browsing time","from":"From","to":"To","send":"Send","format":"YYYY-MM-DD"}},
+                    
+             }
+    }
+
     setDate(el,value)
     {
       
-      var d_it=moment(value).format("DD-MM-YYYY");
+      var loc=this.locale()[Application.language.current];
+      //var d_it=moment(value).format("DD-MM-YYYY");
       var d_en=moment(value).format("YYYY-MM-DD");
-      el.parentElement.querySelector("input[type=text]").value=d_it;
+      var d=moment(value).format(loc["form"]["format"]);
+      /*el.parentElement.querySelector("input[type=text]").value=d_it;
       if(el.id=='from')
       {
         this.$to.parentElement.querySelector("input[type=text]").value=d_it;
+        this.$to.min=d_en;
+        this.$to.value=d_en;
+      }*/
+      el.parentElement.querySelector("input[type=text]").value=d;
+      if(el.id=='from')
+      {
+        this.$to.parentElement.querySelector("input[type=text]").value=d;
         this.$to.min=d_en;
         this.$to.value=d_en;
       }
@@ -216,7 +234,15 @@ export class WIFI extends Base {
     getContent()
     {
        
-        return template;
+       var tpl=template;
+       var loc=this.locale()[Application.language.current].form;
+
+       for(var k in loc)
+       {
+         tpl=tpl.replace(`[${k}]`,loc[k]);
+       }
+       
+        return tpl;
 
     }
 

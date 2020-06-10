@@ -72,8 +72,11 @@ const RequestTypes={"WIFI":"WIFI","IP":"IP","ACCOUNT":"ACCOUNT"}
 
 const language={
     set current(lang){
-        window.Application.lang=lang;
-        EmitEvent("languageChanged")
+        if(window.Application.lang!=lang)
+        {
+            window.Application.lang=lang;
+            EmitEvent("languageChanged")
+        }
     },
     get current(){
         return window.Application.lang;

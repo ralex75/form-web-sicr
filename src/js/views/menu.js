@@ -1,3 +1,5 @@
+
+
 import {Base,UI} from './base.js'
 import { Router } from '../router.js';
 import {Application} from '../app.js'
@@ -16,8 +18,21 @@ export class NavMenu extends Base {
 
         console.log("SelectedLang:",Application.language.current)
         
-        this.target.querySelector("#changeLang").addEventListener("click",ev=>{
+        /*this.target.querySelector("#changeLang").addEventListener("click",ev=>{
             Application.language.current= Application.language.current=='ITA' ? 'ENG' :'ITA';
+        })*/
+
+        this.target.querySelectorAll("[data-lang]").forEach(el=>el.addEventListener("click",ev=>{
+          
+            Application.language.current= ev.target.dataset["lang"];
+        
+        }));
+
+        this.target.querySelectorAll("[data-lang]").forEach(el=>{
+            if(el.dataset["lang"]==Application.language.current)
+            {
+                el.classList.add("selected");
+            }
         })
 
         this.highlightSelectedMenu()
@@ -71,7 +86,12 @@ export class NavMenu extends Base {
 
          
         var template=`<div class=\"divisione\">
-                        <input type="button" id="changeLang" value="ChangeLang" />
+                        <!--<input type="button" id="changeLang" value="ChangeLang" />-->
+                        <div class="language">
+                      
+                            <div class="flag ita" tooltip="ita" data-lang="ITA"></div>
+                            <div class="flag eng" tooltip="eng" data-lang="ENG"></div>
+                        </div>
                         <p><span class=\"divisione_title\">Account e Rete</span></p>
                         ${tpl}
                      </div>
@@ -79,6 +99,39 @@ export class NavMenu extends Base {
                         a.navi.selected{
                             color:#E00;
                         }
+                        div.language{
+                            display:flex;
+                            justify-content:space-evenly;
+                            width:80%;
+                        }
+                        div.flag{
+                            width:46px;
+                            height:32px;
+                            background-repeat:no-repeat;
+                            background-size: contain;
+                            background-origin: content-box;
+                            border:2px solid transparent;
+                            padding:3px;
+                        }
+                        div.flag.ita{
+                            background-image: url("img/ita-flag.png");
+                            width:42px;
+                        }
+                        div.flag.eng{
+                            background-image: url("img/eng-flag.png");
+                            background-size: 36px 22px;
+                        }
+
+
+                        div.flag.selected,div.flag:hover{
+                            border-color:#4697b8;
+                        }
+
+                        *{
+  
+                            box-sizing: border-box;
+                          
+                          }
                      </style>
                      `
 

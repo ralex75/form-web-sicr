@@ -8,7 +8,7 @@ import {IP} from './views/ip.js'
 import {WIFI} from './views/wifi.js'
 
 
-let lastValidRoute="";
+let lastValidRoute={"view":"","args":""};
 
 const go=(view,args)=>{
     
@@ -58,20 +58,11 @@ const go=(view,args)=>{
                 
         }
        
-        lastValidRoute=view;
+        lastValidRoute={"view":view,"args":args};
 
 }
 
 let timeout=null;
-
-/*const changeView=(view,args,delay=0)=>{
-
-    clearTimeout(timeout);
-    timeout=setTimeout(()=>{
-        go({"view":view,"args":args});
-    },delay)
-}*/
-
 
 
 const Router={
@@ -81,7 +72,8 @@ const Router={
 }
 
 document.addEventListener("languageChanged",ev=>{
-    Router.go(lastValidRoute);    
+    var {view,args}=lastValidRoute;
+    Router.go(view,args);    
 })
 
 export {Router};

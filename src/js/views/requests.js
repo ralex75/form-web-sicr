@@ -1,10 +1,10 @@
 const template=`
     
     <div class="req-actions">
-        <input type="text" placeholder="ricerca..." id="search" autocomplete="off" />
-        <label for="selreqtypes">Visualizza:</label>&nbsp;
+        <input type="text" placeholder="[search]" id="search" autocomplete="off" />
+        <label for="selreqtypes">[filter]:</label>&nbsp;
         <select id="selreqtypes">
-            <option selected value="ANY">Tutti</option>
+            <option selected value="ANY">[option-all]</option>
             <option  value="IP">IP</option>
             <option value="WIFI">WIFI</option>
         </select>
@@ -14,8 +14,8 @@ const template=`
     <thead>
         <tr id="table_intest">
             <td>ID</td>
-            <td>Data Richiesta</td>
-            <td>Descrizione</td>
+            <td>[reqdate]</td>
+            <td>[reqdesc]</td>
         </tr>
     </thead>
     <tbody class="tbreq-tbody">
@@ -106,11 +106,34 @@ export class Requests extends Base{
             this.getRequests();
         })
 
+      
+
         this.getRequests();
     }
 
     getContent(){
-        return template;
+        let tmp=template;
+        var loc=this.locale()[Application.language.current];
+        for(var k in loc.form)
+        {
+            console.log(k)
+            tmp=tmp.replace(`[${k}]`,loc.form[k]);
+        }
+       
+        return tmp;
+    }
+
+    locale(){
+        return {
+                "ITA":{"wifi":{"desc":"WIFI temporaneo","format":"DD/MM/YYYY HH:mm"},
+                        "ip":{"create":"Nuovo nodo","update":"Aggiornamento dati del nodo","delete":"Cancellazione nodo"},
+                        "account":{"desc":"Creazione Account di Posta INFN"},
+                        "form":{"search":"ricerca","filter":"visualizza","option-all":"Tutti","reqdate":"Data richiesta","reqdesc":"Descrizione"}},
+                "ENG":{"wifi":{"desc":"WIFI temporary","format":"YYYY/MM/DD"},
+                        "ip":{"create":"New host","update":"Update host data","delete":"Delete host"},
+                        "account":{"desc":"Create INFN E-mail Account"},
+                        "form":{"search":"search","filter":"view","option-all":"All","reqdate":"Request Date","reqdesc":"Description"}}
+               }
     }
 
     setFeedbackMessage(type="",message="")
@@ -153,6 +176,7 @@ export class Requests extends Base{
 
     mapItems(list)
     {
+        var loc=this.locale()[Application.language.current];
         var types=Application.RequestTypes;
         var items=[];
         list.forEach(item => {
@@ -162,18 +186,18 @@ export class Requests extends Base{
             {
                 case types.WIFI:
                  var format=DATE_FORMAT.split(" ")[0];
-                 desc=`WiFi temporaneo dal ${moment(item.data.from).format(format)} al ${moment(item.data.to).format(format)}`;
+                 desc=`${loc["wifi"]["desc"]} ${moment(item.data.from).format(`${loc["wifi"]["format"]}`)} - ${moment(item.data.to).format(`${loc["wifi"]["format"]}`)}`;
                 break;
                 case types.IP:
                     var d=item.data;
-                    var action={"create":"Nuovo nodo","update":"Aggiornamento dati del nodo","delete":"Cancellazione nodo"}
+                    var action={"create":`${loc["ip"]["create"]}`,"update":`${loc["ip"]["update"]}`,"delete":`${loc["ip"]["delete"]}`}
                     desc=`${action[d.action]}:  ` 
                     var h=d.from || d.to;
                     desc+= h.name ? h.name+"."+h.domain : "DHCP - "+h.mac
                 break;
                 case types.ACCOUNT:
                   var d=item.data;
-                  desc="Creazione Account di Posta INFN";
+                  desc=`${loc["account"]["desc"]}`;
                 break;
 
             }
@@ -205,11 +229,13 @@ export class Requests extends Base{
                 <td>${i.id}</td>
                 <td>${i.reqdate}</td>
                 <td>${i.type=='IP' ? `<a href="#requests" data-rid="${i.id}">${i.desc}</a>` : `${i.desc}`}</td>`;
-            this.$tbody.appendChild(tr);    
+            this.$tbody.appendChild(tr);
+
         })
 
         this.$tbody.querySelectorAll("[data-rid]").forEach(el=>{
             el.addEventListener('click',()=>{
+                //window.Application.rid=el.dataset.rid;
                 Router.go('reqdetails',{"rid":el.dataset.rid})
             });
         })
