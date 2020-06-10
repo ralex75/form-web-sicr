@@ -4,32 +4,32 @@ const template=`
 <form>
 				<div class="form_sez">
 					<div class="form_intest">
-					  Identificativo Nodo
+					  [HEADER-HOST]
 					</div>
 				 	<div class="form_riga">
 						<div class="form_col">
-						  <label for="mac">Mac Address</label><br>
+						  <label for="mac">[MAC]</label><br>
                           <input type="text" name="mac" data-attr="formdata" autocomplete="off" maxlength="17"  placeholder="mac address">
                           <small>Error Message</small>		
 						</div>
 						<div class="form_col">
-							<label for="config">Modalità</label>
+							<label for="config">[CONFIG]</label>
 							<br> 
 							<select name="config" data-attr="formdata">
-                                <option  value="STATIC">STATICO</option>
-                                <option  value="STATICVM">STATICO - Virtuale</option>
-								<option selected value="DHCP">DHCP</option>
+                                <option  value="STATIC">[CONFIG-OPTION-STATIC]</option>
+                                <option  value="STATICVM">[CONFIG-OPTION-STATICVM]</option>
+								<option selected value="DHCP">[CONFIG-OPTION-DHCP]</option>
 							</select>
 						</div> 
 					</div>
 					<div class="form_riga">
 						<div class="form_col">
-						  <label for="name">Nome</label><br>
+						  <label for="name">[NAME]</label><br>
                           <input type="text" name="name" data-attr="formdata" autocomplete="off" placeholder="nome">
                           <small>Error Message</small>
 						</div>
 						<div class="form_col">
-						  <label for="domain">Dominio</label><br>
+						  <label for="domain">[DOMAIN]</label><br>
 						  <select name="domain" data-attr="formdata">
 							<option selected  value="roma1.infn.it">roma1.infn.it</option>
 							<option value="phys.uniroma1.it">phys.uniroma1.it</option>
@@ -45,18 +45,18 @@ const template=`
                 </div>
                 <div class="form_sez">
 					<div class="form_intest">
-					  Ulteriori informazioni
+                    [HEADER-NOTES]
 					</div>
 				 	<div class="form_riga">
 						<div class="form_col_long">
-						  <label for="notes">Note</label><br>
+						  <label for="notes">[NOTES]</label><br>
 						  <textarea name="notes" data-attr="formdata" rows="5" value=""></textarea>		
 						</div>
 					</div>	
 				</div>	
 				<div class="form_sez">
 					<div class="form_pied cbutton">
-					  <input type="submit" class="button_m" value="INVIA" />
+					  <input type="submit" class="button_m" value="[SEND]" />
 					</div>	
 				</div>		
 </form>  
@@ -152,7 +152,13 @@ export class IP extends Base{
   
     //restituisce il template
     getContent(){
-        return template;
+        var tpl=template;
+        var loc=this.locale();
+        for(var k in loc.form)
+        {
+            tpl=tpl.replace(`[${k.toUpperCase()}]`,loc.form[k]);
+        }
+        return tpl;
     }
     
 
@@ -164,13 +170,15 @@ export class IP extends Base{
         return this.configMode()=='DHCP';
     }
 
+    //loc è il locale per i messaggi di errore nella lingua corrente
     validateHostName()
     {
+        var loc=this.locale().errors;
         var err="";
         var value=this.formdata['name'].value.trim();
         if(!value.match(/^([0-9A-Za-z_-])+$/))
         {
-            err="Il campo non è valido."
+            err=`${loc.invalid}.`;
         }
    
         return err;
@@ -178,13 +186,17 @@ export class IP extends Base{
 
     validateHostMac()
     {
+        
+        
         var err="";
+        var loc=this.locale().errors;
         //legge valore macaddress
         var value=this.formdata['mac'].value.trim();
 
         if(!value.match(/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/))
         {
-            err="Il campo non è valido.";
+            //err="Il campo non è valido.";
+            err=`${loc.invalid}.`;
         }
         else{
             
@@ -195,7 +207,8 @@ export class IP extends Base{
                 var eValue=this.eHost ? this.eHost.mac : "";
                 if(value!=eValue)
                 {
-                    err="Il mac inserito appartiene ad un altro tuo nodo."
+                    //err="Il mac inserito appartiene ad un altro tuo nodo."
+                    err=`${loc["mac"].yourmac}.`;
                 }
               
             }
@@ -214,8 +227,29 @@ export class IP extends Base{
         }
     }
 
+    locale(){
+
+        const loc= {"ITA":{"form":{"mac":"Indirizzo Mac","config":"Configurazione","name":"Nome","domain":"Dominio","send":"Invia","notes":"Note",
+                               "header-host":"IDENTIFICATIVO NODO","header-notes":"ULTERIORI INFORMAZIONI",
+                               "config-option-static":"STATICO","config-option-staticvm":"STATICO - Virtuale","config-option-dhcp":"DHCP"},
+                        "errors":{"invalid":"Il campo non è valido","yourmac":"L'indirizzo MAC inserito appartiene ad un altro tuo nodo",
+                                  "port-no-set":"Porta non selezionata","port-busy":"La porta selezionata risulta occupata",
+                                  "noFreePorts":"Non ci sono porte libere selezionabili"}},
+                "ENG":{"form":{"mac":"Mac Address","config":"Configuration","name":"Name","domain":"Domain","send":"Send","notes":"Notes",
+                                "header-host":"NODE IDENTIFIER","header-notes":"Additional Information",
+                                "config-option-static":"STATIC","config-option-staticvm":"STATIC - Virtual","config-option-dhcp":"DHCP"},
+                        "errors":{"invalid":"Field is invalid","yourmac":"The MAC address you inserted belongs to another node of yours",
+                                    "port-no-set":"Port not selected","port-busy":"Select port is busy",
+                                    "noFreePorts":"No free ports"}}
+            }
+
+        return loc[Application.language.current];
+    }
+
     validateFields()
     {
+        //recupera messaggi di errore nella lingua corrente
+        var loc=this.locale().errors
         //inizializza tutti i campi errore
         this.$form.querySelectorAll("small").forEach(e=>{
            
@@ -242,7 +276,7 @@ export class IP extends Base{
         //errore porta non selezionata
         if(!this.selectedPort)
         {
-            this.setError(this.formdata['port'],"Porta non selezionata.")
+            this.setError(this.formdata['port'],loc["port-no-set"])
         }
         else
         {
@@ -251,7 +285,7 @@ export class IP extends Base{
 
             if(isBusy)
             {
-                this.setError(this.formdata['port'],"La porta selezionata risulta occupata")
+                this.setError(this.formdata['port'],loc['port-busy'])
             }
 
         }
@@ -399,7 +433,7 @@ export class IP extends Base{
         
         var trg=this.target;
 
-        
+        var loc= this.locale();
 
        
         trg.querySelector("#goBack").style.display = window.location.hash=='#hosts' ? 'block' : 'none';
@@ -452,7 +486,7 @@ export class IP extends Base{
     
         //mostra errore se non ci sono porte libere selezionabili
         document.addEventListener("NoFreePorts",ev=>{
-            this.setError(this.formdata.port,"Non ci sono porte libere selezionabili.")
+            this.setError(this.formdata.port,`${loc.noFreePorts}`)
         })
 
         //registrazione eventi form

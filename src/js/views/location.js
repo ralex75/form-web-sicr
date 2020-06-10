@@ -1,25 +1,25 @@
 const template=
 `   
     <div class="form_intest">
-    Locazione Presa
+    [HEADER-PORT]
     </div>
     <div class="form_riga">
         <div class="form_col">
-            <label for="build">Edificio</label><br>
+            <label for="build">[BUILD]</label><br>
             <select id="build" name="build"></select>
         </div>
         <div class="form_col">
-            <label for="floor">Piano</label><br>
+            <label for="floor">[FLOOR]</label><br>
             <select id="floor" name="floor"></select>
         </div>
     </div> 
     <div class="form_riga">
         <div class="form_col">
-            <label for="room">Stanza</label><br>
+            <label for="room">[ROOM]</label><br>
             <select id="room" name="room"></select>
         </div>
         <div class="form_col">
-            <label for="port">Porta</label><br>
+            <label for="port">[PORT]</label><br>
             <select id="port" name="port"></select>
             <small>Error Message</small>
         </div>
@@ -54,10 +54,14 @@ export class Location extends Base {
         
         this.$location=document.querySelector("#location")
         
-        this.defaultOption={'build':"<option selected value='' disabled hidden> --- Seleziona Edificio --- </option>",
-                                  'floor':"<option selected value='' disabled hidden> --- Seleziona Piano --- </option>",
-                                  'room':"<option selected value='' disabled hidden> --- Seleziona Stanza --- </option>",
-                                  'port':"<option selected value='' disabled hidden> --- Seleziona Porta --- </option>"}
+       
+        
+        var loc=this.locale()[Application.language.current].options;
+
+        this.defaultOption={'build':`<option selected value='' disabled hidden> --- ${loc["build"]} --- </option>`,
+                                  'floor':`<option selected value='' disabled hidden> --- ${loc["floor"]} --- </option>`,
+                                  'room':`<option selected value='' disabled hidden> --- ${loc["room"]} --- </option>`,
+                                  'port':`<option selected value='' disabled hidden> --- ${loc["port"]} --- </option>`}
         
 
         this.$location.querySelectorAll('select').forEach(el=>{
@@ -102,6 +106,17 @@ export class Location extends Base {
 
     getPortRef(){
         return this.$ports;
+    }
+
+    locale(){
+
+        return {"ITA":{"template":{"build":"Edificio","floor":"Piano","room":"Stanza","port":"Porta",
+                               "header-port":"LOCAZIONE PRESA"},
+                               "options":{"build":"Seleziona Edificio","floor":"Seleziona Piano","room":"Seleziona Stanza","port":"Seleziona Porta"}},
+                "ENG":{"template":{"build":"Build","floor":"Floor","room":"Room","port":"Port",
+                                "header-port":"PORT LOCATION"},
+                                "options":{"build":"Select Build","floor":"Select Floor","room":"Select Room","port":"Select Port"}},
+            }
     }
 
     enableDisablePorts()
@@ -296,7 +311,6 @@ export class Location extends Base {
             }
         }
 
-        
 
 
     }
@@ -315,7 +329,13 @@ export class Location extends Base {
     }
 
     getContent(){
-       return template;
+        var tmp=template;
+        var loc=this.locale()[Application.language.current]
+        for(var k in loc.template)
+        {
+            tmp=tmp.replace(`[${k.toUpperCase()}]`,loc.template[k])
+        }
+       return tmp;
     }
 
 }
