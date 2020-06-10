@@ -34,6 +34,11 @@ export class Profile extends Base{
         return value ? value : "--"
     }
 
+    locale(){
+        return {"ITA":{"email":"E-mail","phone":"Telefono","Role":"Ruolo","Expiration":"Scadenza"},
+                "ENG":{"email":"E-mail","phone":"Phone","Role":"Role","Expiration":"Expiration"}}
+    }
+
     async fillUserData(){
 
       
