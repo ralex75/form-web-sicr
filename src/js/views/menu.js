@@ -17,7 +17,7 @@ export class NavMenu extends Base {
         console.log("SelectedLang:",Application.language.current)
         
         this.target.querySelector("#changeLang").addEventListener("click",ev=>{
-            Application.language.current="SPA";
+            Application.language.current= Application.language.current=='ITA' ? 'ENG' :'ITA';
         })
 
         this.highlightSelectedMenu()
@@ -35,27 +35,39 @@ export class NavMenu extends Base {
         
     }
 
+    locale(){
+        return {"ITA":{"profile":"Il mio profilo","requests":"Richieste inviate","ip":"Aggiungi Nodo","hosts":"I miei nodi","wifi":"Wifi temporaneo"},
+                "ENG":{"profile":"My Profile","requests":"My Requests","ip":"Add Host","hosts":"My hosts","wifi":"Temporary WIFI"}
+                }
+    }
    
 
     getContent(){
 
+        var loc = this.locale()[Application.language.current]
+
         this.routes=[
 
-            {"text":'Il mio profilo',"view":"profile"},
-            {"text":'Richieste inviate','view':'requests'},
-            {"text":'Aggiungi Nodo','view':'ip'},
-            {"text":'I miei nodi','view':'hosts'},
-            {"text":'Wifi temporaneo','view':'wifi'}
+            {"text":`${loc["profile"]}`,"view":"profile"},
+            {"text":`${loc["requests"]}`,'view':'requests'},
+            {"text":`${loc["ip"]}`,'view':'ip'},
+            {"text":`${loc["hosts"]}`,'view':'hosts'},
+            {"text":`${loc["wifi"]}`,'view':'wifi'}
         ]
 
         let tpl=""
        
-        this.routes.forEach(i=>{
-           
-            //tpl+=`<div class="bordato"><a href="#" class="navi" data-route="${i.view}">${i.text}</a></div>`
-            tpl+=`<div class="bordato"><a href="#${i.view}" class="navi">${i.text}</a></div>`
+        var user=window.Application.user;
 
-        })
+        if(user.isAuthorized && user.disciplinare)
+        {
+            this.routes.forEach(i=>{
+            
+                //tpl+=`<div class="bordato"><a href="#" class="navi" data-route="${i.view}">${i.text}</a></div>`
+                tpl+=`<div class="bordato"><a href="#${i.view}" class="navi">${i.text}</a></div>`
+
+            })
+        }
 
          
         var template=`<div class=\"divisione\">

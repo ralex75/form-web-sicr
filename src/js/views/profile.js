@@ -35,8 +35,13 @@ export class Profile extends Base{
     }
 
     locale(){
-        return {"ITA":{"email":"E-mail","phone":"Telefono","Role":"Ruolo","Expiration":"Scadenza"},
-                "ENG":{"email":"E-mail","phone":"Phone","Role":"Role","Expiration":"Expiration"}}
+        return {"ITA":{"email":"E-mail","phone":"Telefono","role":"Ruolo","exp":"Scadenza",
+                        "unauthorized":`<div><b>Attenzione</b>, il suo stato risulta: <b class="error"><u>NON AUTORIZZATO</u>.</b></div>`,
+                        "disciplinare":`<div><b>Attenzione<b>, <b class="error"><u>il disciplinare non è stato ancora accettato</u>.</b></div>`},
+                "ENG":{"email":"E-mail","phone":"Phone","role":"Role","exp":"Expiration",
+                        "unauthorized":`<div><b>Warning</b>, your status is: <b class="error"><u>Unauthorized</u>.</b></div>`,
+                        "disciplinare":`<div><b>Warning<b>, <b class="error"><u>il disciplinare non è stato ancora accettato</u>.</b></div>`}
+            }
     }
 
     async fillUserData(){
@@ -52,9 +57,14 @@ export class Profile extends Base{
         //let user = this.args || await services.user.read();
         var content="";
 
-        content = !user.isAuthorized ? `<div><b>Attenzione</b>, il suo stato risulta: <b class="error"><u>NON AUTORIZZATO</u>.</b></div>`
-                                     : !user.disciplinare ? `<div><b>Attenzione<b>, <b class="error"><u>il disciplinare non è stato ancora accettato</u>.</b></div>` 
+        var loc=this.locale()[Application.language.current];
+
+      
+        content = !user.isAuthorized ? `${loc['unauthorized']}`
+                                     : !user.disciplinare ? `${loc["disciplinare"]}` 
                                      : ""
+
+        
 
         var html=`<div class="prof_intest" >
         <p>${user.name} ${user.surname}</p>
@@ -63,25 +73,25 @@ export class Profile extends Base{
         </div>
        
         <div class="prof_lab">
-        <p>E-mail</p>
+        <p>${loc["email"]}</p>
         </div>
         <div class="prof_val">
         <p class="email">${user.email}</p>
         </div>
         <div class="prof_lab">
-        <p>Telefono</p>
+        <p>${loc["phone"]}</p>
         </div>
         <div class="prof_val">
         <p>${this.emptyOrDefault(user.phone)}</p>
         </div>
         <div class="prof_lab">
-        <p>Ruolo</p>
+        <p>${loc["role"]}</p>
         </div>
         <div class="prof_val">
         <p>${user.role}</p>
         </div>
         <div class="prof_lab">
-        <p>Scadenza</p>
+        <p>${loc["exp"]}</p>
         </div>
         <div class="prof_val">
         <p>${user.expiration}</p>

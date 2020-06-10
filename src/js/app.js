@@ -9,21 +9,33 @@ window.Application={"user":null,"lang":"ITA"};
 const Init=(user)=>{
     
 
-        //salva info utente
-        window.Application.user=user;
-
+       //salva info utente
+       window.Application.user=user;
+ 
        
-       
-        if(user.isAuthorized && user.disciplinare)
-        {
-            
-            var menu=document.querySelector("#col_sin_menu")
-            menu=new NavMenu(menu);
-        
-        }
-
-       
+       document.addEventListener("languageChanged",ev=>{
+                buildMenu();
+       })
     
+       buildMenu();
+}
+
+const buildMenu=()=>{
+    
+    var menu=document.querySelector("#col_sin_menu")
+        menu=new NavMenu(menu);
+
+    /*
+    var user=window.Application.user;
+
+    if(user.isAuthorized && user.disciplinare)
+    {
+        
+        var menu=document.querySelector("#col_sin_menu")
+        menu=new NavMenu(menu);
+    
+    }*/
+   
 }
 
 const EmitEvent=(name,args=null,bubbles=true)=>{
