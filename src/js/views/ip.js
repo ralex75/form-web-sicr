@@ -1,6 +1,6 @@
 const template=`
 <div id="dialogPlaceHolder"></div>
-<a href="#hostlist" id="goBack" style="text-decoration:underline;">Torna indietro</a>
+<a href="#hostlist" id="goBack" style="text-decoration:underline;">[GOBACK]</a>
 <form>
 				<div class="form_sez">
 					<div class="form_intest">
@@ -146,6 +146,7 @@ import {Application} from '../app.js'
 import {Location} from './location.js'
 import {Dialog} from '../components/dialog.js'
 import services from '../services.js'
+import { Router } from '../router.js'
 
 
 export class IP extends Base{
@@ -230,16 +231,16 @@ export class IP extends Base{
     locale(){
 
         const loc= {"ITA":{"form":{"mac":"Indirizzo Mac","config":"Configurazione","name":"Nome","domain":"Dominio","send":"Invia","notes":"Note",
-                               "header-host":"IDENTIFICATIVO NODO","header-notes":"ULTERIORI INFORMAZIONI",
+                               "header-host":"IDENTIFICATIVO NODO","header-notes":"ULTERIORI INFORMAZIONI","goback":"Torna indietro",
                                "config-option-static":"STATICO","config-option-staticvm":"STATICO - Virtuale","config-option-dhcp":"DHCP"},
                         "errors":{"invalid":"Il campo non è valido","yourmac":"L'indirizzo MAC inserito appartiene ad un altro tuo nodo",
-                                  "port-no-set":"Porta non selezionata","port-busy":"La porta selezionata risulta occupata",
+                                  "port-no-set":"Porta non selezionata","port-busy":"La porta selezionata risulta occupata.",
                                   "noFreePorts":"Non ci sono porte libere selezionabili"}},
                 "ENG":{"form":{"mac":"Mac Address","config":"Configuration","name":"Name","domain":"Domain","send":"Send","notes":"Notes",
-                                "header-host":"NODE IDENTIFIER","header-notes":"Additional Information",
+                                "header-host":"NODE IDENTIFIER","header-notes":"Additional Information","goback":"Go back",
                                 "config-option-static":"STATIC","config-option-staticvm":"STATIC - Virtual","config-option-dhcp":"DHCP"},
                         "errors":{"invalid":"Field is invalid","yourmac":"The MAC address you inserted belongs to another node of yours",
-                                    "port-no-set":"Port not selected","port-busy":"Select port is busy",
+                                    "port-no-set":"Port not selected","port-busy":"Selected port is busy.",
                                     "noFreePorts":"No free ports"}}
             }
 
@@ -470,6 +471,7 @@ export class IP extends Base{
       
         var location = null;
 
+       
         if(this.eHost)
         {
             location=this.eHost.location;
@@ -628,6 +630,7 @@ export class IP extends Base{
                 
                 if(this.eHost[k] && (this.formdata[k].value.toLowerCase()!=this.eHost[k].toLowerCase()))
                 {
+                    
                     isChanged=true;
                 }
             }
@@ -647,13 +650,22 @@ export class IP extends Base{
         //controllo se dati sono cambiati 
         var _dataIsChanged=this.dataIsChanged();
 
+
         
         //Mostrare la dialog ?
         if(!_dataIsChanged){
+          
 
-            //return this.showDialog("Richiesta di Conferma","<h4>Non ci sono state modifiche</h4><h3>La sua richiesta non verrà inserita.<h3><br>Si desidera procedere?");
-            //richiesta senza dati non salva
-            return Application.SaveRequest("IP")
+            var lang=Application.language.current;
+            var headerText= lang=="ITA" ? "Richiesta di Conferma" : "Confirm Request"
+            var contentText= lang=="ITA" ? "Attenzione: non ci sono modifiche ai dati. <br> <b>La sua richiesta non verrà inserita.</b><br><br>Si vuole procedere?":
+                                       "Warning: no changes in data. <br> <b>Your request will not be submitted.</b><br><br>Do you want to proceed?"
+                                       
+                                  
+
+
+            return this.showDialog(headerText,contentText,()=>{ Router.go("hosts")}, ()=>{});
+           
         }
       
         //check nome duplicato
@@ -667,10 +679,11 @@ export class IP extends Base{
             if(eHostFullName!=hostFullName)
             {
                 var duplicateName=await this.checkDuplicateName(hostFullName);
-
+                var lang=Application.language.current;
+                var errText=lang=="ITA" ? "Il nome inserito risulta già registrato." : "The name typed is already registered."
                 if(duplicateName)
                 {
-                    return this.setError(this.formdata['name'],"Il nome scelto risulta già registrato.")
+                    return this.setError(this.formdata['name'],errText)
                 }
             }
         }
@@ -689,13 +702,17 @@ export class IP extends Base{
                
                 if(duplicateMac)
                 {
+                    var lang=Application.language.current;
+                    var errText=lang=="ITA" ? "Il mac address inserito risulta già registrato." : "The MAC address typed is already registered."
+                    var question = lang=="ITA" ? "Si intende utilizzarlo comunque?" : "Do you want to use it anyway?"
+                    var headerText= lang=="ITA" ? "Richiesta di conferma" : "Confirm request"
                     //controlla che il macaddress inserito non sia uno di quelli dell'utente
                     //this.setError(this.$hostmac,"Il mac address risulta già registrato.")
                     var okCb=()=>{this.useMacBusy=true; this.handleSubmit()};
-                    var noCb=()=>{this.setError(this.formdata['mac'],"Il mac address risulta già registrato.")};
-                    var msg="<b>Il mac address inserito risulta già registrato</b>. <br><br> Si intende utilizzarlo?"
+                    var noCb=()=>{this.setError(this.formdata['mac'],errText)};
+                    var msg=`<b>${errText}</b>. <br><br>${question}`
                     //this.showDialog('<h3>Attenzione</h3>Il mac address risulta già registrato. Si intende utilizzarlo?')
-                    return this.showDialog('Richiesta conferma',msg,okCb,noCb)
+                    return this.showDialog(headerText,msg,okCb,noCb)
                 }
             }
 

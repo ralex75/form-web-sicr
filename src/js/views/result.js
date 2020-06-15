@@ -26,10 +26,14 @@ export class Result extends Base{
     {
        
         var content=""
+        var lang=Application.language.current;
         
         if(data)
         {
-            content=`<h4>La sua richiesta è stata inserita correttamente.</h4>A breve riceverà una mail di riepilogo con i dati inseriti.`
+            if(lang=="ITA")
+                content=`<h4>La sua richiesta è stata inserita.</h4>A breve riceverà una mail di riepilogo con i dati inseriti.`
+            else
+                content=`<h4>You request has been submitted.</h4>You will shortly receive a summary email with the data entered.`
 
             //o è aggiornamento o è un nuovo nodo
             var host=data.to || data.from;
@@ -42,9 +46,13 @@ export class Result extends Base{
             }
 
         }
+        /*
         else{
-          content=`<h4>Non ci sono state modifiche, la sua richiesta non è stata inserita.</h4>`
-        }
+            if(lang=="ITA")
+                content=`<h4>Non ci sono state modifiche, la sua richiesta non è stata inserita.</h4>`
+            else
+                content=`<h4>Non ci sono state modifiche, la sua richiesta non è stata inserita.</h4>`
+        }*/
     
         return content
     }

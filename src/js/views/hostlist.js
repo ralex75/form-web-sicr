@@ -1,15 +1,15 @@
 const template=`
-<input type="text" class="search" placeholder="ricerca" />
-<h3 id="feedback">Nessun risultato</h3>
+<input type="text" class="search" placeholder="[SEARCH]" />
+<h3 id="feedback"></h3>
 <table>
 <thead>
     <tr id="table_intest">
-        <td>Nome</td>
+        <td>[NAME]</td>
         <td>IP</td>
-        <td>Mac Address</td>
-        <td>Porta</td>
+        <td>[MAC]</td>
+        <td>[PORT]</td>
         <!--<td>Locazione</td>-->
-        <td><a href="#" data-edit='{"mac":"","action":"edit"}'>Aggiungi</a></td>
+        <td><a href="#" data-edit='{"mac":"","action":"edit"}'>[ADD]</a></td>
     </tr>
 </thead>
 <tbody id="tb-body">
@@ -43,6 +43,9 @@ const template=`
 import {Base,UI} from './base.js'
 import {Dialog} from '../components/dialog.js'
 import services from '../services.js'
+import {Router} from '../router.js'
+//import { isMoment } from 'moment'
+import {Application} from '../app.js'
 
 export class HostList extends Base{
 
@@ -80,12 +83,29 @@ export class HostList extends Base{
     }
 
     getContent(){
-        return template;
+       
+        var tpl=template;
+        var loc=this.locale();
+        for(var k in loc)
+        {
+            tpl=tpl.replace(`[${k.toUpperCase()}]`,loc[k]);
+        }
+        return tpl;
+       
+    }
+
+    localeIsEnglish(){
+        return Application.language.current=="ENG";
     }
 
     buildTableRows(list){
         
         this.$tbody.innerHTML="";
+
+        var eng=this.localeIsEnglish();
+
+        var editText= !eng ? "Modifica" : "Edit"
+        var delText= !eng ? "Elimina" : "Delete"
 
         list.forEach(h=>{
             var hostName='DHCP';
@@ -104,8 +124,8 @@ export class HostList extends Base{
                         <td>${h.mac}</td>
                         <td><a href="#" data-edit='{"mac":"${h.mac}","action":"view"}'>${h.port_alias}</a></td>
                         <td>
-                            <a href="#" data-edit='{"mac":"${h.mac}","action":"edit"}'>Modifica</a> 
-                            <a href="#" data-edit='{"mac":"${h.mac}","action":"del"}'>Elimina</a>
+                            <a href="#" data-edit='{"mac":"${h.mac}","action":"edit"}'>${editText}</a> 
+                            <a href="#" data-edit='{"mac":"${h.mac}","action":"del"}'>${delText}</a>
                         </td>
                         `
             this.$tbody.appendChild(tr);
@@ -126,7 +146,14 @@ export class HostList extends Base{
         })
     }
 
-    
+    locale(){
+        const loc={"ITA":{"name":"Nome","port":"Porta","mac":"Indirizzo MAC","add":"Aggiungi","search":"ricerca"},
+                "ENG":{"name":"Name","port":"Port","mac":"MAC Address","add":"Add","search":"search"},
+            }
+
+        return loc[Application.language.current];
+        
+    }
 
     editItemHanlder(args){
 
@@ -140,16 +167,20 @@ export class HostList extends Base{
 
         this.selectedHost=h;
 
+        var eng=this.localeIsEnglish();
+
         switch(action)
         {
             case 'edit':
-                UI.EmitChangeView('ip',{"eHost":h});
+                //UI.EmitChangeView('ip',{"eHost":h});
+                Router.go('ip',{"eHost":h})
             break;
             case 'del':
                 this.showDialog(
-                    'Richiesta di conferma',
-                    `
-                        Si desidera davvero inviare la richiesta di eliminare questo nodo?
+                    `${eng ? `Confirm request` : `Richiesta di conferma`}`,
+                    `${eng ? `Do you really want to submit the request to delete this node/host?` : 
+                             `Si desidera davvero inviare la richiesta di eliminare questo nodo?`}
+                        
                         <h4>${
                                h.config!='DHCP' ? h.name+"."+h.domain : 'DHCP - '+h.mac
                             }</h4>`,this.removeHost.bind(this),()=>{})
@@ -157,11 +188,14 @@ export class HostList extends Base{
             case 'view':
                 var title=`Locazione presa - ${h.port_alias}`
                 var {build,floor,room} = h.location;
+                var buildText=`${eng ? "Build" : "Edificio"}`
+                var floorText=`${eng ? "Floor" : "Piano"}`
+                var roomText=`${eng ? "Room" : "Stanza"}`
 
                 var msg=`<div class="grid">
-                         <div>Edificio:</div><div class="c2">${build}</div>
-                         <div>Piano:</div><div class="c2">${floor}</div>
-                         <div>Stanza:</div><div class="c2">${room}</div>
+                         <div>${buildText}:</div><div class="c2">${build}</div>
+                         <div>${floorText}:</div><div class="c2">${floor}</div>
+                         <div>${roomText}:</div><div class="c2">${room}</div>
                          </div>
                         `
                 this.showDialog(title,msg)

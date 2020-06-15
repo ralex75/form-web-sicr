@@ -7,8 +7,8 @@ const template=`
                 DIALOG
             </div>
             <div class="dlg-actions">
-                <a href="#" name="yes" data-value="true" class="yes"><span>&#10003;</span> Si</a>
-                <a href="#" name="no" data-value="false" class="no"><span>&#215;</span> No</a>
+                <a href="#" name="yes" data-value="true" class="yes"><span>&#10003;</span>[YES]</a>
+                <a href="#" name="no" data-value="false" class="no"><span>&#215;</span>No</a>
             </div>
         </div>
     </section>
@@ -119,6 +119,8 @@ const template=`
 </style>
 `
 import {Base} from '../views/base.js'
+import {Application} from '../app.js'
+
 export class Dialog extends Base{
    
     showYesButton(cb=null)
@@ -170,7 +172,11 @@ export class Dialog extends Base{
     }
 
     getContent(){
-        return template;
+        var tpl=template;
+        var lang=Application.language.current;
+        var yesText= lang=="ITA" ? "Si" : "Yes"
+        tpl=tpl.replace("\[YES\]",yesText)
+        return tpl;
     }
     
     init()
