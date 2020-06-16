@@ -209,7 +209,7 @@ export class IP extends Base{
                 if(value!=eValue)
                 {
                     //err="Il mac inserito appartiene ad un altro tuo nodo."
-                    err=`${loc["mac"].yourmac}.`;
+                    err=`${loc.yourmac}.`;
                 }
               
             }
@@ -231,15 +231,15 @@ export class IP extends Base{
     locale(){
 
         const loc= {"ITA":{"form":{"mac":"Indirizzo Mac","config":"Configurazione","name":"Nome","domain":"Dominio","send":"Invia","notes":"Note",
-                               "header-host":"IDENTIFICATIVO NODO","header-notes":"ULTERIORI INFORMAZIONI","goback":"Torna indietro",
+                               "header-host":"IDENTIFICATIVO NODO","header-notes":"ULTERIORI INFORMAZIONI","goback":"Torna Indietro",
                                "config-option-static":"STATICO","config-option-staticvm":"STATICO - Virtuale","config-option-dhcp":"DHCP"},
                         "errors":{"invalid":"Il campo non è valido","yourmac":"L'indirizzo MAC inserito appartiene ad un altro tuo nodo",
                                   "port-no-set":"Porta non selezionata","port-busy":"La porta selezionata risulta occupata.",
                                   "noFreePorts":"Non ci sono porte libere selezionabili"}},
                 "ENG":{"form":{"mac":"Mac Address","config":"Configuration","name":"Name","domain":"Domain","send":"Send","notes":"Notes",
-                                "header-host":"NODE IDENTIFIER","header-notes":"Additional Information","goback":"Go back",
+                                "header-host":"NODE IDENTIFIER","header-notes":"Additional Information","goback":"Go Back",
                                 "config-option-static":"STATIC","config-option-staticvm":"STATIC - Virtual","config-option-dhcp":"DHCP"},
-                        "errors":{"invalid":"Field is invalid","yourmac":"The MAC address you inserted belongs to another node of yours",
+                        "errors":{"invalid":"Field is invalid","yourmac":"The MAC address you typed belongs to another node of yours",
                                     "port-no-set":"Port not selected","port-busy":"Selected port is busy.",
                                     "noFreePorts":"No free ports"}}
             }
@@ -436,8 +436,14 @@ export class IP extends Base{
 
         var loc= this.locale();
 
-       
-        trg.querySelector("#goBack").style.display = window.location.hash=='#hosts' ? 'block' : 'none';
+        var goBack=trg.querySelector("#goBack");
+        goBack.style.display = window.location.hash=='#hosts' ? 'block' : 'none';
+        goBack.addEventListener('click',ev=>{
+         
+            ev.preventDefault();
+            Router.go("hosts")
+            
+        })
 
         this.$form=trg.querySelector("form");
 
@@ -518,8 +524,7 @@ export class IP extends Base{
         this.formdata['name'].addEventListener('change',ev=>{
             this.handleFieldError(this.formdata['name'],this.validateHostName());
         })
-        
-
+       
         //selezione porta
         this.$form.addEventListener("selectedPort",e=>{
             this.selectedPort=e.detail;

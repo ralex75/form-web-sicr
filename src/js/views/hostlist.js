@@ -186,7 +186,9 @@ export class HostList extends Base{
                             }</h4>`,this.removeHost.bind(this),()=>{})
             break;
             case 'view':
-                var title=`Locazione presa - ${h.port_alias}`
+
+                var title= eng ? "Port Location" : "Locazione presa"
+                title+= ` :  <b>${h.port_alias}</b>`
                 var {build,floor,room} = h.location;
                 var buildText=`${eng ? "Build" : "Edificio"}`
                 var floorText=`${eng ? "Floor" : "Piano"}`

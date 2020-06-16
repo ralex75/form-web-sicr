@@ -125,7 +125,7 @@ export class Requests extends Base{
 
     locale(){
         return {
-                "ITA":{"wifi":{"desc":"WIFI temporaneo","format":"DD/MM/YYYY HH:mm"},
+                "ITA":{"wifi":{"desc":"WIFI temporaneo","format":"DD/MM/YYYY"},
                         "ip":{"create":"Nuovo nodo","update":"Aggiornamento dati del nodo","delete":"Cancellazione nodo"},
                         "account":{"desc":"Creazione Account di Posta INFN"},
                         "form":{"search":"ricerca","filter":"visualizza","option-all":"Tutti","reqdate":"Data richiesta","reqdesc":"Descrizione"}},
@@ -205,7 +205,7 @@ export class Requests extends Base{
             
             var i={
               "id":item.id,
-              "reqdate":moment(item.req_date).format(DATE_FORMAT),
+              "reqdate":moment(item.req_date).format(loc.wifi.format+" HH:mm"),
               "desc": desc,
               "type":item.rtype
             }
