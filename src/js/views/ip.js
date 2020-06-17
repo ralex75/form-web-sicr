@@ -375,9 +375,11 @@ export class IP extends Base{
 
             console.log("Save")
 
-        var html=this.getReport(data.to);
+        var lang=Application.language.current;
 
-        this.showDialog("Richiesta di Conferma",html,()=>{
+        var html=this.getReport(lang,data.to);
+
+        this.showDialog(`${lang!='ITA' ? 'Confirmation Request' : 'Richiesta di Conferma'}`,html,()=>{
             console.log("Send Form:",data)
             Application.SaveRequest(Application.RequestTypes.IP,data);
             //UI.EmitSaveRequest('IP',data);
@@ -385,33 +387,41 @@ export class IP extends Base{
         //UI.EmitSaveRequest('IP',data);
     }
 
-    getReport(data)
+    getReport(lang,data)
     {
+        
+        
         var config={"STATIC":"Indirizzo IP fisso",
                     "STATICVM":"Indirizzo IP per macchina virtuale",
                     "DHCP":"Indirizzo IP dinamico"}
+        
+        if(lang!="ITA")
+        {
+            config["STATIC"]="Static IP address"
+            config["STATICVM"]="Static IP address for virtual machine"
+            config["DHCP"]="Dynamic IP address"
+        }
 
-        var html=`
-                    <div class="grid">
-                    <div>Configurazione:</div><div class="c2">${config[data.config]}</div>
-                    <div>Mac Address:</div><div class="c2">${data.mac}</div>`
+        var html=`  <div class="grid">
+                    <div>${lang!='ITA' ? 'Configuration':'Configurazione'}:</div><div class="c2">${config[data.config]}</div>
+                    <div>${lang!='ITA' ? 'MAC Address' :'Indirizzo MAC'}:</div><div class="c2">${data.mac}</div>`
         
                    
         if(data.config!='DHCP')
-          html+=`<div>Nome:</div><div class="c2">${data.name}.${data.domain}</div>`
+          html+=`<div>${lang!='ITA' ? 'Name' : 'Nome'}:</div><div class="c2">${data.name}.${data.domain}</div>`
                     
                     
                    
-        html+=`<div>Porta:</div><div class="c2">${data.port}</div>`
+        html+=`<div>${lang!='ITA' ? 'Port' : 'Porta'}:</div><div class="c2">${data.port}</div>`
         
         if(data.notes)
         {
-            html+=`<div>Note:</div><div class="c2">${data.notes.slice(0,100)+"..."}</div>`
+            html+=`<div>${lang!='ITA' ? 'Notes' : 'Note'}:</div><div class="c2">${data.notes.slice(0,100)+"..."}</div>`
         }
 
-        html+=`</div>`
+        html+="</div>"
         
-        html+="<h4>Si vuole procedere con l'invio della richiesta?</h4>"
+        html+=`<h4>${lang!='ITA' ? "Do you want submit the request?" : "Si vuole procedere con l'invio della richiesta?"}</h4>`
 
         return html
     }
