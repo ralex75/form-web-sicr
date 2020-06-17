@@ -48,18 +48,9 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         //inizializza app
         Application.Init(user);
 
-        Application.language.current="ENG";
-
        
         Router.go("profile");
 
-        //debugger;
-        /*if(window.location.hash!='#profile')
-        {
-            window.location.hash='#profile';
-        }
-        else
-            Router.go("Profile");*/
 
     }
     catch(exc)

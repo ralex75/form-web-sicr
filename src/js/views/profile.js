@@ -9,6 +9,12 @@ var template=`
         margin:10px 0;
     }
 
+    .prof-feedback{
+        text-align:justify;
+        width:80%;
+        font-size:16px;
+    }
+
     .error u{
         color:red;
     }
@@ -34,31 +40,60 @@ export class Profile extends Base{
         return value ? value : "--"
     }
 
+    currentUser()
+    {
+        return window.Application.user;
+    }
+
     locale(){
+
+        var user=this.currentUser();
+
+        var disciText_ita="Le linee guida della politica IT INFN (Disciplinare) non sono state ancora accettate."
+        var disciText_eng="The INFN IT policy guidelines (Disciplinare) has not yet been accepted."
+        var unauth_ita=`Gentile ${user.name} ${user.surname}, la sua identità risulta correttamente registrata nel sistema informativo centrale, 
+                        ma la sua utenza non è stata ancora associata alla sede di Roma.<br>
+                        Se lei è membro registrato e attivo del dipartimento e la registrazione della sua identità è stata 
+                        effettuata meno di 6h fa la preghiamo di attendere e riprovare in seguito, 
+                        la sua utenza verrà associata a breve.<br>In caso contrario è pregato di contattare 
+                        il supporto di Roma all'indirizzo supporto@roma1.infn.it.`
+        
+        var unauth_eng=`Dear ${user.name} ${user.surname}, your identity is correctly registered in the central IT systems, 
+                        but your user is not yet  associated to the site of Roma.<br> 
+                        If you are a registered and active member of the Department of Physics and your identity 
+                        has been registered less than 6h ago, please wait and try again later, 
+                        your user will be associated shortly.<br> 
+                        In all other cases please contact the Roma support via email at supporto@roma1.infn.it.`
+
         return {"ITA":{"email":"E-mail","phone":"Telefono","role":"Ruolo","exp":"Scadenza",
-                        "unauthorized":`<div><b>Attenzione</b>, il suo stato risulta: <b class="error"><u>NON AUTORIZZATO</u>.</b></div>`,
-                        "disciplinare":`<div><b>Attenzione<b>, <b class="error"><u>il disciplinare non è stato ancora accettato</u>.</b></div>`},
+                        "unauthorized":`<p class="prof-feedback">${unauth_ita}</p>`,
+                        "disciplinare":`<p class="prof-feedback">${disciText_ita}</p>`},
                 "ENG":{"email":"E-mail","phone":"Phone","role":"Role","exp":"Expiration",
-                        "unauthorized":`<div><b>Warning</b>, your status is: <b class="error"><u>Unauthorized</u>.</b></div>`,
-                        "disciplinare":`<div><b>Warning<b>, <b class="error"><u>il disciplinare non è stato ancora accettato</u>.</b></div>`}
+                        "unauthorized":`<p class="prof-feedback">${unauth_eng}</p>`,
+                        "disciplinare":`<p class="prof-feedback">${disciText_eng}</p>`}
             }
     }
 
     async fillUserData(){
 
       
-        var user=window.Application.user;
+        var user=this.currentUser();
 
        
         var resp=await services.requests.list(false,Application.RequestTypes.ACCOUNT);
 
         let requests=resp.data;
+
+        
         
         //let user = this.args || await services.user.read();
         var content="";
 
         var loc=this.locale()[Application.language.current];
 
+        //console.log(user);
+
+        //user.isAuthorized=false;
       
         content = !user.isAuthorized ? `${loc['unauthorized']}`
                                      : !user.disciplinare ? `${loc["disciplinare"]}` 

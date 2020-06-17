@@ -177,7 +177,7 @@ export class HostList extends Base{
             break;
             case 'del':
                 this.showDialog(
-                    `${eng ? `Confirm request` : `Richiesta di conferma`}`,
+                    `${eng ? `Confirmation request` : `Richiesta di conferma`}`,
                     `${eng ? `Do you really want to submit the request to delete this node/host?` : 
                              `Si desidera davvero inviare la richiesta di eliminare questo nodo?`}
                         
@@ -190,7 +190,7 @@ export class HostList extends Base{
                 var title= eng ? "Port Location" : "Locazione presa"
                 title+= ` :  <b>${h.port_alias}</b>`
                 var {build,floor,room} = h.location;
-                var buildText=`${eng ? "Build" : "Edificio"}`
+                var buildText=`${eng ? "Building" : "Edificio"}`
                 var floorText=`${eng ? "Floor" : "Piano"}`
                 var roomText=`${eng ? "Room" : "Stanza"}`
 

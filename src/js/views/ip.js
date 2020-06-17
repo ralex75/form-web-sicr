@@ -662,7 +662,7 @@ export class IP extends Base{
           
 
             var lang=Application.language.current;
-            var headerText= lang=="ITA" ? "Richiesta di Conferma" : "Confirm Request"
+            var headerText= lang=="ITA" ? "Richiesta di Conferma" : "Confirmation Request"
             var contentText= lang=="ITA" ? "Attenzione: non ci sono modifiche ai dati. <br> <b>La sua richiesta non verrà inserita.</b><br><br>Si vuole procedere?":
                                        "Warning: no changes in data. <br> <b>Your request will not be submitted.</b><br><br>Do you want to proceed?"
                                        
@@ -710,7 +710,7 @@ export class IP extends Base{
                     var lang=Application.language.current;
                     var errText=lang=="ITA" ? "Il mac address inserito risulta già registrato." : "The MAC address typed is already registered."
                     var question = lang=="ITA" ? "Si intende utilizzarlo comunque?" : "Do you want to use it anyway?"
-                    var headerText= lang=="ITA" ? "Richiesta di conferma" : "Confirm request"
+                    var headerText= lang=="ITA" ? "Richiesta di conferma" : "Confirmation request"
                     //controlla che il macaddress inserito non sia uno di quelli dell'utente
                     //this.setError(this.$hostmac,"Il mac address risulta già registrato.")
                     var okCb=()=>{this.useMacBusy=true; this.handleSubmit()};

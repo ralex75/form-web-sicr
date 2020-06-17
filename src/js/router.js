@@ -8,12 +8,11 @@ import {IP} from './views/ip.js'
 import {WIFI} from './views/wifi.js'
 
 
-let lastValidRoute={"view":"","args":""};
+let lastValidRoute={"view":"profile","args":""};
 
 const go=(view,args)=>{
     
-        //if(lastValidRoute.toLowerCase()==view.toLowerCase()) return; 
-
+       
         var target=document.querySelector("#colonne_content")
        
         target.classList.remove("fade-in");
@@ -53,7 +52,7 @@ const go=(view,args)=>{
                 }
             break;
             default:
-                view=lastValidRoute ? lastValidRoute : "profile";
+                view=lastValidRoute.view ? lastValidRoute.view : "profile";
                 return window.location.hash=`#${view}`;
                 
         }

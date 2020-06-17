@@ -39,10 +39,17 @@ export class Result extends Base{
             var host=data.to || data.from;
             if(host.useMacBusy)
             {
-                content+=`<br><br><h4>Come gia' segnalato nel form di richiesta:</h4>
-                          il mac address selezionato ${ host.mac } è già in uso.
-                          <h4><u>Seguira' pertanto comunicazione del Servizio Impianti Calcolo e Reti</u></h4>
-                          `
+                if(lang=="ITA")
+
+                    content+=`<br><br><h4>Come gia' segnalato nel form di richiesta:</h4>
+                            il mac address selezionato ${ host.mac } è già in uso.
+                            <h4><u>Seguira' pertanto comunicazione del Servizio Impianti Calcolo e Reti</u></h4>
+                            `
+                else
+                    content+=`<br><br><h4>Come gia' segnalato nel form di richiesta:</h4>
+                              il mac address selezionato ${ host.mac } è già in uso.
+                                <h4><u>Seguira' pertanto comunicazione del Servizio Impianti Calcolo e Reti</u></h4>
+                            `
             }
 
         }

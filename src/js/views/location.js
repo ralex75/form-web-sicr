@@ -102,6 +102,13 @@ export class Location extends Base {
         await this.getPorts();
         this.$ports.value=this.args.port;
         this.$ports.dispatchEvent(new Event('change'))
+
+        //quando cambia la configurazione del nodo resettiamo la lista porte;
+        document.addEventListener("ConfigChanged", ev=>{
+            console.log("ConfigChanged");
+            this.$ports.value="";
+            this.$ports.dispatchEvent(new Event('change'))
+        })
     }
 
     getPortRef(){
@@ -113,9 +120,9 @@ export class Location extends Base {
         return {"ITA":{"template":{"build":"Edificio","floor":"Piano","room":"Stanza","port":"Porta",
                                "header-port":"LOCAZIONE PRESA"},
                                "options":{"build":"Seleziona Edificio","floor":"Seleziona Piano","room":"Seleziona Stanza","port":"Seleziona Porta"}},
-                "ENG":{"template":{"build":"Build","floor":"Floor","room":"Room","port":"Port",
+                "ENG":{"template":{"build":"Building","floor":"Floor","room":"Room","port":"Port",
                                 "header-port":"PORT LOCATION"},
-                                "options":{"build":"Select Build","floor":"Select Floor","room":"Select Room","port":"Select Port"}},
+                                "options":{"build":"Select Building","floor":"Select Floor","room":"Select Room","port":"Select Port"}},
             }
     }
 
