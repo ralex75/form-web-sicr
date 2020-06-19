@@ -5,6 +5,7 @@ const template=`
         <label for="selreqtypes">[filter]:</label>&nbsp;
         <select id="selreqtypes">
             <option selected value="ANY">[option-all]</option>
+            <option  value="ACCOUNT">ACCOUNT</option>
             <option  value="IP">IP</option>
             <option value="WIFI">WIFI</option>
         </select>

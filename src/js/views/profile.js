@@ -91,9 +91,7 @@ export class Profile extends Base{
 
         var loc=this.locale()[Application.language.current];
 
-        console.log(user);
-
-        //user.isAuthorized=false;
+    
        
         content = !user.isAuthorized ? `${loc['unauthorized']}`
                                      : !user.disciplinare ? `${loc["disciplinare"]}` 
@@ -110,7 +108,7 @@ export class Profile extends Base{
         <p>Username</p>
         </div>
         <div class="prof_val">
-        <p class="username">${user.uid || '--'}</p>
+        <p class="username">${user.uid}</p>
         </div>
         <div class="prof_lab">
         <p>${loc["email"]}</p>
