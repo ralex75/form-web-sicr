@@ -1,6 +1,6 @@
 const template=`
 <div id="dialogPlaceHolder"></div>
-<a href="#hostlist" id="goBack" style="text-decoration:underline;">[GOBACK]</a>
+<a href="#hostlist"  id="goBack" style="text-decoration:underline;">[GOBACK]</a>
 <form>
 				<div class="form_sez">
 					<div class="form_intest">
@@ -62,6 +62,7 @@ const template=`
 </form>  
 
 <style scoped>
+
 .form_pied{
     padding:1px;
 }
@@ -249,8 +250,9 @@ export class IP extends Base{
 
 
     //validazione di base
-    validateFields()
+    async validateFields()
     {
+        
         //recupera messaggi di errore nella lingua corrente
         var loc=this.locale().errors
         //inizializza tutti i campi errore
@@ -270,6 +272,10 @@ export class IP extends Base{
         {
             err = this.validateHostName();
             this.handleFieldError(this.formdata['name'],err);
+            if(!err)
+            {
+                await this.handleFieldError(this.formdata['name'],await this.validateDuplicatedHostName());
+            }
         }
         else{
             this.reset(this.formdata['name']);
@@ -294,6 +300,9 @@ export class IP extends Base{
             if(isBusy)
             {
                 this.setError(this.formdata['port'],loc['port-busy'])
+            }
+            else{
+                this.setSuccess(this.formdata['port'])
             }
 
         }
@@ -462,7 +471,7 @@ export class IP extends Base{
         var loc= this.locale();
 
         var goBack=trg.querySelector("#goBack");
-        goBack.style.display = window.location.hash=='#hosts' ? 'block' : 'none';
+        goBack.style.display = window.location.hash=='#hosts' ? 'inline-block' : 'none';
         goBack.addEventListener('click',ev=>{
          
             ev.preventDefault();
@@ -480,32 +489,31 @@ export class IP extends Base{
 
         })
 
-        let timeOutCheck=null;
+        
 
-        /*
-        trg.querySelector('input[name="name"]').addEventListener('change',function(ev){
-            if(!this.formdata["name"].value) return;
-            clearTimeout(timeOutCheck)
+        
+        trg.querySelector('input[name="name"]').addEventListener('change', async function(ev){
+            
+            this.handleFieldError(this.formdata['name'],this.validateHostName());
+            if(!this.formdata["name"].value || this.getError(this.formdata["name"])==this.locale().invalid) return;
+            /*clearTimeout(this.timeOutCheck)
             this.setError(this.formdata["name"],"Sto verificando...")
-            timeOutCheck=setTimeout(()=>{
-                this.reset(this.formdata["name"])
-                this.checkDuplicateHostName();
-            },2000)
-           
+            this.timeOutCheck=setTimeout(async ()=>{
+                this.handleFieldError(this.formdata['name'],await this.validateDuplicatedHostName());
+            },2000)*/
+           //debugger;
+            this.reset(this.formdata["name"])
+            this.handleFieldError(this.formdata['name'],await this.validateDuplicatedHostName());
         }.bind(this))
 
-        trg.querySelector('select[name="domain"]').addEventListener('change',function(ev){
+        
+        trg.querySelector('select[name="domain"]').addEventListener('change',async function(ev){
 
-            if(!this.formdata["name"].value) return;
-            clearTimeout(timeOutCheck)
+            if(!this.formdata["name"].value || this.getError(this.formdata["name"])==this.locale().invalid) return;
+            this.reset(this.formdata["name"])
+            this.handleFieldError(this.formdata['name'],await this.validateDuplicatedHostName());
            
-            this.setError(this.formdata["name"],"Sto verificando...")
-            timeOutCheck=setTimeout(()=>{
-                this.reset(this.formdata["name"])
-                this.checkDuplicateHostName();
-            },2000)
-           
-        }.bind(this))*/
+        }.bind(this))
        
         
         //il nodo di edit se si tratta di modifica
@@ -587,9 +595,9 @@ export class IP extends Base{
         })
 
          //cambia nome 
-        this.formdata['name'].addEventListener('change',function(ev){
+        /*this.formdata['name'].addEventListener('change',function(ev){
             
-            this.handleFieldError(this.formdata['name'],this.validateHostName());
+            await this.validateDuplicateHostName()
             
             var err=this.getError(this.formdata['name']);
 
@@ -599,13 +607,13 @@ export class IP extends Base{
             this.setError(this.formdata["name"],"Sto verificando...")
             timeOutCheck=setTimeout(()=>{
                 this.reset(this.formdata["name"])
-                this.checkDuplicateHostName();
+                this.handleFieldError(this.formdata['name'],this.validateHostName());
             },10000)
            
         
-        }.bind(this))
+        }.bind(this))*/
 
-        trg.querySelector('select[name="domain"]').addEventListener('change',function(ev){
+        /*trg.querySelector('select[name="domain"]').addEventListener('change',function(ev){
 
             if(!this.formdata["name"].value) return;
             clearTimeout(timeOutCheck)
@@ -621,7 +629,7 @@ export class IP extends Base{
                 this.checkDuplicateHostName();
             },2000)
 
-        }.bind(this))
+        }.bind(this))*/
        
         //selezione porta
         this.$form.addEventListener("selectedPort",e=>{
@@ -743,10 +751,14 @@ export class IP extends Base{
         return isChanged;
     }
 
-    async checkDuplicateHostName()
+
+    async validateDuplicatedHostName()
     {
-       
-        if(!this.formdata['name'].value) return;
+       console.log("Chiamata")
+        
+        var err=""
+        
+        if(!this.formdata['name'].value) return err;
 
         var hostFullName=`${this.formdata['name'].value}.${this.formdata['domain'].value}`;
 
@@ -757,29 +769,28 @@ export class IP extends Base{
         {
             var duplicateName=await this.checkDuplicateName(hostFullName);
             var lang=Application.language.current;
-            var errText=lang=="ITA" ? "Il nome inserito risulta già registrato." : "The name typed is already registered."
             if(duplicateName)
             {
-                return this.setError(this.formdata['name'],errText)
+                err= (lang=="ITA") ? "Il nome inserito risulta già registrato." : "The name typed is already registered."
             }
-            else{
-                return this.setSuccess(this.formdata['name'])
-            }
+            
         }
+
+        return err;
         
     }
 
+    //*********** Submit Form ****************/
     async handleSubmit(){
         
         //validazione primo livello, campi vuoti o non corretti
-        var validFields=this.validateFields();
+        var validFields=await this.validateFields();
 
-       
+      
         if(!validFields) return;
 
         //controllo se dati sono cambiati 
         var _dataIsChanged=this.dataIsChanged();
-
 
         
         //Mostrare la dialog ?
@@ -799,25 +810,15 @@ export class IP extends Base{
         }
       
         //check nome duplicato
-        if(!this.modeIsDHCP())
+        
+        /*if(!this.modeIsDHCP())
         {
-            var hostFullName=`${this.formdata['name'].value}.${this.formdata['domain'].value}`;
+            var err=await this.validateDuplicatedHostName()
+            this.handleFieldError(this.formdata['name'],err)
+            if(err!="") return;
+        }*/
 
-            var eHostFullName= this.eHost ? `${this.eHost.name}.${this.eHost.domain}` : "";
-
-            //nome del nodo è diverso da quello di edit
-            if(eHostFullName!=hostFullName)
-            {
-                var duplicateName=await this.checkDuplicateName(hostFullName);
-                var lang=Application.language.current;
-                var errText=lang=="ITA" ? "Il nome inserito risulta già registrato." : "The name typed is already registered."
-                if(duplicateName)
-                {
-                    return this.setError(this.formdata['name'],errText)
-                }
-            }
-        }
-
+       
         var duplicateMac=false;
 
         if(!this.useMacBusy)

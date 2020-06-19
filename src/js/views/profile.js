@@ -91,10 +91,10 @@ export class Profile extends Base{
 
         var loc=this.locale()[Application.language.current];
 
-        //console.log(user);
+        console.log(user);
 
         //user.isAuthorized=false;
-      
+       
         content = !user.isAuthorized ? `${loc['unauthorized']}`
                                      : !user.disciplinare ? `${loc["disciplinare"]}` 
                                      : ""
@@ -144,15 +144,15 @@ export class Profile extends Base{
            
             if(req)
             {
+                
+            
                
                 diff=moment(moment().format('YYYY-MM-DD')).diff(moment(req.req_date).format("YYYY-MM-DD"),'days')
                 console.log("Date Diff:",diff);
-
-            }
-
-            if(diff<9)
-            {
-                link="Richiesta inviata, account di Posta in lavorazione..."
+                if(diff<9)
+                {
+                    link="Richiesta inviata, account di Posta in lavorazione..."
+                }
             }
             else
             {
