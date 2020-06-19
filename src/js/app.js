@@ -30,7 +30,7 @@ const showHide=()=>{
     var routes=document.querySelector("#routes");
     if(routes)
     {
-        routes.style.display = Application.UserIsValid() ? 'block' : 'none'
+        routes.style.display = UserIsValid() ? 'block' : 'none'
     }
 }
 
@@ -96,7 +96,6 @@ const language={
 
 const Application={
     Init,
-    UserIsValid,
     SaveRequest,
     EmitEvent,
     RequestTypes,

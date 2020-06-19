@@ -43,7 +43,7 @@ export class NavMenu extends Base {
     {
        
         this.target.querySelectorAll('a.navi').forEach(el=>{
-        
+          
             el.className= window.location.hash.indexOf(el.hash)>-1 ? 'navi selected' : 'navi';
 
         })

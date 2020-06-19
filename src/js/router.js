@@ -13,6 +13,8 @@ let lastValidRoute={"view":"profile","args":""};
 const go=(view,args)=>{
     
        
+
+       
         var target=document.querySelector("#colonne_content")
        
         target.classList.remove("fade-in");

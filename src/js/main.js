@@ -31,7 +31,6 @@ const handleError=(err)=>{
 }
 
 window.addEventListener('hashchange', ev=>{
-   
     var view=window.location.hash.substr(1);
     Router.go(view);
 })
@@ -45,12 +44,17 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         //legge informazioni utente
         var user=await services.user.read();
  
+        if(!window.location.hash)
+        {
+            //setta #profile nell'url senza fare reolad della pagina
+            window.history.pushState("","","#profile")
+        }
+       
         //inizializza app
         Application.Init(user);
 
-       
+        //vai alla view profile
         Router.go("profile");
-
 
     }
     catch(exc)
