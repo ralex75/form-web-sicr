@@ -9,7 +9,7 @@ const template=`
 				 	<div class="form_riga">
 						<div class="form_col">
 						  <label for="mac">[MAC]</label><br>
-                          <input type="text" name="mac" data-attr="formdata" autocomplete="off" maxlength="17"  placeholder="mac address">
+                          <input type="text" name="mac" data-attr="formdata" autocomplete="off" maxlength="17"  placeholder="[MAC]">
                           <small>Error Message</small>		
 						</div>
 						<div class="form_col">
@@ -25,7 +25,7 @@ const template=`
 					<div class="form_riga">
 						<div class="form_col">
 						  <label for="name">[NAME]</label><br>
-                          <input type="text" name="name" data-attr="formdata" autocomplete="off" placeholder="nome">
+                          <input type="text" name="name" data-attr="formdata" autocomplete="off" placeholder="[NAME]">
                           <small>Error Message</small>
 						</div>
 						<div class="form_col">
@@ -158,7 +158,7 @@ export class IP extends Base{
         var loc=this.locale();
         for(var k in loc.form)
         {
-            tpl=tpl.replace(`[${k.toUpperCase()}]`,loc.form[k]);
+            tpl=tpl.replace(new RegExp("\\["+`${k.toUpperCase()}`+"\\]","g"),loc.form[k]);
         }
         return tpl;
     }

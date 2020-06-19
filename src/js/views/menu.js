@@ -93,7 +93,9 @@ export class NavMenu extends Base {
                             <div class="flag eng" tooltip="eng" data-lang="ENG"></div>
                         </div>
                         <p><span class=\"divisione_title\">Account e Rete</span></p>
+                        <div id="routes">
                         ${tpl}
+                        </div>
                      </div>
                      <style scoped>
                         a.navi.selected{

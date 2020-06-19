@@ -16,15 +16,26 @@ const Init=(user)=>{
        document.addEventListener("languageChanged",ev=>{
                 buildMenu();
        })
+
+       document.addEventListener("showHideMenu",ev=>{
+         buildMenu();
+       })
     
-       buildMenu();
+       //buildMenu();
 }
 
 const buildMenu=()=>{
     
     var menu=document.querySelector("#col_sin_menu")
+   
+    var routes=menu.querySelector("#routes");
+    if(routes){
+        routes.innerHTML=""
+    }
+    if(Application.UserIsValid())
+    {
         menu=new NavMenu(menu);
-
+    }
     /*
     var user=window.Application.user;
 
@@ -36,6 +47,12 @@ const buildMenu=()=>{
     
     }*/
    
+}
+
+const UserIsValid=()=>{
+    
+    var user=window.Application.user
+    return user.isAuthorized && user.disciplinare;
 }
 
 const EmitEvent=(name,args=null,bubbles=true)=>{
@@ -87,6 +104,7 @@ const language={
 
 const Application={
     Init,
+    UserIsValid,
     SaveRequest,
     EmitEvent,
     RequestTypes,

@@ -1,5 +1,7 @@
 var template=`
-
+    <input type="button" id="auth" value="Set/Unset Authorization" />
+    <input type="button" id="disci" value="Set/Unset Disciplinare" />
+    <input type="button" id="ca" value="Show/Hide Create Account" />
     <div id="udata"></div>
 
     <style scoped>
@@ -31,9 +33,28 @@ export class Profile extends Base{
     
     init()
     {
+       this.disci=true;
+       this.auth=true;
+       this.createAcc=false;
       
+       this.target.querySelector("#auth").addEventListener('click',ev=>{
+          this.auth=!this.auth 
+          this.disci=true;
+          this.fillUserData()
+       }) 
+       this.target.querySelector("#disci").addEventListener('click',ev=>{
+        this.disci=!this.disci 
+        this.auth=true;
+        this.fillUserData()
+     }) 
+     this.target.querySelector("#ca").addEventListener('click',ev=>{
+        this.disci=true; 
+        this.auth=true;
+        this.createAcc=!this.createAcc;
+        this.fillUserData()
+     }) 
        this.fillUserData()
-
+       
     }
 
     emptyOrDefault(value){
@@ -79,11 +100,12 @@ export class Profile extends Base{
       
         var user=this.currentUser();
 
-       
         var resp=await services.requests.list(false,Application.RequestTypes.ACCOUNT);
 
         let requests=resp.data;
 
+        user.isAuthorized=this.auth;
+        user.disciplinare=this.disci;
         
         
         //let user = this.args || await services.user.read();
@@ -91,13 +113,13 @@ export class Profile extends Base{
 
         var loc=this.locale()[Application.language.current];
 
-    
        
         content = !user.isAuthorized ? `${loc['unauthorized']}`
                                      : !user.disciplinare ? `${loc["disciplinare"]}` 
                                      : ""
 
         
+        Application.EmitEvent("showHideMenu")
 
         var html=`<div class="prof_intest" >
         <p>${user.name} ${user.surname}</p>
@@ -114,7 +136,7 @@ export class Profile extends Base{
         <p>${loc["email"]}</p>
         </div>
         <div class="prof_val">
-        <p class="email">${user.email}</p>
+        <p class="email">${user.email || "--"}</p>
         </div>
         <div class="prof_lab">
         <p>${loc["phone"]}</p>
@@ -139,7 +161,9 @@ export class Profile extends Base{
        
         this.target.querySelector("#udata").innerHTML=html;
         
-        if(!user.email || user.email.indexOf("@roma1.infn.it")<0)
+
+        
+        if(!user.email || user.email.indexOf("@roma1.infn.it")<0 || this.createAcc)
         {
             var req=requests[0];
             var diff=3;
@@ -160,6 +184,12 @@ export class Profile extends Base{
                 link=`<input type="button" value="Richiedi Creazione Account di Posta" />`
             }
 
+            if(this.createAcc && !link)
+            {
+                link=`<input type="button" value="Richiedi Creazione Account di Posta" />`
+            }
+
+           
             this.target.querySelector(".email").innerHTML=link;
 
             let ctrl=this.target.querySelector(".email input")
