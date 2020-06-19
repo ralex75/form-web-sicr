@@ -144,8 +144,6 @@ export class Profile extends Base{
            
             if(req)
             {
-                
-            
                
                 diff=moment(moment().format('YYYY-MM-DD')).diff(moment(req.req_date).format("YYYY-MM-DD"),'days')
                 console.log("Date Diff:",diff);
