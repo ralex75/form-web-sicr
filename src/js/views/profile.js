@@ -106,7 +106,12 @@ export class Profile extends Base{
         
         ${content}
         </div>
-       
+        <div class="prof_lab">
+        <p>Username</p>
+        </div>
+        <div class="prof_val">
+        <p class="username">${user.uid || '--'}</p>
+        </div>
         <div class="prof_lab">
         <p>${loc["email"]}</p>
         </div>

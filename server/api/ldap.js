@@ -31,7 +31,7 @@ const getUserLDAP=async function(query){
 
                         filter:query,
                         scope: 'sub',
-                        attributes: ['infnUUID','schacpersonaluniqueid', 'givenname', 'sn', 'mail', 'schacUserStatus','mailAlternateAddress','isMemberOf','telephoneNumber'],
+                        attributes: ['infnUUID','uid','schacpersonaluniqueid', 'givenname', 'sn', 'mail', 'schacUserStatus','mailAlternateAddress','isMemberOf','telephoneNumber'],
                         paged:{pageSize:500},
                         timeLimit: 2000, // 10 minutes in seconds or limit of your choice
 
@@ -53,6 +53,7 @@ const getUserLDAP=async function(query){
                                 var schac=ejson.schacpersonaluniqueid;
                                 schac= Array.isArray(schac) ? schac[schac.length-1] : schac;
                                
+                                usr.uid=ejson.uid || 'ciccio';
                                 usr.uuid=ejson.infnUUID;
                                 usr.cf=ejson.infnUUID;
                                 usr.isMemberOf=ejson.isMemberOf;

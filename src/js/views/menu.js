@@ -51,8 +51,8 @@ export class NavMenu extends Base {
     }
 
     locale(){
-        return {"ITA":{"profile":"Il mio profilo","requests":"Richieste inviate","ip":"Aggiungi Nodo","hosts":"I miei nodi","wifi":"Wifi temporaneo"},
-                "ENG":{"profile":"My Profile","requests":"My Requests","ip":"Add Host","hosts":"My hosts","wifi":"Temporary WIFI"}
+        return {"ITA":{"profile":"Il mio profilo","requests":"Richieste inviate","ip":"Richiesta indirizzo IP","hosts":"I miei nodi","wifi":"Richiesta WIFI temporaneo"},
+                "ENG":{"profile":"My Profile","requests":"My Requests","ip":"IP address request","hosts":"My hosts","wifi":"Temporary WIFI request"}
                 }
     }
    
@@ -65,8 +65,8 @@ export class NavMenu extends Base {
 
             {"text":`${loc["profile"]}`,"view":"profile"},
             {"text":`${loc["requests"]}`,'view':'requests'},
-            {"text":`${loc["ip"]}`,'view':'ip'},
             {"text":`${loc["hosts"]}`,'view':'hosts'},
+            {"text":`${loc["ip"]}`,'view':'ip'},
             {"text":`${loc["wifi"]}`,'view':'wifi'}
         ]
 
