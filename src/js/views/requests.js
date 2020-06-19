@@ -100,7 +100,7 @@ export class Requests extends Base{
             this.timeoutid=setTimeout(()=>{
             var items=this.items.filter(e=>{return Object.values(e).join().toLowerCase().indexOf(ev.target.value.toLowerCase())>-1})
             this.buildRows(items);
-            },200)
+            },0)
         })
 
         this.$types.addEventListener('change',ev=>{
