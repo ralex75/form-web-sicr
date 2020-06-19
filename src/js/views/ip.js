@@ -235,18 +235,20 @@ export class IP extends Base{
                                "config-option-static":"STATICO","config-option-staticvm":"STATICO - Virtuale","config-option-dhcp":"DHCP"},
                         "errors":{"invalid":"Il campo non è valido","yourmac":"L'indirizzo MAC inserito appartiene ad un altro tuo nodo",
                                   "port-no-set":"Porta non selezionata","port-busy":"La porta selezionata risulta occupata.",
-                                  "noFreePorts":"Non ci sono porte libere selezionabili"}},
+                                  "no-free-ports":"Non ci sono porte libere selezionabili"}},
                 "ENG":{"form":{"mac":"Mac Address","config":"Configuration","name":"Name","domain":"Domain","send":"Send","notes":"Notes",
                                 "header-host":"NODE IDENTIFIER","header-notes":"Additional Information","goback":"Go Back",
                                 "config-option-static":"STATIC","config-option-staticvm":"STATIC - Virtual","config-option-dhcp":"DHCP"},
                         "errors":{"invalid":"Field is invalid","yourmac":"The MAC address you typed belongs to another node of yours",
                                     "port-no-set":"Port not selected","port-busy":"Selected port is busy.",
-                                    "noFreePorts":"No free ports"}}
+                                    "no-free-ports":"No free ports"}}
             }
 
         return loc[Application.language.current];
     }
 
+
+    //validazione di base
     validateFields()
     {
         //recupera messaggi di errore nella lingua corrente
@@ -277,7 +279,12 @@ export class IP extends Base{
         //errore porta non selezionata
         if(!this.selectedPort)
         {
-            this.setError(this.formdata['port'],loc["port-no-set"])
+            var err=loc["port-no-set"];
+            if(this.freePorts!=undefined && !this.freePorts)
+            {
+                err=loc["no-free-ports"];
+            }
+            this.setError(this.formdata['port'],err)
         }
         else
         {
@@ -320,15 +327,23 @@ export class IP extends Base{
 
     setError(input,msg)
     {
+      
        var parent= input.parentElement;
        const small=parent.querySelector("small")
        small.innerText=msg;
        parent.className='form_col error';
     }
 
+    getError(input)
+    {
+       var parent= input.parentElement;
+       const small=parent.querySelector("small")
+       return small.innerText;
+    }
+
     reset(input)
     {
-      
+     
        var parent= input.parentElement;
        const small=parent.querySelector("small")
        small.innerText="";
@@ -373,7 +388,7 @@ export class IP extends Base{
                 action:action
             }
 
-            console.log("Save")
+           
 
         var lang=Application.language.current;
 
@@ -465,6 +480,32 @@ export class IP extends Base{
 
         })
 
+        let timeOutCheck=null;
+
+        /*
+        trg.querySelector('input[name="name"]').addEventListener('change',function(ev){
+            if(!this.formdata["name"].value) return;
+            clearTimeout(timeOutCheck)
+            this.setError(this.formdata["name"],"Sto verificando...")
+            timeOutCheck=setTimeout(()=>{
+                this.reset(this.formdata["name"])
+                this.checkDuplicateHostName();
+            },2000)
+           
+        }.bind(this))
+
+        trg.querySelector('select[name="domain"]').addEventListener('change',function(ev){
+
+            if(!this.formdata["name"].value) return;
+            clearTimeout(timeOutCheck)
+           
+            this.setError(this.formdata["name"],"Sto verificando...")
+            timeOutCheck=setTimeout(()=>{
+                this.reset(this.formdata["name"])
+                this.checkDuplicateHostName();
+            },2000)
+           
+        }.bind(this))*/
        
         
         //il nodo di edit se si tratta di modifica
@@ -502,9 +543,19 @@ export class IP extends Base{
 
         this.formdata.port=location.getPortRef();
     
-        //mostra errore se non ci sono porte libere selezionabili
-        document.addEventListener("NoFreePorts",ev=>{
-            this.setError(this.formdata.port,`${loc.noFreePorts}`)
+        //questo messaggio viene inviato dal componente Location per informare del numero di porte
+        //libere nella configurazione selezionata (DHCP,Static o Static VM)
+        document.addEventListener("freePorts",ev=>{
+            
+            //ritorna il numero di porte libere selezionabili
+            this.freePorts=ev.detail;
+            
+            //se non ci sono settiamo errore
+            if(!this.freePorts)
+            {
+                this.selectedPort=null;
+                this.setError(this.formdata.port,`${loc.errors['no-free-ports']}`)
+            }
         })
 
         //registrazione eventi form
@@ -512,12 +563,17 @@ export class IP extends Base{
         //cambio configurazione
         this.formdata['config'].addEventListener('change',ev=>{
            
+           
             var disabled=this.modeIsDHCP();
             this.formdata['name'].disabled=disabled;
             this.formdata['domain'].disabled=disabled;
-            this.reset(this.formdata['name']);
-            this.reset(this.formdata['port']);
+            if(disabled)
+            {
+             this.reset(this.formdata['name']);
+            }
 
+            this.reset(this.formdata['port']);
+            
             var mac= this.eHost ? this.eHost.mac : null;
             //Invia Evento a Location
             Application.EmitEvent('ConfigChanged',{"config":ev.target.value,"mac":mac});
@@ -531,12 +587,45 @@ export class IP extends Base{
         })
 
          //cambia nome 
-        this.formdata['name'].addEventListener('change',ev=>{
+        this.formdata['name'].addEventListener('change',function(ev){
+            
             this.handleFieldError(this.formdata['name'],this.validateHostName());
-        })
+            
+            var err=this.getError(this.formdata['name']);
+
+            if(err!="" && err==loc.errors.invalid) return;
+           
+            clearTimeout(timeOutCheck)
+            this.setError(this.formdata["name"],"Sto verificando...")
+            timeOutCheck=setTimeout(()=>{
+                this.reset(this.formdata["name"])
+                this.checkDuplicateHostName();
+            },10000)
+           
+        
+        }.bind(this))
+
+        trg.querySelector('select[name="domain"]').addEventListener('change',function(ev){
+
+            if(!this.formdata["name"].value) return;
+            clearTimeout(timeOutCheck)
+           
+            var err=this.getError(this.formdata['name']);
+
+            if(err!="" && err==loc.errors.invalid) return;
+           
+            clearTimeout(timeOutCheck)
+            this.setError(this.formdata["name"],"Sto verificando...")
+            timeOutCheck=setTimeout(()=>{
+                this.reset(this.formdata["name"])
+                this.checkDuplicateHostName();
+            },2000)
+
+        }.bind(this))
        
         //selezione porta
         this.$form.addEventListener("selectedPort",e=>{
+            
             this.selectedPort=e.detail;
             this.reset(this.formdata['port']);
         })
@@ -654,12 +743,38 @@ export class IP extends Base{
         return isChanged;
     }
 
+    async checkDuplicateHostName()
+    {
+       
+        if(!this.formdata['name'].value) return;
+
+        var hostFullName=`${this.formdata['name'].value}.${this.formdata['domain'].value}`;
+
+        var eHostFullName= this.eHost ? `${this.eHost.name}.${this.eHost.domain}` : "";
+
+        //nome del nodo è diverso da quello di edit
+        if(eHostFullName!=hostFullName)
+        {
+            var duplicateName=await this.checkDuplicateName(hostFullName);
+            var lang=Application.language.current;
+            var errText=lang=="ITA" ? "Il nome inserito risulta già registrato." : "The name typed is already registered."
+            if(duplicateName)
+            {
+                return this.setError(this.formdata['name'],errText)
+            }
+            else{
+                return this.setSuccess(this.formdata['name'])
+            }
+        }
+        
+    }
 
     async handleSubmit(){
         
         //validazione primo livello, campi vuoti o non corretti
         var validFields=this.validateFields();
 
+       
         if(!validFields) return;
 
         //controllo se dati sono cambiati 

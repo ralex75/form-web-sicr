@@ -82,6 +82,7 @@ export class Location extends Base {
             this.enableDisablePorts();
         })
 
+        //se si tratta di Edit imposta il default delle varie options
         if(this.args)
         {
             
@@ -89,9 +90,19 @@ export class Location extends Base {
            
         }
 
+        /*
+        //quando cambia la configurazione del nodo resettiamo la lista porte;
+        document.addEventListener("ConfigChanged", ev=>{
+            console.log("ConfigChanged");
+            //this.$ports.value="";
+            //this.$ports.dispatchEvent(new Event('change'))
+            //this.enableDisablePorts();
+        })*/
+
        
     }
 
+    //Imposta il default con i parametri di Modifica di un nodo
     async initLocation()
     {
         this.$builds.value=this.args.build;
@@ -102,13 +113,6 @@ export class Location extends Base {
         await this.getPorts();
         this.$ports.value=this.args.port;
         this.$ports.dispatchEvent(new Event('change'))
-
-        //quando cambia la configurazione del nodo resettiamo la lista porte;
-        document.addEventListener("ConfigChanged", ev=>{
-            console.log("ConfigChanged");
-            this.$ports.value="";
-            this.$ports.dispatchEvent(new Event('change'))
-        })
     }
 
     getPortRef(){
@@ -130,6 +134,8 @@ export class Location extends Base {
     {
         if(!this.ports) return;
 
+        this.$ports.value="";
+
         var options=this.$ports.options;
         var disabledCount=0;
 
@@ -142,13 +148,15 @@ export class Location extends Base {
            }
        }
 
+       var freePorts=(disabledCount!=(this.$ports.options.length-1));
+       //this.$ports.disabled= (disabledCount==(this.$ports.options.length-1));
        
-       this.$ports.disabled= (disabledCount==(this.$ports.options.length-1));
-       
-       if(this.$ports.disabled)
+       /*if(noFreePorts)
        {
            Application.EmitEvent("NoFreePorts");
-       }
+       }*/
+
+       Application.EmitEvent("freePorts",freePorts);
         
     }
 
@@ -281,7 +289,7 @@ export class Location extends Base {
 
     selectChanged(select){
           
-      
+       console.log("Changed");
         var callback=null;
         var {name}=select;
     
