@@ -8,7 +8,6 @@ window.Application={"user":null,"lang":"ITA"};
 
 const Init=(user)=>{
     
-
        //salva info utente
        window.Application.user=user;
  
@@ -27,8 +26,7 @@ const Init=(user)=>{
 }
 
 const showHide=()=>{
-   
-   
+  
     var routes=document.querySelector("#routes");
     if(routes)
     {
@@ -40,28 +38,6 @@ const buildMenu=()=>{
     
     var menu=document.querySelector("#col_sin_menu")
     new NavMenu(menu);
-
-    /*
-    if(Application.UserIsValid())
-    {
-        menu=new NavMenu(menu);
-    }
-    else{
-        var routes=menu.querySelector("#routes");
-        if(routes){
-            routes.innerHTML=""
-        }
-    }*/
-    /*
-    var user=window.Application.user;
-
-    if(user.isAuthorized && user.disciplinare)
-    {
-        
-        var menu=document.querySelector("#col_sin_menu")
-        menu=new NavMenu(menu);
-    
-    }*/
    
 }
 
