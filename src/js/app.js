@@ -14,28 +14,44 @@ const Init=(user)=>{
  
        
        document.addEventListener("languageChanged",ev=>{
+           
                 buildMenu();
        })
 
        document.addEventListener("showHideMenu",ev=>{
-         buildMenu();
+           
+               showHide();
        })
     
-       //buildMenu();
+       buildMenu();
+}
+
+const showHide=()=>{
+   
+   
+    var routes=document.querySelector("#routes");
+    if(routes)
+    {
+        routes.style.display = Application.UserIsValid() ? 'block' : 'none'
+    }
 }
 
 const buildMenu=()=>{
     
     var menu=document.querySelector("#col_sin_menu")
-   
-    var routes=menu.querySelector("#routes");
-    if(routes){
-        routes.innerHTML=""
-    }
+    new NavMenu(menu);
+
+    /*
     if(Application.UserIsValid())
     {
         menu=new NavMenu(menu);
     }
+    else{
+        var routes=menu.querySelector("#routes");
+        if(routes){
+            routes.innerHTML=""
+        }
+    }*/
     /*
     var user=window.Application.user;
 

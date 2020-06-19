@@ -10,13 +10,13 @@ export class NavMenu extends Base {
     
     init()
     {
-       
+       console.log("Menu created")
        
         window.addEventListener('hashchange', ev=>{
             this.highlightSelectedMenu()
         });
 
-        console.log("SelectedLang:",Application.language.current)
+        //console.log("SelectedLang:",Application.language.current)
         
         /*this.target.querySelector("#changeLang").addEventListener("click",ev=>{
             Application.language.current= Application.language.current=='ITA' ? 'ENG' :'ITA';
