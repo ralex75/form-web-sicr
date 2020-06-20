@@ -6,6 +6,7 @@ const template=`
             <div class="dlg-message">
                 DIALOG
             </div>
+           
             <div class="dlg-actions">
                 <a href="#" name="yes" data-value="true" class="yes"><span>&#10003;</span>[YES]</a>
                 <a href="#" name="no" data-value="false" class="no"><span>&#215;</span>No</a>
@@ -59,6 +60,7 @@ const template=`
 .dlg-message{
     padding-top:10px;
     min-height:100px;
+    padding-bottom:20px;
 }
 
   a.dlg-close{
@@ -75,11 +77,15 @@ const template=`
 
   .dlg-actions
   {
-      display:none;
-      align-items:flex-end;
+      display:block;
+      min-height:50px;
+      align-items:center;
       justify-content:space-around;
-      border-top:1px solid #DDD;
-      padding:20px 0 0 0;
+      border:0px solid #DDD;
+      border-top:1px solid #ADD;
+      padding-top:20px
+     
+      
   }
 
 

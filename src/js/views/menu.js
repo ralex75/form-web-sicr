@@ -16,11 +16,6 @@ export class NavMenu extends Base {
             this.highlightSelectedMenu()
         });
 
-        //console.log("SelectedLang:",Application.language.current)
-        
-        /*this.target.querySelector("#changeLang").addEventListener("click",ev=>{
-            Application.language.current= Application.language.current=='ITA' ? 'ENG' :'ITA';
-        })*/
 
         this.target.querySelectorAll("[data-lang]").forEach(el=>el.addEventListener("click",ev=>{
           

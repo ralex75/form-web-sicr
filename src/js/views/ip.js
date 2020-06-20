@@ -250,11 +250,12 @@ export class IP extends Base{
 
 
     //validazione di base
-    async validateFields()
+    async handleSubmit()
     {
         
         //recupera messaggi di errore nella lingua corrente
         var loc=this.locale().errors
+        
         //inizializza tutti i campi errore
         this.$form.querySelectorAll("small").forEach(e=>{
            
@@ -319,10 +320,64 @@ export class IP extends Base{
             }
         })
 
-        console.log("Form errors first level is valid:",errors.length==0);
+        if(errors.length>0)
+        {
+            return;
+        }
 
+        //controllo se dati sono cambiati 
+        var _dataIsChanged=this.dataIsChanged();
+
+        
+        //Mostrare la dialog ?
+        if(!_dataIsChanged){
+          
+
+            var lang=Application.language.current;
+            var headerText= lang=="ITA" ? "Richiesta di Conferma" : "Confirmation Request"
+            var contentText= lang=="ITA" ? "Attenzione: non ci sono modifiche ai dati. <br> <b>La sua richiesta non verrà inserita.</b><br><br>Si vuole procedere?":
+                                       "Warning: no changes in data. <br> <b>Your request will not be submitted.</b><br><br>Do you want to proceed?"
+                                       
+                                  
+
+
+            return this.showDialog(headerText,contentText,()=>{ Router.go("hosts")}, ()=>{});
+           
+        }
+
+        if(!this.useMacBusy)
+        {
+            var mac=this.formdata['mac'].value;
+            var checkForDuplicate=(this.eHost ? this.eHost.mac!=mac : true);
+            
+            if(checkForDuplicate)
+            {
+                
+                var duplicateMac=await this.checkDuplicatedMacAddress(mac);
+               
+                if(duplicateMac)
+                {
+                    var lang=Application.language.current;
+                    var errText=lang=="ITA" ? "Il mac address inserito risulta già registrato." : "The MAC address typed is already registered."
+                    var question = lang=="ITA" ? "Si intende utilizzarlo comunque?" : "Do you want to use it anyway?"
+                    var headerText= lang=="ITA" ? "Richiesta di conferma" : "Confirmation request"
+                    //controlla che il macaddress inserito non sia uno di quelli dell'utente
+                    //this.setError(this.$hostmac,"Il mac address risulta già registrato.")
+                    var okCb=()=>{this.useMacBusy=true; this.submitForm()};
+                    var noCb=()=>{this.setError(this.formdata['mac'],errText)};
+                    var msg=`<b>${errText}</b>. <br><br>${question}`
+                    //this.showDialog('<h3>Attenzione</h3>Il mac address risulta già registrato. Si intende utilizzarlo?')
+                    return this.showDialog(headerText,msg,okCb,noCb)
+                }
+            }
+
+        }
+        
       
-        return errors.length==0;
+
+        this.submitForm();
+
+
     }
 
 
@@ -781,7 +836,7 @@ export class IP extends Base{
     }
 
     //*********** Submit Form ****************/
-    async handleSubmit(){
+    async handleSubmitOLD(){
         
         //validazione primo livello, campi vuoti o non corretti
         var validFields=await this.validateFields();
@@ -818,8 +873,7 @@ export class IP extends Base{
             if(err!="") return;
         }*/
 
-       
-        var duplicateMac=false;
+     
 
         if(!this.useMacBusy)
         {
@@ -849,7 +903,7 @@ export class IP extends Base{
 
         }
         
-        //if(duplicateMac) return;
+      
 
         this.submitForm();
 
