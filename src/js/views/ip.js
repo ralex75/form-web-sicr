@@ -255,6 +255,7 @@ export class IP extends Base{
         
         //recupera messaggi di errore nella lingua corrente
         var loc=this.locale().errors
+        
         //inizializza tutti i campi errore
         this.$form.querySelectorAll("small").forEach(e=>{
            
