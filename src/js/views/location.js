@@ -41,6 +41,7 @@ import {Base} from './base.js'
 import services from '../services.js'
 import {Application} from '../app.js';
 
+
 export class Location extends Base {
     
     
@@ -134,27 +135,29 @@ export class Location extends Base {
     {
         if(!this.ports) return;
 
-        this.$ports.value="";
-
+       
         var options=this.$ports.options;
         var disabledCount=0;
 
        for(var i=0;i<options.length;i++){
+           
            var disabled=this.isDisabled(options[i]);
            options[i].disabled=disabled;
            if(disabled)
            {
+              
                disabledCount++;
            }
        }
 
-       var freePorts=(disabledCount!=(this.$ports.options.length-1));
-       //this.$ports.disabled= (disabledCount==(this.$ports.options.length-1));
-       
-       /*if(noFreePorts)
+       //lasciamo la porta selezionata settata solo se non è disabilitata
+       if(this.$ports.options[this.$ports.selectedIndex].disabled)
        {
-           Application.EmitEvent("NoFreePorts");
-       }*/
+           this.$ports.value=""
+       }
+
+       var freePorts=(disabledCount!=(this.$ports.options.length-1));
+      
 
        Application.EmitEvent("freePorts",freePorts);
         
