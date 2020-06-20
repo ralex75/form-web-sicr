@@ -46,15 +46,17 @@ export class NavMenu extends Base {
     }
 
     locale(){
-        return {"ITA":{"profile":"Il mio profilo","requests":"Richieste inviate","ip":"Richiesta indirizzo IP","hosts":"I miei nodi","wifi":"Richiesta WIFI temporaneo"},
+        var loc= {"ITA":{"profile":"Il mio profilo","requests":"Richieste inviate","ip":"Richiesta indirizzo IP","hosts":"I miei nodi","wifi":"Richiesta WIFI temporaneo"},
                 "ENG":{"profile":"My Profile","requests":"My Requests","ip":"IP address request","hosts":"My hosts","wifi":"Temporary WIFI request"}
                 }
+
+        return loc[Application.language.current]
     }
    
 
     getContent(){
 
-        var loc = this.locale()[Application.language.current]
+        var loc = this.locale()
 
         this.routes=[
 
@@ -67,9 +69,8 @@ export class NavMenu extends Base {
 
         let tpl=""
        
-        var user=window.Application.user;
-
-        if(user.isAuthorized && user.disciplinare)
+       
+        if(Application.UserIsValid())
         {
             this.routes.forEach(i=>{
             

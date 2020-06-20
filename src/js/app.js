@@ -8,6 +8,7 @@ window.Application={"user":null,"lang":"ITA"};
 
 const Init=(user)=>{
     
+      
        //salva info utente
        window.Application.user=user;
  
@@ -22,7 +23,9 @@ const Init=(user)=>{
                showHide();
        })
     
+
        buildMenu();
+
 }
 
 const showHide=()=>{
@@ -96,6 +99,7 @@ const language={
 
 const Application={
     Init,
+    UserIsValid,
     SaveRequest,
     EmitEvent,
     RequestTypes,

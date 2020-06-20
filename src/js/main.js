@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         Application.Init(user);
 
         //vai alla view profile
-        Router.go("profile");
+        Router.go(window.location.hash.substr(1));
 
     }
     catch(exc)

@@ -6,14 +6,22 @@ import {RequestDetails} from './views/reqdetails.js'
 
 import {IP} from './views/ip.js'
 import {WIFI} from './views/wifi.js'
+import {Application} from './app.js'
 
 
 let lastValidRoute={"view":"profile","args":""};
 
 const go=(view,args)=>{
-    
        
 
+        //controllo se utente è autorizzato prima di passare ad altra view
+        //utente potrebbe fare copia e incolla della route
+        //se non è autorizzato mostra la view del profilo
+        if(!Application.UserIsValid())
+        {
+            window.history.pushState("","","#profile")
+            view="profile";
+        }
        
         var target=document.querySelector("#colonne_content")
        

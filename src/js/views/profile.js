@@ -104,9 +104,10 @@ export class Profile extends Base{
 
         let requests=resp.data;
 
+        /*
         user.isAuthorized=this.auth;
         user.disciplinare=this.disci;
-        
+        */
         
         //let user = this.args || await services.user.read();
         var content="";
