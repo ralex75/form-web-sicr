@@ -87,7 +87,7 @@ const template=`
         position:absolute;
         visibility:hidden;
     }
-    .form_col.success input{
+    .form_col.success input,.form_col.success select{
         border-color:#2ecc71
     }
     .form_col.error input,.form_col.error select{
@@ -173,11 +173,10 @@ export class IP extends Base{
     }
 
     //loc è il locale per i messaggi di errore nella lingua corrente
-    validateHostName()
+    validateHostName(value)
     {
         var loc=this.locale().errors;
         var err="";
-        var value=this.formdata['name'].value.trim();
         if(!value.match(/^([0-9A-Za-z_-])+$/))
         {
             err=`${loc.invalid}.`;
@@ -186,15 +185,13 @@ export class IP extends Base{
         return err;
     }
 
-    validateHostMac()
+    validateHostMac(value)
     {
         
         
         var err="";
         var loc=this.locale().errors;
-        //legge valore macaddress
-        var value=this.formdata['mac'].value.trim();
-
+       
         if(!value.match(/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/))
         {
             //err="Il campo non è valido.";
@@ -518,6 +515,62 @@ export class IP extends Base{
        
     }
 
+
+
+    async validate(e){
+
+        var hname=e.target.name;
+        var el= this.formdata[hname];
+        
+        var err=""
+
+        if(hname=='mac')
+        {
+            var value=el.value.trim();
+            err=this.validateHostMac(value.toUpperCase());
+            this.handleFieldError(el,err);
+        }
+
+        if(hname=='name' || hname=='domain')
+        {
+            var name=this.formdata['name'].value;
+            var domain=this.formdata['domain'].value;
+            err=this.validateHostName(name);
+            if(!err)
+            {
+                var hostFullName=`${name}.${domain}`;
+                err=await this.validateDuplicatedHostName(hostFullName)
+            }
+
+            this.handleFieldError(this.formdata['name'],err);
+        }
+
+        if(hname=='port')
+        {
+            var err=""
+            
+            
+            this.selectedPort=e.detail;
+
+            
+            if(!this.selectedPort)
+            {
+                var loc=this.locale().errors
+                var err=loc["port-no-set"];
+                if(this.freePorts!=undefined && !this.freePorts)
+                {
+                    err=loc["no-free-ports"];
+                }
+            }
+           
+            this.handleFieldError(this.formdata['port'],err)
+        }
+
+        
+        
+    }
+    
+
      async init(){
 
         
@@ -534,47 +587,22 @@ export class IP extends Base{
             
         })
 
-        this.$form=trg.querySelector("form");
 
         this.formdata={};
+        this.$form=trg.querySelector("form");
 
         trg.querySelectorAll("[data-attr='formdata']").forEach(el=>{
            
             this.formdata[el.name]=el;
-
+            el.addEventListener('change',async ev=> await this.validate(ev))
         })
 
         
-
-        
-        trg.querySelector('input[name="name"]').addEventListener('change', async function(ev){
-            
-            this.handleFieldError(this.formdata['name'],this.validateHostName());
-            if(!this.formdata["name"].value || this.getError(this.formdata["name"])==this.locale().invalid) return;
-            /*clearTimeout(this.timeOutCheck)
-            this.setError(this.formdata["name"],"Sto verificando...")
-            this.timeOutCheck=setTimeout(async ()=>{
-                this.handleFieldError(this.formdata['name'],await this.validateDuplicatedHostName());
-            },2000)*/
-           //debugger;
-            this.reset(this.formdata["name"])
-            this.handleFieldError(this.formdata['name'],await this.validateDuplicatedHostName());
-        }.bind(this))
-
-        
-        trg.querySelector('select[name="domain"]').addEventListener('change',async function(ev){
-
-            if(!this.formdata["name"].value || this.getError(this.formdata["name"])==this.locale().invalid) return;
-            this.reset(this.formdata["name"])
-            this.handleFieldError(this.formdata['name'],await this.validateDuplicatedHostName());
-           
-        }.bind(this))
-       
         
         //il nodo di edit se si tratta di modifica
         this.eHost=null;
 
-        //porta selezionata
+        //La porta selezionata
         this.selectedPort=null;
         
         //lista di nodi gestiti dall'utente
@@ -585,10 +613,8 @@ export class IP extends Base{
         //il nodo di edit
         this.eHost=this.args ? this.args.eHost : null;
 
-        
         this.useMacBusy=false;
        
-      
         var location = null;
 
        
@@ -621,77 +647,68 @@ export class IP extends Base{
             }
         })
 
+
+
+         //selezione porta
+        this.$form.addEventListener("selectedPort",ev=>this.validate(ev))
+
         //registrazione eventi form
 
         //cambio configurazione
         this.formdata['config'].addEventListener('change',ev=>{
-           
            
             var disabled=this.modeIsDHCP();
             this.formdata['name'].disabled=disabled;
             this.formdata['domain'].disabled=disabled;
             if(disabled)
             {
-             this.reset(this.formdata['name']);
+               this.reset(this.formdata['name']);
             }
 
-            this.reset(this.formdata['port']);
+            //this.reset(this.formdata['port']);
             
             var mac= this.eHost ? this.eHost.mac : null;
             //Invia Evento a Location
             Application.EmitEvent('ConfigChanged',{"config":ev.target.value,"mac":mac});
+
         })
 
         //cambio mac 
+        /*
         this.formdata['mac'].addEventListener('change',ev=>{
             this.useMacBusy=false;
             this.formdata['mac'].value=ev.target.value.toUpperCase();
             this.handleFieldError(this.formdata['mac'],this.validateHostMac());
-        })
+        })*/
 
-         //cambia nome 
-        /*this.formdata['name'].addEventListener('change',function(ev){
-            
-            await this.validateDuplicateHostName()
-            
-            var err=this.getError(this.formdata['name']);
-
-            if(err!="" && err==loc.errors.invalid) return;
-           
-            clearTimeout(timeOutCheck)
-            this.setError(this.formdata["name"],"Sto verificando...")
-            timeOutCheck=setTimeout(()=>{
-                this.reset(this.formdata["name"])
-                this.handleFieldError(this.formdata['name'],this.validateHostName());
-            },10000)
-           
+        //cambio mac 
+        //this.formdata['mac'].addEventListener('change',ev=>this.validate(ev));
         
-        }.bind(this))*/
+        //cambio nome 
+        //this.formdata['name'].addEventListener('change',ev=>this.validate(ev));
 
-        /*trg.querySelector('select[name="domain"]').addEventListener('change',function(ev){
 
-            if(!this.formdata["name"].value) return;
-            clearTimeout(timeOutCheck)
-           
-            var err=this.getError(this.formdata['name']);
-
-            if(err!="" && err==loc.errors.invalid) return;
-           
-            clearTimeout(timeOutCheck)
-            this.setError(this.formdata["name"],"Sto verificando...")
-            timeOutCheck=setTimeout(()=>{
-                this.reset(this.formdata["name"])
-                this.checkDuplicateHostName();
-            },2000)
-
-        }.bind(this))*/
-       
-        //selezione porta
-        this.$form.addEventListener("selectedPort",e=>{
+        /*
+        trg.querySelector('input[name="name"]').addEventListener('change', async function(ev){
             
-            this.selectedPort=e.detail;
-            this.reset(this.formdata['port']);
-        })
+            this.handleFieldError(this.formdata['name'],this.validateHostName());
+            if(!this.formdata["name"].value || this.getError(this.formdata["name"])==this.locale().invalid) return;
+           
+            this.reset(this.formdata["name"])
+            this.handleFieldError(this.formdata['name'],await this.validateDuplicatedHostName());
+        }.bind(this))*/
+
+        /*
+        trg.querySelector('select[name="domain"]').addEventListener('change',async function(ev){
+
+            if(!this.formdata["name"].value || this.getError(this.formdata["name"])==this.locale().invalid) return;
+            this.reset(this.formdata["name"])
+            this.handleFieldError(this.formdata['name'],await this.validateDuplicatedHostName());
+           
+        }.bind(this))*/
+
+       
+       
 
           //invio form
         this.$form.addEventListener('submit',ev=>{
@@ -807,7 +824,7 @@ export class IP extends Base{
     }
 
 
-    async validateDuplicatedHostName()
+    async validateDuplicatedHostName(hostFullName)
     {
        console.log("Chiamata")
         
@@ -834,6 +851,7 @@ export class IP extends Base{
         return err;
         
     }
+
 
     //*********** Submit Form ****************/
     async handleSubmitOLD(){
