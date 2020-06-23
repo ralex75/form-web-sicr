@@ -5,6 +5,17 @@ import {Router} from './router.js'
 //application data
 window.Application={"user":null,"lang":"ITA"};
 
+/*
+const handlers={};
+
+const registerHandler=(event,handler)=>{
+   
+    handlers[event]=handler;
+}
+
+const getHandler=(event)=>{
+    return handlers[event];
+}*/
 
 const Init=(user)=>{
     
@@ -104,6 +115,10 @@ const Application={
     EmitEvent,
     RequestTypes,
     language
+    /*handler:{
+        registerHandler,
+        getHandler
+    }*/
 }
 
 export {Application}

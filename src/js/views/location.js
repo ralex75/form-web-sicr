@@ -42,6 +42,7 @@ import services from '../services.js'
 import {Application} from '../app.js';
 
 
+
 export class Location extends Base {
     
     
@@ -67,7 +68,7 @@ export class Location extends Base {
 
         this.$location.querySelectorAll('select').forEach(el=>{
            
-                el.addEventListener('change',ev=>{this.selectChanged(ev.target)});
+                el.addEventListener('change',ev=>{ this.selectChanged(ev.target)});
                 this.buildOptions(el)
             }
             
@@ -75,44 +76,34 @@ export class Location extends Base {
 
         this.buildOptions(this.$builds,[{'txt':'Marconi','value':'MARCONI'},{'txt':'Fermi','value':'Fermi'}])
 
-        //In ascolto per cambio configurazione (DHCP=>Statico=>Statico Virtuale)
-        document.addEventListener('ConfigChanged',ev=>{
-            this.configChangedArgs=ev.detail;
-           
-            //Abilita o Disabilita le porte
-            this.enableDisablePorts();
-        })
+        
 
-        //se si tratta di Edit imposta il default delle varie options
-        if(this.args)
-        {
-            
-           this.initLocation();
-           
-        }
+    }
+    
 
-        /*
-        //quando cambia la configurazione del nodo resettiamo la lista porte;
-        document.addEventListener("ConfigChanged", ev=>{
-            console.log("ConfigChanged");
-            //this.$ports.value="";
-            //this.$ports.dispatchEvent(new Event('change'))
-            //this.enableDisablePorts();
-        })*/
+    //aggiorna lista porte libere selezionabili
+    updateFreePorts(args){
 
        
+        this.configChangedArgs=args;
+           
+        console.log("Chiamato ConfigChanged")
+        //Abilita o Disabilita le porte
+        this.enableDisablePorts();
     }
+    
+
 
     //Imposta il default con i parametri di Modifica di un nodo
-    async initLocation()
+    async setDefault({build,floor,id,port})
     {
-        this.$builds.value=this.args.build;
+        this.$builds.value=build;
         await this.getFloors();
-        this.$floors.value=this.args.floor;
+        this.$floors.value=floor;
         await this.getRooms();
-        this.$rooms.value=this.args.id;
+        this.$rooms.value=id;
         await this.getPorts();
-        this.$ports.value=this.args.port;
+        this.$ports.value=port;
         this.$ports.dispatchEvent(new Event('change'))
     }
 
@@ -159,7 +150,7 @@ export class Location extends Base {
        var freePorts=(disabledCount!=(this.$ports.options.length-1));
       
 
-       Application.EmitEvent("freePorts",freePorts);
+       this.target.dispatchEvent(new CustomEvent('freePorts', { detail: freePorts,bubbles:true }));
         
     }
 
@@ -174,6 +165,7 @@ export class Location extends Base {
 
         var _invalid=port.vlanid==null;
         
+        if(!this.configChangedArgs) return;
         var {config,mac}=this.configChangedArgs;
         
         if(!_invalid)

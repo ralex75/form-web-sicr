@@ -549,10 +549,8 @@ export class IP extends Base{
         {
             var err=""
             
-            
             this.selectedPort=e.detail;
-
-            
+    
             if(!this.selectedPort)
             {
                 var loc=this.locale().errors
@@ -597,30 +595,23 @@ export class IP extends Base{
             el.addEventListener('change',async ev=> await this.validate(ev))
         })
 
-        
-        
-        //il nodo di edit se si tratta di modifica
-        this.eHost=null;
 
         //La porta selezionata
         this.selectedPort=null;
         
-        //lista di nodi gestiti dall'utente
-        
+        //lista di nodi gestiti dall'utente per controllo su nodo di cui è proprietario
         this.usermaclist=await this.getHosts();
-        //console.log("maclist:",this.usermaclist);
-        
+       
         //il nodo di edit
         this.eHost=this.args ? this.args.eHost : null;
 
-        this.useMacBusy=false;
-       
-        var location = null;
-
+        //istanzia oggetto location
+        this.location=new Location(trg.querySelector("#location"));
        
         if(this.eHost)
         {
-            location=this.eHost.location;
+            //imposta edificio piano stanza porta
+            await this.location.setDefault(this.eHost.location);
 
             for(var k in this.formdata)
             {
@@ -628,13 +619,13 @@ export class IP extends Base{
             }
         }
 
-        location=new Location(trg.querySelector("#location"),location);
-
-        this.formdata.port=location.getPortRef();
+        this.useMacBusy=false;
+       
+        this.formdata.port=this.location.getPortRef();
     
         //questo messaggio viene inviato dal componente Location per informare del numero di porte
         //libere nella configurazione selezionata (DHCP,Static o Static VM)
-        document.addEventListener("freePorts",ev=>{
+        this.$form.addEventListener("freePorts",ev=>{
             
             //ritorna il numero di porte libere selezionabili
             this.freePorts=ev.detail;
@@ -645,6 +636,7 @@ export class IP extends Base{
                 this.selectedPort=null;
                 this.setError(this.formdata.port,`${loc.errors['no-free-ports']}`)
             }
+
         })
 
 
@@ -657,6 +649,7 @@ export class IP extends Base{
         //cambio configurazione
         this.formdata['config'].addEventListener('change',ev=>{
            
+
             var disabled=this.modeIsDHCP();
             this.formdata['name'].disabled=disabled;
             this.formdata['domain'].disabled=disabled;
@@ -668,9 +661,10 @@ export class IP extends Base{
             //this.reset(this.formdata['port']);
             
             var mac= this.eHost ? this.eHost.mac : null;
-            //Invia Evento a Location
-            Application.EmitEvent('ConfigChanged',{"config":ev.target.value,"mac":mac});
 
+            //aggiorna la lista delle porte libere in base alla configurazione scelta
+            this.location.updateFreePorts({"config":ev.target.value,"mac":mac})
+       
         })
 
         //cambio mac 
