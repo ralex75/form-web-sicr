@@ -68,7 +68,11 @@ export class Location extends Base {
 
         this.$location.querySelectorAll('select').forEach(el=>{
            
-                el.addEventListener('change',ev=>{ this.selectChanged(ev.target)});
+                el.addEventListener('change',ev=>{ 
+                                this.selectChanged(ev.target);
+                                this.$ports.parentElement.className="form_col"     
+                            });
+                
                 this.buildOptions(el)
             }
             
@@ -162,13 +166,15 @@ export class Location extends Base {
      
         port=port && port[0];
 
-        var _invalid=port.vlanid==null;
+        var _unlinkedPort=port.vlanid==null;
+
+        if(_unlinkedPort) return false;
         
         if(!this.configChangedArgs) return;
         var {config,mac}=this.configChangedArgs;
         
-        if(!_invalid)
-        {
+        var _invalid=false;
+        
             //nodo e porta devono essere DHCP altrimenti controlla se è occupata (port.busy)
             if(!(port.vlanid==113 && config=='DHCP'))
             {
@@ -197,7 +203,7 @@ export class Location extends Base {
 
             }
 
-        }
+        
     
         
 
@@ -222,11 +228,9 @@ export class Location extends Base {
         select.innerHTML+=options;
         select.disabled = select.options.length<2;
        
-        if(select.name=='port')
+        if(select.name=='port' && !select.disabled)
         {
-            select.parentElement.className="form_col"
-            if(!select.disabled)
-                this.enableDisablePorts();
+            this.enableDisablePorts();
         }
  
     }

@@ -531,7 +531,7 @@ export class IP extends Base{
             
             if(!el.value)
             {
-              
+             
                     var loc=this.locale()
                     var err=loc.errors["port-no-set"];
                     if(this.freePorts!=undefined && !this.freePorts)
@@ -610,7 +610,7 @@ export class IP extends Base{
             //ritorna il numero di porte libere selezionabili
            
             this.freePorts=ev.detail;
-
+          
             if(this.freePorts)
             {
                 this.reset(this.formdata.port);
