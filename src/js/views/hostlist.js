@@ -238,7 +238,7 @@ export class HostList extends Base{
                     'to':null,
                     'action':'delete'}
 
-         UI.EmitSaveRequest('IP',data);
+         Application.SaveRequest('IP',data);
      }
     
 

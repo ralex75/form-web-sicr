@@ -150,6 +150,7 @@ import services from '../services.js'
 import { Router } from '../router.js'
 
 
+
 export class IP extends Base{
   
     //restituisce il template
@@ -191,6 +192,7 @@ export class IP extends Base{
         
         var err="";
         var loc=this.locale().errors;
+        
        
         if(!value.match(/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/))
         {
@@ -232,13 +234,13 @@ export class IP extends Base{
                                "header-host":"IDENTIFICATIVO NODO","header-notes":"ULTERIORI INFORMAZIONI","goback":"Torna Indietro",
                                "config-option-static":"STATICO","config-option-staticvm":"STATICO - Virtuale","config-option-dhcp":"DHCP"},
                         "errors":{"invalid":"Il campo non è valido","yourmac":"L'indirizzo MAC inserito appartiene ad un altro tuo nodo",
-                                  "port-no-set":"Porta non selezionata","port-busy":"La porta selezionata risulta occupata.",
+                                  "port-no-set":"La porta non è stata selezionata.","port-busy":"La porta selezionata risulta occupata.",
                                   "no-free-ports":"Non ci sono porte libere selezionabili"}},
                 "ENG":{"form":{"mac":"Mac Address","config":"Configuration","name":"Name","domain":"Domain","send":"Send","notes":"Notes",
                                 "header-host":"NODE IDENTIFIER","header-notes":"Additional Information","goback":"Go Back",
                                 "config-option-static":"STATIC","config-option-staticvm":"STATIC - Virtual","config-option-dhcp":"DHCP"},
                         "errors":{"invalid":"Field is invalid","yourmac":"The MAC address you typed belongs to another node of yours",
-                                    "port-no-set":"Port not selected","port-busy":"Selected port is busy.",
+                                    "port-no-set":"The port has not been selected.","port-busy":"Selected port is busy.",
                                     "no-free-ports":"No free ports"}}
             }
 
@@ -250,61 +252,45 @@ export class IP extends Base{
     async handleSubmit()
     {
         
-        //recupera messaggi di errore nella lingua corrente
-        var loc=this.locale().errors
-        
-        //inizializza tutti i campi errore
-        this.$form.querySelectorAll("small").forEach(e=>{
-           
-            e.innerText="";
-            e.parentElement.className='form_col';
+         //controllo se dati sono cambiati 
+         var _dataIsChanged=this.dataIsChanged();
 
+         //dizionario messaggi di errore nella lingua selezionata
+         var loc=this.locale().errors
+ 
+         //Mostrare la dialog ?
+         if(!_dataIsChanged){
+           
+ 
+             var lang=Application.language.current;
+             var headerText= lang=="ITA" ? "Richiesta di Conferma" : "Confirmation Request"
+             var contentText= lang=="ITA" ? "Attenzione: non ci sono modifiche ai dati. <br> <b>La sua richiesta non verrà inserita.</b><br><br>Si vuole procedere?":
+                                        "Warning: no changes in data. <br> <b>Your request will not be submitted.</b><br><br>Do you want to proceed?"
+                                        
+                                   
+ 
+ 
+             return this.showDialog(headerText,contentText,()=>{ Router.go("hosts")}, ()=>{});
+            
+         }
+       
+       
+        Object.keys(this.formdata).forEach( async k=>{
+             
+             //host mac address
+            if(["mac","name","port"].indexOf(k)>-1)
+            {
+                
+                var fieldStatus=this.getFieldStatus(this.formdata[k]);
+                if(!fieldStatus.err && fieldStatus.status!='success')
+                {
+                    //console.log("validate:",k);
+                    await this.validate(this.formdata[k]);
+                }
+            }
         })
 
-        //host mac address
-        var err=this.validateHostMac();
-        this.handleFieldError(this.formdata['mac'],err);
-      
-        //host name 
-        if(!this.modeIsDHCP())
-        {
-            err = this.validateHostName();
-            this.handleFieldError(this.formdata['name'],err);
-            if(!err)
-            {
-                await this.handleFieldError(this.formdata['name'],await this.validateDuplicatedHostName());
-            }
-        }
-        else{
-            this.reset(this.formdata['name']);
-        }
- 
        
-        //errore porta non selezionata
-        if(!this.selectedPort)
-        {
-            var err=loc["port-no-set"];
-            if(this.freePorts!=undefined && !this.freePorts)
-            {
-                err=loc["no-free-ports"];
-            }
-            this.setError(this.formdata['port'],err)
-        }
-        else
-        {
-            //controllo porta occupata
-            var isBusy=this.checkPortBusy();
-
-            if(isBusy)
-            {
-                this.setError(this.formdata['port'],loc['port-busy'])
-            }
-            else{
-                this.setSuccess(this.formdata['port'])
-            }
-
-        }
-
         //check errori
 
         var errors=[];
@@ -322,25 +308,7 @@ export class IP extends Base{
             return;
         }
 
-        //controllo se dati sono cambiati 
-        var _dataIsChanged=this.dataIsChanged();
-
-        
-        //Mostrare la dialog ?
-        if(!_dataIsChanged){
-          
-
-            var lang=Application.language.current;
-            var headerText= lang=="ITA" ? "Richiesta di Conferma" : "Confirmation Request"
-            var contentText= lang=="ITA" ? "Attenzione: non ci sono modifiche ai dati. <br> <b>La sua richiesta non verrà inserita.</b><br><br>Si vuole procedere?":
-                                       "Warning: no changes in data. <br> <b>Your request will not be submitted.</b><br><br>Do you want to proceed?"
-                                       
-                                  
-
-
-            return this.showDialog(headerText,contentText,()=>{ Router.go("hosts")}, ()=>{});
-           
-        }
+       
 
         if(!this.useMacBusy)
         {
@@ -395,11 +363,12 @@ export class IP extends Base{
        parent.className='form_col error';
     }
 
-    getError(input)
+    getFieldStatus(input)
     {
        var parent= input.parentElement;
        const small=parent.querySelector("small")
-       return small.innerText;
+       var status= parent.className.split(" ")[1] || "";
+       return {"status":status,"err":small.innerText};
     }
 
     reset(input)
@@ -486,7 +455,8 @@ export class IP extends Base{
         if(data.config!='DHCP')
           html+=`<div>${lang!='ITA' ? 'Name' : 'Nome'}:</div><div class="c2">${data.name}.${data.domain}</div>`
                     
-                    
+        
+        //var portAlias= this.formdata.port.selectedOptions[0].text           
                    
         html+=`<div>${lang!='ITA' ? 'Port' : 'Porta'}:</div><div class="c2">${data.port}</div>`
         
@@ -517,10 +487,11 @@ export class IP extends Base{
 
 
 
-    async validate(e){
+    async validate(el){
 
-        var hname=e.target.name;
-        var el= this.formdata[hname];
+       
+        var hname=el.name;
+        
         
         var err=""
 
@@ -533,6 +504,12 @@ export class IP extends Base{
 
         if(hname=='name' || hname=='domain')
         {
+            
+            if(this.modeIsDHCP())
+            {
+                return this.reset(this.formdata['name']);
+            }
+            
             var name=this.formdata['name'].value;
             var domain=this.formdata['domain'].value;
             err=this.validateHostName(name);
@@ -545,25 +522,25 @@ export class IP extends Base{
             this.handleFieldError(this.formdata['name'],err);
         }
 
+       
         if(hname=='port')
         {
+           
             var err=""
+           
             
-            this.selectedPort=e.detail;
-    
-            if(!this.selectedPort)
+            if(!el.value)
             {
-                var loc=this.locale().errors
-                var err=loc["port-no-set"];
-                if(this.freePorts!=undefined && !this.freePorts)
-                {
-                    err=loc["no-free-ports"];
-                }
+              
+                    var loc=this.locale()
+                    var err=loc.errors["port-no-set"];
+                    if(this.freePorts!=undefined && !this.freePorts)
+                    err=`${loc.errors['no-free-ports']}`;
             }
            
             this.handleFieldError(this.formdata['port'],err)
         }
-
+       
         
         
     }
@@ -573,9 +550,7 @@ export class IP extends Base{
 
         
         var trg=this.target;
-
-        var loc= this.locale();
-
+        
         var goBack=trg.querySelector("#goBack");
         goBack.style.display = window.location.hash=='#hosts' ? 'inline-block' : 'none';
         goBack.addEventListener('click',ev=>{
@@ -589,62 +564,74 @@ export class IP extends Base{
         this.formdata={};
         this.$form=trg.querySelector("form");
 
+        //istanzia oggetto location
+        this.location=new Location(trg.querySelector("#location"));
+        
         trg.querySelectorAll("[data-attr='formdata']").forEach(el=>{
            
             this.formdata[el.name]=el;
-            el.addEventListener('change',async ev=> await this.validate(ev))
+            if(["mac","name","port"].indexOf(el.name)>-1)
+            {
+                el.addEventListener('change',async ev=> await this.validate(ev.target))
+            }
         })
 
+        this.formdata["mac"].addEventListener("input",ev=>{
+            ev.target.value=ev.target.value.replace("-",":")
+        })
 
-        //La porta selezionata
-        this.selectedPort=null;
-        
         //lista di nodi gestiti dall'utente per controllo su nodo di cui è proprietario
         this.usermaclist=await this.getHosts();
        
         //il nodo di edit
         this.eHost=this.args ? this.args.eHost : null;
 
-        //istanzia oggetto location
-        this.location=new Location(trg.querySelector("#location"));
-       
+    
+        //setta i valori di default
         if(this.eHost)
         {
             //imposta edificio piano stanza porta
             await this.location.setDefault(this.eHost.location);
-
             for(var k in this.formdata)
             {
                 this.formdata[k].value=(this.eHost[k] || "")
             }
         }
 
+        //gestione di nodo occupato
         this.useMacBusy=false;
-       
-        this.formdata.port=this.location.getPortRef();
     
+
         //questo messaggio viene inviato dal componente Location per informare del numero di porte
         //libere nella configurazione selezionata (DHCP,Static o Static VM)
         this.$form.addEventListener("freePorts",ev=>{
             
+           var loc=this.locale();
             //ritorna il numero di porte libere selezionabili
+           
             this.freePorts=ev.detail;
+
+            if(this.freePorts)
+            {
+                this.reset(this.formdata.port);
+            }
+            else{
+                //this.setError(this.formdata.port,`${loc.errors['no-free-ports']}`)
+                this.validate(this.formdata['port']);
+            }
             
             //se non ci sono settiamo errore
-            if(!this.freePorts)
+            /*if(!this.freePorts)
             {
                 this.selectedPort=null;
                 this.setError(this.formdata.port,`${loc.errors['no-free-ports']}`)
-            }
+            }else{
+                this.reset(this.formdata.port);
+            }*/
 
         })
 
 
-
-         //selezione porta
-        this.$form.addEventListener("selectedPort",ev=>this.validate(ev))
-
-        //registrazione eventi form
 
         //cambio configurazione
         this.formdata['config'].addEventListener('change',ev=>{
@@ -658,51 +645,14 @@ export class IP extends Base{
                this.reset(this.formdata['name']);
             }
 
-            //this.reset(this.formdata['port']);
             
             var mac= this.eHost ? this.eHost.mac : null;
 
             //aggiorna la lista delle porte libere in base alla configurazione scelta
             this.location.updateFreePorts({"config":ev.target.value,"mac":mac})
-       
+            //this.refreshFreePorts();
         })
 
-        //cambio mac 
-        /*
-        this.formdata['mac'].addEventListener('change',ev=>{
-            this.useMacBusy=false;
-            this.formdata['mac'].value=ev.target.value.toUpperCase();
-            this.handleFieldError(this.formdata['mac'],this.validateHostMac());
-        })*/
-
-        //cambio mac 
-        //this.formdata['mac'].addEventListener('change',ev=>this.validate(ev));
-        
-        //cambio nome 
-        //this.formdata['name'].addEventListener('change',ev=>this.validate(ev));
-
-
-        /*
-        trg.querySelector('input[name="name"]').addEventListener('change', async function(ev){
-            
-            this.handleFieldError(this.formdata['name'],this.validateHostName());
-            if(!this.formdata["name"].value || this.getError(this.formdata["name"])==this.locale().invalid) return;
-           
-            this.reset(this.formdata["name"])
-            this.handleFieldError(this.formdata['name'],await this.validateDuplicatedHostName());
-        }.bind(this))*/
-
-        /*
-        trg.querySelector('select[name="domain"]').addEventListener('change',async function(ev){
-
-            if(!this.formdata["name"].value || this.getError(this.formdata["name"])==this.locale().invalid) return;
-            this.reset(this.formdata["name"])
-            this.handleFieldError(this.formdata['name'],await this.validateDuplicatedHostName());
-           
-        }.bind(this))*/
-
-       
-       
 
           //invio form
         this.$form.addEventListener('submit',ev=>{
@@ -713,9 +663,11 @@ export class IP extends Base{
 
         //trigger evento Change sulla configurazione
         this.formdata['config'].dispatchEvent(new Event('change'));
-
+ 
 
     }
+
+    
 
   
 
@@ -740,6 +692,7 @@ export class IP extends Base{
         });
     }
 
+    /*
     checkPortBusy(){
         
         var port= this.selectedPort;
@@ -780,7 +733,7 @@ export class IP extends Base{
 
         return _invalid;
 
-    }
+    }*/
 
      //DIALOG PROMPT
     showDialog(title,message,okCallback=null,noCallback=null)
@@ -820,7 +773,7 @@ export class IP extends Base{
 
     async validateDuplicatedHostName(hostFullName)
     {
-       console.log("Chiamata")
+       
         
         var err=""
         
@@ -847,79 +800,6 @@ export class IP extends Base{
     }
 
 
-    //*********** Submit Form ****************/
-    async handleSubmitOLD(){
-        
-        //validazione primo livello, campi vuoti o non corretti
-        var validFields=await this.validateFields();
-
-      
-        if(!validFields) return;
-
-        //controllo se dati sono cambiati 
-        var _dataIsChanged=this.dataIsChanged();
-
-        
-        //Mostrare la dialog ?
-        if(!_dataIsChanged){
-          
-
-            var lang=Application.language.current;
-            var headerText= lang=="ITA" ? "Richiesta di Conferma" : "Confirmation Request"
-            var contentText= lang=="ITA" ? "Attenzione: non ci sono modifiche ai dati. <br> <b>La sua richiesta non verrà inserita.</b><br><br>Si vuole procedere?":
-                                       "Warning: no changes in data. <br> <b>Your request will not be submitted.</b><br><br>Do you want to proceed?"
-                                       
-                                  
-
-
-            return this.showDialog(headerText,contentText,()=>{ Router.go("hosts")}, ()=>{});
-           
-        }
-      
-        //check nome duplicato
-        
-        /*if(!this.modeIsDHCP())
-        {
-            var err=await this.validateDuplicatedHostName()
-            this.handleFieldError(this.formdata['name'],err)
-            if(err!="") return;
-        }*/
-
-     
-
-        if(!this.useMacBusy)
-        {
-            var mac=this.formdata['mac'].value;
-            var checkForDuplicate=(this.eHost ? this.eHost.mac!=mac : true);
-            
-            if(checkForDuplicate)
-            {
-                
-                var duplicateMac=await this.checkDuplicatedMacAddress(mac);
-               
-                if(duplicateMac)
-                {
-                    var lang=Application.language.current;
-                    var errText=lang=="ITA" ? "Il mac address inserito risulta già registrato." : "The MAC address typed is already registered."
-                    var question = lang=="ITA" ? "Si intende utilizzarlo comunque?" : "Do you want to use it anyway?"
-                    var headerText= lang=="ITA" ? "Richiesta di conferma" : "Confirmation request"
-                    //controlla che il macaddress inserito non sia uno di quelli dell'utente
-                    //this.setError(this.$hostmac,"Il mac address risulta già registrato.")
-                    var okCb=()=>{this.useMacBusy=true; this.handleSubmit()};
-                    var noCb=()=>{this.setError(this.formdata['mac'],errText)};
-                    var msg=`<b>${errText}</b>. <br><br>${question}`
-                    //this.showDialog('<h3>Attenzione</h3>Il mac address risulta già registrato. Si intende utilizzarlo?')
-                    return this.showDialog(headerText,msg,okCb,noCb)
-                }
-            }
-
-        }
-        
-      
-
-        this.submitForm();
-
     
-    }
 
 }

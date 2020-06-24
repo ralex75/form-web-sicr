@@ -20,7 +20,7 @@ const template=
         </div>
         <div class="form_col">
             <label for="port">[PORT]</label><br>
-            <select id="port" name="port"></select>
+            <select id="port" name="port" data-attr='formdata'></select>
             <small>Error Message</small>
         </div>
     </div> 
@@ -87,7 +87,7 @@ export class Location extends Base {
        
         this.configChangedArgs=args;
            
-        console.log("Chiamato ConfigChanged")
+        console.log("UpdateFreePorts")
         //Abilita o Disabilita le porte
         this.enableDisablePorts();
     }
@@ -104,12 +104,10 @@ export class Location extends Base {
         this.$rooms.value=id;
         await this.getPorts();
         this.$ports.value=port;
-        this.$ports.dispatchEvent(new Event('change'))
+        //this.$ports.dispatchEvent(new Event('change'))
     }
 
-    getPortRef(){
-        return this.$ports;
-    }
+   
 
     locale(){
 
@@ -124,6 +122,7 @@ export class Location extends Base {
 
     enableDisablePorts()
     {
+       
         if(!this.ports) return;
 
        
@@ -159,7 +158,7 @@ export class Location extends Base {
         
         if(!o || !o.value) return;
 
-        var port=this.ports.filter(p=>p.port_code==o.value)
+        var port=this.ports.filter(p=>{return (p.port_code==o.value || p.port_alias==o.value)})
      
         port=port && port[0];
 
@@ -222,10 +221,12 @@ export class Location extends Base {
 
         select.innerHTML+=options;
         select.disabled = select.options.length<2;
-
-        if(select.name=='port' && !select.disabled)
+       
+        if(select.name=='port')
         {
-            this.enableDisablePorts();
+            select.parentElement.className="form_col"
+            if(!select.disabled)
+                this.enableDisablePorts();
         }
  
     }
@@ -272,7 +273,7 @@ export class Location extends Base {
         var ports=[];
         data.forEach(d=>{
             var p={
-                   "value":d.port_code,
+                   "value":d.port_alias,
                    "txt": `${d.port_alias} ${d.vlanid=='113' ? ' - DHCP':''}`
                     }
          
@@ -335,7 +336,7 @@ export class Location extends Base {
             p=(p && p[0]);
         }
 
-        this.$ports.dispatchEvent(new CustomEvent("selectedPort",{detail:p,bubbles:true}))
+        //this.$ports.dispatchEvent(new CustomEvent("selectedPort",{detail:p,bubbles:true}))
     }
 
     getContent(){
