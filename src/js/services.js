@@ -129,6 +129,10 @@ const net={
 
     getVlanID(portcode){
         return axios.get(`/net/portcode/${portcode}/vlan`)
+    },
+
+    verifyEmailAddress(email){
+        return axios.get(`/mail/exists/${email}`)
     }
 
 }

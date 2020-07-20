@@ -16,6 +16,14 @@ const template=`
 
 <style scoped>
 
+
+  small.error{
+      color:red;
+  }
+  small.check{
+      color:green;
+  }
+
   .dialog::before{
     content:'';
     width:100%;
@@ -137,20 +145,26 @@ export class Dialog extends Base{
         return this;
     }
 
-    showNoButton(cb=null)
+    showNoButton(cb=null,title=null)
     {
         if(cb)
-        this.showButton('no',cb);
-
+        this.showButton('no',cb,title);
+ 
         return this;
     }
 
-    showButton(butName,cb)
+    
+
+    showButton(butName,cb,txt)
     {
         var el=this.$dlg.querySelector(`a.${butName}`);
         this.callback[butName]=cb;
         el.className=`${butName} show`;
         el.parentElement.style.display='flex';
+        if(txt)
+        {
+            el.innerText=txt;
+        }
     }
 
     showHide()

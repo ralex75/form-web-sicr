@@ -1,4 +1,4 @@
-const pgp = require('pg-promise')(/*options*/);
+const pgp = require('pg-promise')({noWarnings: true});
 
 const nqdb=pgp({
     host:'webapp-dev.roma1.infn.it',

@@ -5,21 +5,9 @@ import {Router} from './router.js'
 //application data
 window.Application={"user":null,"lang":"ITA"};
 
-/*
-const handlers={};
-
-const registerHandler=(event,handler)=>{
-   
-    handlers[event]=handler;
-}
-
-const getHandler=(event)=>{
-    return handlers[event];
-}*/
-
 const Init=(user)=>{
     
-      
+      //user.email="";
        //salva info utente
        window.Application.user=user;
  
@@ -108,17 +96,23 @@ const language={
 }
 
 
+const user={
+    isValid(){
+        return UserIsValid()
+    },
+    current(){
+        return window.Application.user;
+    }
+}
+
 const Application={
     Init,
     UserIsValid,
     SaveRequest,
     EmitEvent,
     RequestTypes,
-    language
-    /*handler:{
-        registerHandler,
-        getHandler
-    }*/
+    language,
+    user
 }
 
 export {Application}

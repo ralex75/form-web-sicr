@@ -46,8 +46,13 @@ export class NavMenu extends Base {
     }
 
     locale(){
-        var loc= {"ITA":{"profile":"Il mio profilo","requests":"Richieste inviate","ip":"Richiesta indirizzo IP","hosts":"I miei nodi","wifi":"Richiesta WIFI temporaneo"},
-                "ENG":{"profile":"My Profile","requests":"My Requests","ip":"IP address request","hosts":"My hosts","wifi":"Temporary WIFI request"}
+        var loc= {"ITA":{"profile":"Il mio profilo",
+                        "requests":"Richieste inviate",
+                        "account":"Richiesta account di posta",
+                        "ip":"Richiesta indirizzo IP","hosts":"I miei nodi","wifi":"Richiesta WIFI temporaneo"},
+                "ENG":{"profile":"My profile","requests":"My requests",
+                "account":"Email account request",
+                "ip":"IP address request","hosts":"My hosts","wifi":"Temporary WIFI request"}
                 }
 
         return loc[Application.language.current]
@@ -63,8 +68,10 @@ export class NavMenu extends Base {
             {"text":`${loc["profile"]}`,"view":"profile"},
             {"text":`${loc["requests"]}`,'view':'requests'},
             {"text":`${loc["hosts"]}`,'view':'hosts'},
+            {"text":`${loc["account"]}`,'view':'account'},
             {"text":`${loc["ip"]}`,'view':'ip'},
             {"text":`${loc["wifi"]}`,'view':'wifi'}
+            
         ]
 
         let tpl=""

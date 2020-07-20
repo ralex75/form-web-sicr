@@ -3,6 +3,7 @@ var router = express.Router();
 var {nqdb}=require("./db");
 const {authToken} =require('./auth')
 
+
 //check if exists
 router.get("/exists/:val",(req,res)=>{
     var value=req.params.val.toLowerCase();

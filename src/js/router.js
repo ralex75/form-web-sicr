@@ -5,6 +5,7 @@ import {Requests} from './views/requests.js'
 import {RequestDetails} from './views/reqdetails.js'
 
 import {IP} from './views/ip.js'
+import {Account} from './views/account.js'
 import {WIFI} from './views/wifi.js'
 import {Application} from './app.js'
 
@@ -33,6 +34,9 @@ const go=(view,args)=>{
             
             case "profile":
                 new Profile(target,args)
+            break;
+            case "account":
+                new Account(target,args);
             break;
             case "ip":
                 new IP(target,args);

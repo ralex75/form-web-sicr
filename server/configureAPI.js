@@ -3,7 +3,8 @@ const {getUser} = require('./api/user')
 const location = require('./api/location')
 const network = require('./api/network')
 const requests = require('./api/requests')
-const {ReadRequests}=require('./dispatcher/dispatcher');
+const mail = require('./api/mail');
+//const {ReadRequests}=require('./dispatcher/dispatcher');
 const {authToken} =require('./api/auth')
 
 
@@ -18,7 +19,7 @@ module.exports = app => {
   app.use('/loc', location)
   app.use('/net', authToken, network)
   app.use('/requests', authToken, requests)
-
+  app.use('/mail',authToken,mail)
   
   setInterval(()=>{
     //ReadRequests();

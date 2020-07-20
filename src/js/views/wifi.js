@@ -127,6 +127,22 @@ export class WIFI extends Base {
 
     init()
     {
+       const user=Application.user.current();
+       if(user.email)
+       {
+         var loc=this.locale();
+         let html="<div class=\"form_sez\"><div class=\"form_intest\">"
+         html+=loc.form.header
+         html+="</div>"
+                
+          //this.target.querySelectorAll(".form_sez").forEach(el=>el.style.display="none")
+          html+="<p style=\"width:80%;\">Attenzione, attualmente sei in possesso di un account roma1. \
+                    <br>Questo significa che per il WIFI puoi utilizzare le reti <b>eduroam</b> o <b>dot1x</b></p>"
+          html+="</div>"
+                    this.target.innerHTML=html;
+          return;
+       }
+
        this.$form=this.target.querySelector("form");
       
        this.$from=this.target.querySelector("#from");
@@ -134,14 +150,7 @@ export class WIFI extends Base {
 
        var date=moment().format("YYYY-MM-DD");
 
-       /*this.$from.min=date;
-       this.$from.value=date;
-      
-       this.$to.min=date;
-       this.$to.value=date;*/
-
-       //this.$from.previousElementSibling.previousElementSibling.value=moment(date).format('DD-MM-YYYY');
-
+       
        this.target.querySelectorAll('[type=date]').forEach(el=>{
           el.min=date;
           el.value=date;
@@ -154,32 +163,7 @@ export class WIFI extends Base {
           })
         })
 
-        //this.$from.previousElementSibling.previousElementSibling.value=moment(date).format('DD-MM-YYYY');
-        //this.setDate(this.$from,moment(date).format('DD-MM-YYYY'));
-
-       /*
-
-        var date=moment().format('YYYY-MM-DD');
-     
-        this.$from.min=date;
-        this.$from.value=date;
-        this.$to.min=date;
-        this.$to.value=date;
-       
-        this.target.querySelectorAll('[type=date]').forEach(el=>{
-          el.addEventListener('click',ev=>{
-            ev.target.blur();
-          })
-        })
-
-       this.$from.addEventListener("input",ev=>{
-          if(ev.target.value)
-          {
-            this.$to.min=ev.target.value;
-            this.$to.value=ev.target.value;
-          }
-        });*/
-
+        
         
         this.$form.addEventListener('submit',ev=>{
           ev.preventDefault()
@@ -191,18 +175,20 @@ export class WIFI extends Base {
     }
 
     locale(){
-      return {
+      var loc= {
               "ITA":{"form":{"header":"Periodo di navigazione","from":"Inizio","to":"Fine","send":"Invia","format":"DD-MM-YYYY"}},
                     
               "ENG":{"form":{"header":"Browsing time","from":"From","to":"To","send":"Send","format":"YYYY-MM-DD"}},
                     
              }
+
+      return loc[Application.language.current]
     }
 
     setDate(el,value)
     {
       
-      var loc=this.locale()[Application.language.current];
+      var loc=this.locale();
       //var d_it=moment(value).format("DD-MM-YYYY");
       var d_en=moment(value).format("YYYY-MM-DD");
       var d=moment(value).format(loc["form"]["format"]);
@@ -236,12 +222,14 @@ export class WIFI extends Base {
     {
        
        var tpl=template;
-       var loc=this.locale()[Application.language.current].form;
+       var loc=this.locale().form;
 
        for(var k in loc)
        {
          tpl=tpl.replace(`[${k}]`,loc[k]);
        }
+
+       
        
         return tpl;
 

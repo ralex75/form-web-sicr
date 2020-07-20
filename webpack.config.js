@@ -26,7 +26,6 @@ module.exports = {
       publicPath: `/`,
       before: function(app, server, compiler) {
         configureAPI(app);
-       
       },
       after:function(app,server,compiler){
         app.get('*', function(req, res) {
