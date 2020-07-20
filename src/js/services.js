@@ -1,7 +1,7 @@
 import axios from "axios"
 
-//axios.defaults.baseURL = 'http://webapp-dev.roma1.infn.it';
-axios.defaults.baseURL = 'http://localhost:3000/';
+axios.defaults.baseURL = 'http://webapp-dev.roma1.infn.it';
+//axios.defaults.baseURL = 'http://localhost:3000/';
 
 function checkUserAuth(fail=null){
    
