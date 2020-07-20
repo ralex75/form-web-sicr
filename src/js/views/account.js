@@ -369,8 +369,8 @@ export class Account extends Base{
         {
           tpl=tpl.replace(`[${k.toUpperCase()}]`,loc[k]);
         }
-        user.name="Topolino Giorgio";
-        user.surname="Pluto Paperino"
+        //user.name="Topolino Giorgio";
+        //user.surname="Pluto Paperino"
         this.names=user.name.split(" ");
         this.surnames=user.surname.split(" ");
         this.addressIsValid=true;
