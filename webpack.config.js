@@ -1,7 +1,7 @@
 
 //const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require('path');
-const configureAPI=require('./server/configureAPI');
+
 
 
 require("@babel/core").transform("code", {
@@ -25,6 +25,7 @@ module.exports = {
       contentBase:path.join(__dirname,"dist"),
       publicPath: `/`,
       before: function(app, server, compiler) {
+        const configureAPI=require('./server/configureAPI');
         configureAPI(app);
       },
       after:function(app,server,compiler){

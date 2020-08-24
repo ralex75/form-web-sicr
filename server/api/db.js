@@ -1,4 +1,5 @@
-const pgp = require('pg-promise')();
+const pgp = require('pg-promise')({});
+
 
 const nqdb=pgp({
     host:'webapp-dev.roma1.infn.it',
@@ -15,7 +16,6 @@ const userdb=pgp({// connect to userdb
 	user: "sync_persons",
     password: "R34d0nlY"
 });
-
 
 
 module.exports={nqdb,userdb};

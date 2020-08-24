@@ -4,7 +4,7 @@ const location = require('./api/location')
 const network = require('./api/network')
 const requests = require('./api/requests')
 const mail = require('./api/mail');
-//const {ReadRequests}=require('./dispatcher/dispatcher');
+const {ReadRequests}=require('./dispatcher/dispatcher');
 const {authToken} =require('./api/auth')
 
 
