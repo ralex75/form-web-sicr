@@ -16,7 +16,7 @@ const go=(view,args)=>{
        
 
         //controllo se utente è autorizzato prima di passare ad altra view
-        //utente potrebbe fare copia e incolla della route
+        //L'utente potrebbe fare copia e incolla della route
         //se non è autorizzato mostra la view del profilo
         if(!Application.UserIsValid())
         {
