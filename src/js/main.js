@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
 
         console.log("message:",syncResultMessage)
  
-      
+        
         
         if(!window.location.hash)
         {
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
     finally
     {
         if(subscription)
-        subscription.unsubscribe();
+            subscription.unsubscribe();
     }
    
 })
