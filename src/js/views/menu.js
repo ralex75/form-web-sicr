@@ -87,7 +87,7 @@ export class NavMenu extends Base {
                 tpl+=`<div class="bordato"><a href="#${i.view}" class="navi">${i.text}</a></div>`
 
             })
-            tpl+=`<div class="bordato"><a href="http://www.roma1.infn.it/conference/wwwsicr/Shibboleth.sso/Logout?return=http://www.roma1.infn.it/conference/wwwsicr/supporto" class="navi">Logout</a></div>`
+            //tpl+=`<div class="bordato"><a href="http://www.roma1.infn.it/conference/wwwsicr/Shibboleth.sso/Logout?return=http://www.roma1.infn.it/conference/wwwsicr/supporto" class="navi">Logout</a></div>`
 
         }
 
