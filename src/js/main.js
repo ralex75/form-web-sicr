@@ -64,6 +64,8 @@ window.addEventListener('hashchange', ev=>{
 //listener DOM Loaded
 document.addEventListener('DOMContentLoaded',async ev=>{
 
+    let subscription=null;
+
     try{
     
         //Loader
@@ -78,7 +80,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
 
         
        
-        const subscription=interval(1000).subscribe(
+        subscription=interval(1000).subscribe(
             next=>
             {
                 if(next>2)
@@ -102,9 +104,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
 
         console.log("message:",syncResultMessage)
  
-        subscription.unsubscribe();
-
-        //cont.innerHTML="";
+        
         
         if(!window.location.hash)
         {
@@ -122,6 +122,11 @@ document.addEventListener('DOMContentLoaded',async ev=>{
     catch(exc)
     {
         handleError(exc);
+    }
+    finally
+    {
+        if(subscription)
+            subscription.unsubscribe();
     }
    
 })
