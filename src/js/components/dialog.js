@@ -6,14 +6,23 @@ const template=`
             <div class="dlg-message">
                 DIALOG
             </div>
+           
             <div class="dlg-actions">
-                <a href="#" name="yes" data-value="true" class="yes"><span>&#10003;</span> Si</a>
-                <a href="#" name="no" data-value="false" class="no"><span>&#215;</span> No</a>
+                <a href="#" name="yes" data-value="true" class="yes"><span>&#10003;</span>[YES]</a>
+                <a href="#" name="no" data-value="false" class="no"><span>&#215;</span>No</a>
             </div>
         </div>
     </section>
 
 <style scoped>
+
+
+  small.error{
+      color:red;
+  }
+  small.check{
+      color:green;
+  }
 
   .dialog::before{
     content:'';
@@ -22,11 +31,12 @@ const template=`
     position:fixed;
     top:0;
     left:0;
+    
     background-color:rgba(100,100,100,0.5);
     z-index:1;
   }
 
-  .dialog .dlg-content{
+  .dlg-content{
     width:600px;
     min-height:100px;
     position:absolute;
@@ -59,6 +69,7 @@ const template=`
 .dlg-message{
     padding-top:10px;
     min-height:100px;
+    padding-bottom:20px;
 }
 
   a.dlg-close{
@@ -75,11 +86,15 @@ const template=`
 
   .dlg-actions
   {
-      display:none;
-      align-items:flex-end;
+      display:block;
+      min-height:50px;
+      align-items:center;
       justify-content:space-around;
-      border-top:1px solid #DDD;
-      padding:20px 0 0 0;
+      border:0px solid #DDD;
+      border-top:1px solid #ADD;
+      padding-top:20px
+     
+      
   }
 
 
@@ -119,6 +134,8 @@ const template=`
 </style>
 `
 import {Base} from '../views/base.js'
+import {Application} from '../app.js'
+
 export class Dialog extends Base{
    
     showYesButton(cb=null)
@@ -129,20 +146,26 @@ export class Dialog extends Base{
         return this;
     }
 
-    showNoButton(cb=null)
+    showNoButton(cb=null,title=null)
     {
         if(cb)
-        this.showButton('no',cb);
-
+        this.showButton('no',cb,title);
+ 
         return this;
     }
 
-    showButton(butName,cb)
+    
+
+    showButton(butName,cb,txt)
     {
         var el=this.$dlg.querySelector(`a.${butName}`);
         this.callback[butName]=cb;
         el.className=`${butName} show`;
         el.parentElement.style.display='flex';
+        if(txt)
+        {
+            el.innerText=txt;
+        }
     }
 
     showHide()
@@ -170,7 +193,11 @@ export class Dialog extends Base{
     }
 
     getContent(){
-        return template;
+        var tpl=template;
+        var lang=Application.language.current;
+        var yesText= lang=="ITA" ? "Si" : "Yes"
+        tpl=tpl.replace("\[YES\]",yesText)
+        return tpl;
     }
     
     init()

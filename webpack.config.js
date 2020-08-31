@@ -14,7 +14,7 @@ module.exports = {
     //mode:'production',
     devtool: 'inline-source-map',
     entry: [
-      './src/js/app.js',
+      './src/js/main.js',
     ],
     output: {
       filename: 'bundle.js',
@@ -26,7 +26,6 @@ module.exports = {
       publicPath: `/`,
       before: function(app, server, compiler) {
         configureAPI(app);
-       
       },
       after:function(app,server,compiler){
         app.get('*', function(req, res) {

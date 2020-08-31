@@ -3,8 +3,9 @@ const {getUser} = require('./api/user')
 const location = require('./api/location')
 const network = require('./api/network')
 const requests = require('./api/requests')
-const {ReadRequests}=require('./dispatcher/dispatcher');
-const {authToken} =require('./api/auth')
+const mail = require('./api/mail');
+//const {ReadRequests}=require('./dispatcher/dispatcher');
+const {authToken,forceLDAPSync} =require('./api/auth')
 
 
 const cors=require('cors')
@@ -18,7 +19,7 @@ module.exports = app => {
   app.use('/loc', location)
   app.use('/net', authToken, network)
   app.use('/requests', authToken, requests)
-
+  app.use('/mail',authToken,mail)
   
   setInterval(()=>{
     //ReadRequests();
@@ -26,12 +27,16 @@ module.exports = app => {
 
 
 
- app.use('/auth/:uid?',authToken, async (req,res,next)=>{
+ app.use('/auth/:uid?',authToken,forceLDAPSync, async (req,res,next)=>{
   
   var user=null;
+  var {syncResultMessage}=res.locals || "";
+
+  console.log("USERAUTH")
 
   try{
-   
+
+    
     var user = await getUser(req.userid);
   
   }
@@ -41,7 +46,9 @@ module.exports = app => {
     return res.status(500).json("Auth Server Error")
   }
 
-  res.json(user)
+  console.log("Invio risposta al client");
+
+  res.json({"user":user,"syncResultMessage":syncResultMessage})
 
 })
 

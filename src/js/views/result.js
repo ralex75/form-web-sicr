@@ -17,6 +17,7 @@ const template=`
 `
 
 import {Base} from './base.js'
+import {Application} from '../app.js'
 
 
 export class Result extends Base{
@@ -25,25 +26,40 @@ export class Result extends Base{
     {
        
         var content=""
+        var lang=Application.language.current;
         
         if(data)
         {
-            content=`<h4>La sua richiesta è stata inserita correttamente.</h4>A breve riceverà una mail di riepilogo con i dati inseriti.`
+            if(lang=="ITA")
+                content=`<h4>La sua richiesta è stata inserita.</h4>A breve riceverà una mail di riepilogo con i dati inseriti.`
+            else
+                content=`<h4>You request has been submitted.</h4>You will shortly receive a summary email with the data entered.`
 
             //o è aggiornamento o è un nuovo nodo
             var host=data.to || data.from;
             if(host.useMacBusy)
             {
-                content+=`<br><br><h4>Come gia' segnalato nel form di richiesta:</h4>
-                          il mac address selezionato ${ host.mac } è già in uso.
-                          <h4><u>Seguira' pertanto comunicazione del Servizio Impianti Calcolo e Reti</u></h4>
-                          `
+                if(lang=="ITA")
+
+                    content+=`<br><br><h4>Come gia' segnalato nel form di richiesta:</h4>
+                            il mac address selezionato ${ host.mac } è già in uso.
+                            <h4><u>Seguira' pertanto comunicazione del Servizio Impianti Calcolo e Reti</u></h4>
+                            `
+                else
+                    content+=`<br><br><h4>Come gia' segnalato nel form di richiesta:</h4>
+                              il mac address selezionato ${ host.mac } è già in uso.
+                                <h4><u>Seguira' pertanto comunicazione del Servizio Impianti Calcolo e Reti</u></h4>
+                            `
             }
 
         }
+        /*
         else{
-          content=`<h4>Non ci sono state modifiche, la sua richiesta non è stata inserita.</h4>`
-        }
+            if(lang=="ITA")
+                content=`<h4>Non ci sono state modifiche, la sua richiesta non è stata inserita.</h4>`
+            else
+                content=`<h4>Non ci sono state modifiche, la sua richiesta non è stata inserita.</h4>`
+        }*/
     
         return content
     }
@@ -54,25 +70,10 @@ export class Result extends Base{
         return content
     }
 
-    displayUserProfileFeedback(user)
+    displayUserAccountFeedback(user)
     {
-        var content="";
-       
-        if(!user.isAuthorized)
-        {
-            content=`<h4>Attenzione<h4> Il suo stato risulta: <b class="error">NON AUTORIZZATO.</b>`
-        }
-        else{
-            if(!user.disciplinare)
-            {
-                content=`<h4>Attenzione<h4> Il disciplinare non è stato ancora accettato.`
-                //TO DO
-                //link al disciplinare
-            }
-        }
-
-        return content;
-        
+        var content=`<h4>La sua richiesta è stata inserita correttamente.</h4>A breve riceverà una mail di riepilogo con i dati inseriti.`
+        return content
     }
 
 
@@ -91,16 +92,17 @@ export class Result extends Base{
         else{
 
             var {type,data} = reqdata;
+            var types=Application.RequestTypes;
 
             switch(type)
             {
-                case 'USER':
-                    content=this.displayUserProfileFeedback(data);
+                case types.ACCOUNT:
+                    content=this.displayUserAccountFeedback(data);
                 break;
-                case 'IP':
+                case types.IP:
                     content=this.displayUserRequestIPFeedback(data);
                 break;
-                case 'WIFI':
+                case types.WIFI:
                     content=this.displayUserRequestWiFiFeedback(data);
                 break;
             }
@@ -108,7 +110,7 @@ export class Result extends Base{
         }
 
 
-        var tem=template.replace('[CONTENT]',content);
-        return tem;
+        var tmp=template.replace('[CONTENT]',content);
+        return tmp;
     }
 }

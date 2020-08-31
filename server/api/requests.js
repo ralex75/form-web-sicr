@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var {sendMail}=require('./mailer');
 var {nqdb:db}=require("./db");
 //var helper=require("./helper.js");
 

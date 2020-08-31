@@ -1,3 +1,4 @@
+/*
 export class UI {
 
     static ApplicationEvents={'ChangeView':'ChangeView','SaveRequest':'SaveRequest'}
@@ -33,7 +34,7 @@ export class UI {
     }
 
 }
-
+*/
 
 export class Base{
     constructor(target,args)

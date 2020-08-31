@@ -129,6 +129,10 @@ const net={
 
     getVlanID(portcode){
         return axios.get(`/net/portcode/${portcode}/vlan`)
+    },
+
+    verifyEmailAddress(email){
+        return axios.get(`/mail/exists/${email}`)
     }
 
 }
@@ -142,6 +146,8 @@ const requests={
     },
 
     list:function (all=false,type='ANY') {
+
+      
         var baseURL="/requests/list"
         var payload={}
         /*if(!all)

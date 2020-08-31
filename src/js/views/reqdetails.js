@@ -1,8 +1,8 @@
 const template=`
 
    
-    <h1>Dettagli della richiesta ID - [ID]</h1>
-    <a href="#requests" id="goBack" style="text-decoration:underline;">Torna indietro</a>
+    <h1>[request-header] - [ID]</h1>
+    <a href="#requests" id="goBack" style="text-decoration:underline;">[go-back]</a>
    
     
 `
@@ -26,29 +26,33 @@ const style=`
 `
 
 
-import {Base,UI} from './base.js'
+import {Base} from './base.js'
 import services from '../services.js'
+import {Router} from '../router.js'
+import {Application} from '../app.js'
 
 export class RequestDetails extends Base {
 
-   
     init(){
 
-
+        var loc=this.locale()[Application.language.current]
         this.getRequest();
-        this.configMAP={"STATIC":"Indirizzo IP fisso",
-                    "STATICVM":"Indirizzo IP per macchina virtuale",
-                    "DHCP":"Indirizzo IP dinamico"}
+        this.configMAP={"STATIC":`${loc["configMAP"]["static"]}`,
+                        "STATICVM":`${loc["configMAP"]["staticvm"]}`,
+                        "DHCP":`${loc["configMAP"]["dhcp"]}`}
 
+        
        
     }
+
+    
 
 
     async getRequest()
     {
         var req=null;
         try{
-            var res=await services.requests.get(this.args.rid);
+            var res=await services.requests.get(this.requestID);
             req=res.data;
         }
         catch(exc)
@@ -59,12 +63,13 @@ export class RequestDetails extends Base {
        
 
         var html="";
+
+        var loc=this.locale()[Application.language.current];
       
         if(req.rtype=="IP")
         {
-            var action={"create":"Nuovo Nodo","update":"Aggiornamento dati del nodo","delete":"Rimozione Nodo"}
-
-            html+=`<h3>${action[req.data.action]}</h3>`
+           
+            html+=`<h3>${loc.action[req.data.action]}</h3>`
             if(req.data.action=='update')
             {
                 html+=this.changesTemplateIP(req.data);
@@ -77,14 +82,23 @@ export class RequestDetails extends Base {
             
             if(req.data.to && req.data.to.useMacBusy)
             {
-
+                    if(Application.language.current=='ITA')
+                    {
                     html+=`   <div class="alert-box">
                               <h4>Come gia' segnalato nel form di richiesta:</h4>
                               il mac address selezionato ${ req.data.to.mac } è già in uso.
                               <h4><u>Seguira' pertanto comunicazione del Servizio Impianti Calcolo e Reti</u></h4>
                               </div>
                               `
-            
+                    }
+                    else{
+                        html+=`<div class="alert-box">
+                                <h4>Come gia' segnalato nel form di richiesta:</h4>
+                                il mac address selezionato ${ req.data.to.mac } è già in uso.
+                                <h4><u>Seguira' pertanto comunicazione del Servizio Impianti Calcolo e Reti</u></h4>
+                            </div>
+                            `
+                    }
             }
 
         }
@@ -100,7 +114,8 @@ export class RequestDetails extends Base {
         goBack.addEventListener('click',ev=>{
          
             ev.preventDefault();
-            UI.EmitChangeView("requests");
+            Router.go("requests")
+            
         })
     }
 
@@ -109,33 +124,62 @@ export class RequestDetails extends Base {
         return h.config=='DHCP' ? "DHCP" : h.name+"."+h.domain;
     }
 
+    locale(){
+        return {
+                "ITA":{"configMAP":{"static":"Indirizzo IP fisso","staticvm":"Indirizzo IP per macchina virtuale","dhcp":"Indirizzo IP dinamico (DHCP)"},
+                       "template":{"request-header":"Dettagli della richiesta ID",
+                                    "go-back":"Torna Indietro"},
+                        "action":{"create":"Nuovo nodo","update":"Aggiornamento dati del nodo","delete":"Cancellazione nodo"},
+                        "tableHeaders":{"from":"DA","to":"A",
+                                           "config":"Configurazione",
+                                           "name":"Nome",
+                                           "mac":"Indirizzo MAC",
+                                           "port":"Porta"},
+                                },
+                    
+                "ENG":{"configMAP":{"static":"Static IP address","staticvm":"Virtual Machine Static IP Address","dhcp":"Dynamic IP Address (DHCP)"},
+                        "template":{"request-header":"Request details ID",
+                                     "go-back":"Go Back"},
+                        "action":{"create":"New host","update":"Update host data","delete":"Delete host"},
+                        "tableHeaders":{"from":"From","to":"To",
+                        "config":"Configuration",
+                        "name":"Name",
+                        "mac":"MAC Address",
+                        "port":"Port"},
+                        }
+               }
+    }
+
     changesTemplateIP(data)
     {
+        var loc=this.locale()[Application.language.current];
+        var locTable=loc["tableHeaders"];
+
         var html=`
             <table>
                 <thead id="table_intest">
                     <td id="table_intest"></td>
-                    <td id="table_intest">Da</td>
-                    <td id="table_intest">A</td>
+                    <td id="table_intest">${locTable["from"]}</td>
+                    <td id="table_intest">${locTable["to"]}</td>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><div class="prof_lab">Configurazione</div></td>
+                        <td><div class="prof_lab">${locTable["config"]}</div></td>
                         <td>${this.configMAP[data.from.config]}</td>
                         <td>${this.configMAP[data.to.config]}</td>
                     </tr>
                     <tr>
-                        <td><div class="prof_lab">Nome</div></td>
+                        <td><div class="prof_lab">${locTable["name"]}</div></td>
                         <td>${this.fullName(data.from)}</td>
                         <td>${this.fullName(data.to)}</td>
                     </tr>
                     <tr>
-                        <td><div class="prof_lab" style="width:160px;">Mac Address</div></td>
+                        <td><div class="prof_lab" style="width:160px;">${locTable["mac"]}</div></td>
                         <td>${data.from.mac}</td>
                         <td>${data.to.mac}</td>
                     </tr>
                     <tr>
-                        <td><div class="prof_lab">Porta</div></td>
+                        <td><div class="prof_lab">${locTable["port"]}</div></td>
                         <td>${data.from.port}</td>
                         <td>${data.to.port}</td>
                     </tr>
@@ -148,6 +192,9 @@ export class RequestDetails extends Base {
 
     singleTemplateIP(data)
     {
+        var loc=this.locale()[Application.language.current];
+        var locTable=loc["tableHeaders"];
+
         var curr=data.to || data.from;
         var html=`
             <table>
@@ -157,19 +204,19 @@ export class RequestDetails extends Base {
            </thead>
                 <tbody>
                     <tr>
-                        <td><div class="prof_lab">Configurazione</div></td>
+                        <td><div class="prof_lab">${locTable["config"]}</div></td>
                         <td>${this.configMAP[curr.config]}</td>
                     </tr>
                     <tr>
-                        <td><div class="prof_lab">Nome</div></td>
+                        <td><div class="prof_lab">${locTable["name"]}</div></td>
                         <td>${this.fullName(curr)}</td>
                      </tr>
                     <tr>
-                        <td><div class="prof_lab" style="width:160px;">Mac Address</div></td>
+                        <td><div class="prof_lab" style="width:160px;">${locTable["mac"]}</div></td>
                         <td>${curr.mac}</td>
                     </tr>
                     <tr>
-                        <td><div class="prof_lab">Porta</div></td>
+                        <td><div class="prof_lab">${locTable["port"]}</div></td>
                         <td>${curr.port}</td>
                     </tr>
                 </tbody>
@@ -205,8 +252,19 @@ export class RequestDetails extends Base {
 
 
     getContent(){
+        
        
-        return template.replace("[ID]",this.args.rid);
+        this.requestID=this.args.rid;
+        let tpl=template;
+        
+        var loc=this.locale()[Application.language.current].template;
+        loc["ID"]=this.requestID;
+        for(var k in loc)
+        {
+            tpl=tpl.replace(`[${k}]`,loc[k]);
+        }
+
+        return tpl;
       
     }
 

@@ -1,26 +1,26 @@
 const template=
 `   
     <div class="form_intest">
-    Locazione Presa
+    [HEADER-PORT]
     </div>
     <div class="form_riga">
         <div class="form_col">
-            <label for="build">Edificio</label><br>
+            <label for="build">[BUILD]</label><br>
             <select id="build" name="build"></select>
         </div>
         <div class="form_col">
-            <label for="floor">Piano</label><br>
+            <label for="floor">[FLOOR]</label><br>
             <select id="floor" name="floor"></select>
         </div>
     </div> 
     <div class="form_riga">
         <div class="form_col">
-            <label for="room">Stanza</label><br>
+            <label for="room">[ROOM]</label><br>
             <select id="room" name="room"></select>
         </div>
         <div class="form_col">
-            <label for="port">Porta</label><br>
-            <select id="port" name="port"></select>
+            <label for="port">[PORT]</label><br>
+            <select id="port" name="port" data-attr='formdata'></select>
             <small>Error Message</small>
         </div>
     </div> 
@@ -37,8 +37,11 @@ const template=
     </style>
    
 `
-import {Base,UI} from './base.js'
+import {Base} from './base.js'
 import services from '../services.js'
+import {Application} from '../app.js';
+
+
 
 export class Location extends Base {
     
@@ -53,15 +56,23 @@ export class Location extends Base {
         
         this.$location=document.querySelector("#location")
         
-        this.defaultOption={'build':"<option selected value='' disabled hidden> --- Seleziona Edificio --- </option>",
-                                  'floor':"<option selected value='' disabled hidden> --- Seleziona Piano --- </option>",
-                                  'room':"<option selected value='' disabled hidden> --- Seleziona Stanza --- </option>",
-                                  'port':"<option selected value='' disabled hidden> --- Seleziona Porta --- </option>"}
+       
+        
+        var loc=this.locale()[Application.language.current].options;
+
+        this.defaultOption={'build':`<option selected value='' disabled hidden> --- ${loc["build"]} --- </option>`,
+                                  'floor':`<option selected value='' disabled hidden> --- ${loc["floor"]} --- </option>`,
+                                  'room':`<option selected value='' disabled hidden> --- ${loc["room"]} --- </option>`,
+                                  'port':`<option selected value='' disabled hidden> --- ${loc["port"]} --- </option>`}
         
 
         this.$location.querySelectorAll('select').forEach(el=>{
            
-                el.addEventListener('change',ev=>{this.selectChanged(ev.target)});
+                el.addEventListener('change',ev=>{ 
+                                this.selectChanged(ev.target);
+                                this.$ports.parentElement.className="form_col"     
+                            });
+                
                 this.buildOptions(el)
             }
             
@@ -69,61 +80,80 @@ export class Location extends Base {
 
         this.buildOptions(this.$builds,[{'txt':'Marconi','value':'MARCONI'},{'txt':'Fermi','value':'Fermi'}])
 
-        document.addEventListener('ConfigChanged',ev=>{
-            this.configChangedArgs=ev.detail;
-           
-            this.enableDisablePorts();
-        })
+        
 
-        if(this.args)
-        {
-            
-           this.initLocation();
-           
-        }
+    }
+    
+
+    //aggiorna lista porte libere selezionabili
+    updateFreePorts(args){
 
        
+        this.configChangedArgs=args;
+           
+        console.log("UpdateFreePorts")
+        //Abilita o Disabilita le porte
+        this.enableDisablePorts();
     }
+    
 
-    async initLocation()
+
+    //Imposta il default con i parametri di Modifica di un nodo
+    async setDefault({build,floor,id,port})
     {
-        this.$builds.value=this.args.build;
+        this.$builds.value=build;
         await this.getFloors();
-        this.$floors.value=this.args.floor;
+        this.$floors.value=floor;
         await this.getRooms();
-        this.$rooms.value=this.args.id;
+        this.$rooms.value=id;
         await this.getPorts();
-        this.$ports.value=this.args.port;
-        this.$ports.dispatchEvent(new Event('change'))
+        this.$ports.value=port;
+        //this.$ports.dispatchEvent(new Event('change'))
     }
 
-    getPortRef(){
-        return this.$ports;
+   
+
+    locale(){
+
+        return {"ITA":{"template":{"build":"Edificio","floor":"Piano","room":"Stanza","port":"Porta",
+                               "header-port":"LOCAZIONE PRESA"},
+                               "options":{"build":"Seleziona Edificio","floor":"Seleziona Piano","room":"Seleziona Stanza","port":"Seleziona Porta"}},
+                "ENG":{"template":{"build":"Building","floor":"Floor","room":"Room","port":"Port",
+                                "header-port":"PORT LOCATION"},
+                                "options":{"build":"Select Building","floor":"Select Floor","room":"Select Room","port":"Select Port"}},
+            }
     }
 
     enableDisablePorts()
     {
+       
         if(!this.ports) return;
 
+       
         var options=this.$ports.options;
         var disabledCount=0;
 
        for(var i=0;i<options.length;i++){
+           
            var disabled=this.isDisabled(options[i]);
            options[i].disabled=disabled;
            if(disabled)
            {
+              
                disabledCount++;
            }
        }
 
-       
-       this.$ports.disabled= (disabledCount==(this.$ports.options.length-1));
-       
-       if(this.$ports.disabled)
+       //lasciamo la porta selezionata settata solo se non è disabilitata
+       if(this.$ports.options[this.$ports.selectedIndex].disabled)
        {
-           UI.EmitEvent("NoFreePorts");
+           this.$ports.value=""
        }
+
+       var freePorts=(disabledCount!=(this.$ports.options.length-1));
+      
+
+       this.target.dispatchEvent(new CustomEvent('freePorts', { detail: freePorts,bubbles:true }));
         
     }
 
@@ -132,16 +162,19 @@ export class Location extends Base {
         
         if(!o || !o.value) return;
 
-        var port=this.ports.filter(p=>p.port_code==o.value)
+        var port=this.ports.filter(p=>{return (p.port_code==o.value || p.port_alias==o.value)})
      
         port=port && port[0];
 
-        var _invalid=port.vlanid==null;
+        var _unlinkedPort=port.vlanid==null;
+
+        if(_unlinkedPort) return false;
         
+        if(!this.configChangedArgs) return;
         var {config,mac}=this.configChangedArgs;
         
-        if(!_invalid)
-        {
+        var _invalid=false;
+        
             //nodo e porta devono essere DHCP altrimenti controlla se è occupata (port.busy)
             if(!(port.vlanid==113 && config=='DHCP'))
             {
@@ -170,7 +203,7 @@ export class Location extends Base {
 
             }
 
-        }
+        
     
         
 
@@ -194,7 +227,7 @@ export class Location extends Base {
 
         select.innerHTML+=options;
         select.disabled = select.options.length<2;
-
+       
         if(select.name=='port' && !select.disabled)
         {
             this.enableDisablePorts();
@@ -244,7 +277,7 @@ export class Location extends Base {
         var ports=[];
         data.forEach(d=>{
             var p={
-                   "value":d.port_code,
+                   "value":d.port_alias,
                    "txt": `${d.port_alias} ${d.vlanid=='113' ? ' - DHCP':''}`
                     }
          
@@ -256,7 +289,7 @@ export class Location extends Base {
 
     selectChanged(select){
           
-      
+       console.log("Changed");
         var callback=null;
         var {name}=select;
     
@@ -293,7 +326,6 @@ export class Location extends Base {
             }
         }
 
-        
 
 
     }
@@ -308,11 +340,17 @@ export class Location extends Base {
             p=(p && p[0]);
         }
 
-        this.$ports.dispatchEvent(new CustomEvent("selectedPort",{detail:p,bubbles:true}))
+        //this.$ports.dispatchEvent(new CustomEvent("selectedPort",{detail:p,bubbles:true}))
     }
 
     getContent(){
-       return template;
+        var tmp=template;
+        var loc=this.locale()[Application.language.current]
+        for(var k in loc.template)
+        {
+            tmp=tmp.replace(`[${k.toUpperCase()}]`,loc.template[k])
+        }
+       return tmp;
     }
 
 }

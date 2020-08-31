@@ -1,156 +1,123 @@
 import {NavMenu} from './views/menu.js'
-import {Result} from './views/result.js'
-import {Profile} from './views/profile.js'
-import {HostList} from './views/hostlist.js'
-import {Requests} from './views/requests.js'
-import {RequestDetails} from './views/reqdetails.js'
-
-import {IP} from './views/ip.js'
-import {WIFI} from './views/wifi.js'
-import {Base,UI} from './views/base.js'
 import services from './services.js'
+import {Router} from './router.js'
 
 //application data
-window.Application={"user":null};
+window.Application={"user":null,"lang":"ITA"};
 
-
-window.addEventListener('error', function(event) { 
-    handleError(event);
-})
-
-window.addEventListener('unhandledrejection', function(event) {
-    //console.error('Unhandled rejection (promise: ', event.promise, ', reason: ', event.reason, ').');
-    //document.querySelector("#col_sin_menu").innerHTML="";
-    handleError(event);
-});
-
-
-const handleError=(err)=>{
-    console.log(err);
-   
-    //TO DO
-     //DUMP ERROR to file ?
-
-    //rimuove pannello di navigazione ?
-    //document.querySelector("#col_sin_menu").innerHTML="";
-   
-    //show error
-    return showView({'view':'result','args':{'status':false}})
-}
-
-
-//listener DOM Loaded
-document.addEventListener('DOMContentLoaded',async ev=>{
-
-     //legge informazioni utente
-    var user=await services.user.read();
+const Init=(user)=>{
     
-    //salva info utente
-    window.Application.user=user;
-
-    try{
-        
+      //user.email="";
+       //salva info utente
+       window.Application.user=user;
+ 
        
-        if(user.isAuthorized && user.disciplinare)
-        {
-            
-            var menu=document.querySelector("#col_sin_menu")
-            menu=new NavMenu(menu);
-        
-        }
+       document.addEventListener("languageChanged",ev=>{
+           
+                buildMenu();
+       })
 
-        //default route
-        window.location.hash='#profile';
-
-    }
-    catch(exc)
-    {
-        handleError(exc);
-    }
-   
-})
-
-const showView=function({view,args}){
+       document.addEventListener("showHideMenu",ev=>{
+           
+               showHide();
+       })
     
-    var target=document.querySelector("#colonne_content")
-   
-    target.classList.remove("fade-in");
-    void target.offsetWidth;
-    target.classList.add("fade-in");
 
-    
-    switch(view.toLowerCase()){
-        
-        
-        case "profile":
-            view=new Profile(target,args)
-        break;
-        case "ip":
-            view=new IP(target,args);
-        break;
-        case "wifi":
-            view=new WIFI(target,args);
-        break;
-        case "hosts":
-            view=new HostList(target,args);
-        break;
-        case "requests":
-            view=new Requests(target,args);
-        break;
-        case "reqdetails":
-            view=new RequestDetails(target,args);
-        break;
-        case "result":
-            view=new Result(target,args);
-            //redirezione utente ad altra view se è view Result
-            if(args.status)
-            {
-                UI.EmitChangeView(args.next || 'profile',null, 2000);
-            }
-        break;
-        default:
-            view=new Base(target,args);
-    }
-
+       buildMenu();
 
 }
 
-//listener cambio view
-document.addEventListener(UI.ApplicationEvents.ChangeView, ev=>{
-    
-    ev.preventDefault();
-    showView(ev.detail);
-
-})
-
-
-//salva richiesta
-document.addEventListener(UI.ApplicationEvents.SaveRequest, async ev=> {
-   
-    var {type,data}=ev.detail;
-   
-    var result={"status":true, "reqdata":ev.detail, "next":"hostlist"};
-
-   
-    if(data)
+const showHide=()=>{
+  
+    var routes=document.querySelector("#routes");
+    if(routes)
     {
+        routes.style.display = UserIsValid() ? 'block' : 'none'
+    }
+}
+
+const buildMenu=()=>{
+    
+    var menu=document.querySelector("#col_sin_menu")
+    new NavMenu(menu);
+   
+}
+
+const UserIsValid=()=>{
+    
+    var user=window.Application.user
+    return user.isAuthorized && user.disciplinare;
+}
+
+const EmitEvent=(name,args=null,bubbles=true)=>{
+   
+    document.dispatchEvent(new CustomEvent(name,{'detail':args,bubbles:bubbles}))
+}
+
+const SaveRequest=async (type,data)=>{
         
-        try
+        var success=false;
+       
+        if(data)
         {
-            await services.requests.save(type,data)
-            result.next="requests";
-        }
-        catch(exc)
-        {
-            result.status=false;
-            result.next="profile";
-            console.log("exc:",exc);
+           
+            try
+            {
+                await services.requests.save(type,data)
+                success=true;
+            }
+            catch(exc)
+            {
+                console.log("exc:",exc);
+            }
+
         }
 
+        var result={"status":success, "reqdata":{'type':type,'data':data}, "next":"requests"};
+
+        Router.go("result",result);
+
+}
+
+const RequestTypes={"WIFI":"WIFI","IP":"IP","ACCOUNT":"ACCOUNT"}
+
+const language={
+    set current(lang){
+        if(window.Application.lang!=lang)
+        {
+            window.Application.lang=lang;
+            EmitEvent("languageChanged")
+        }
+    },
+    get current(){
+        return window.Application.lang;
     }
-    
    
-    //mostra risultati
-    UI.EmitChangeView('result',result);
-    
-})
+}
+
+
+const user={
+    isValid(){
+        return UserIsValid()
+    },
+    current(){
+        return window.Application.user;
+    }
+}
+
+const Application={
+    Init,
+    UserIsValid,
+    SaveRequest,
+    EmitEvent,
+    RequestTypes,
+    language,
+    user
+}
+
+export {Application}
+
+
+
+
+

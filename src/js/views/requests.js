@@ -1,10 +1,11 @@
 const template=`
     
     <div class="req-actions">
-        <input type="text" placeholder="ricerca..." id="search" autocomplete="off" />
-        <label for="selreqtypes">Visualizza:</label>&nbsp;
+        <input type="text" placeholder="[search]" id="search" autocomplete="off" />
+        <label for="selreqtypes">[filter]:</label>&nbsp;
         <select id="selreqtypes">
-            <option selected value="ANY">Tutti</option>
+            <option selected value="ANY">[option-all]</option>
+            <option  value="ACCOUNT">ACCOUNT</option>
             <option  value="IP">IP</option>
             <option value="WIFI">WIFI</option>
         </select>
@@ -14,8 +15,8 @@ const template=`
     <thead>
         <tr id="table_intest">
             <td>ID</td>
-            <td>Data Richiesta</td>
-            <td>Descrizione</td>
+            <td>[reqdate]</td>
+            <td>[reqdesc]</td>
         </tr>
     </thead>
     <tbody class="tbreq-tbody">
@@ -74,8 +75,10 @@ const template=`
     </style>
 `
 
-import {Base,UI} from './base.js'
+import {Base} from './base.js'
 import services from '../services.js'
+import {Router} from '../router.js'
+import {Application} from '../app.js'
 
 
 const DATE_FORMAT="DD/MM/YYYY HH:mm"
@@ -97,18 +100,41 @@ export class Requests extends Base{
             this.timeoutid=setTimeout(()=>{
             var items=this.items.filter(e=>{return Object.values(e).join().toLowerCase().indexOf(ev.target.value.toLowerCase())>-1})
             this.buildRows(items);
-            },200)
+            },0)
         })
 
         this.$types.addEventListener('change',ev=>{
             this.getRequests();
         })
 
+      
+
         this.getRequests();
     }
 
     getContent(){
-        return template;
+        let tmp=template;
+        var loc=this.locale()[Application.language.current];
+        for(var k in loc.form)
+        {
+            console.log(k)
+            tmp=tmp.replace(`[${k}]`,loc.form[k]);
+        }
+       
+        return tmp;
+    }
+
+    locale(){
+        return {
+                "ITA":{"wifi":{"desc":"WIFI temporaneo","format":"DD/MM/YYYY"},
+                        "ip":{"create":"Nuovo nodo","update":"Aggiornamento dati del nodo","delete":"Cancellazione nodo"},
+                        "account":{"desc":"Creazione Account di Posta INFN"},
+                        "form":{"search":"ricerca","filter":"visualizza","option-all":"Tutti","reqdate":"Data richiesta","reqdesc":"Descrizione"}},
+                "ENG":{"wifi":{"desc":"WIFI temporary","format":"YYYY/MM/DD"},
+                        "ip":{"create":"New host","update":"Update host data","delete":"Delete host"},
+                        "account":{"desc":"Create INFN E-mail Account"},
+                        "form":{"search":"search","filter":"view","option-all":"All","reqdate":"Request Date","reqdesc":"Description"}}
+               }
     }
 
     setFeedbackMessage(type="",message="")
@@ -134,8 +160,8 @@ export class Requests extends Base{
 
        //try{
             
-            var resp=await services.requests.list(false,this.$types.value)
-            this.items=this.mapItems(resp.data);
+        var resp=await services.requests.list(false,this.$types.value)
+        this.items=this.mapItems(resp.data);
             //this.buildRows(this.items);
        /*}
        catch(exc)
@@ -151,32 +177,43 @@ export class Requests extends Base{
 
     mapItems(list)
     {
-       
+        var loc=this.locale()[Application.language.current];
+        var types=Application.RequestTypes;
         var items=[];
         list.forEach(item => {
                   
             var desc=""
-            if(item.rtype=="WIFI")
+            switch (item.rtype)
             {
-               var format=DATE_FORMAT.split(" ")[0];
-               desc=`WiFi temporaneo dal ${moment(item.data.from).format(format)} al ${moment(item.data.to).format(format)}`;
+                case types.WIFI:
+                 var format=DATE_FORMAT.split(" ")[0];
+                 desc=`${loc["wifi"]["desc"]} ${moment(item.data.from).format(`${loc["wifi"]["format"]}`)} - ${moment(item.data.to).format(`${loc["wifi"]["format"]}`)}`;
+                break;
+                case types.IP:
+                    var d=item.data;
+                    var action={"create":`${loc["ip"]["create"]}`,"update":`${loc["ip"]["update"]}`,"delete":`${loc["ip"]["delete"]}`}
+                    desc=`${action[d.action]}:  ` 
+                    var h=d.from || d.to;
+                    desc+= h.name ? h.name+"."+h.domain : "DHCP - "+h.mac
+                break;
+                case types.ACCOUNT:
+                  var d=item.data;
+                  desc=`${loc["account"]["desc"]}`;
+                break;
+
             }
-            if(item.rtype=="IP")
-            {
-              var d=item.data;
-              var action={"create":"Nuovo nodo","update":"Aggiornamento dati del nodo","delete":"Cancellazione nodo"}
-              
-              desc=`${action[d.action]}:  ` 
-              var h=d.from || d.to;
-              desc+= h.name ? h.name+"."+h.domain : "DHCP - "+h.mac
-               
-            }
+            
+            
             var i={
               "id":item.id,
-              "reqdate":moment(item.req_date).format(DATE_FORMAT),
-              "desc": desc 
+              "reqdate":moment(item.req_date).format(loc.wifi.format+" HH:mm"),
+              "desc": desc,
+              "type":item.rtype
             }
+
+            if(desc!="")
             items.push(i);
+
           });
 
           return items;
@@ -188,16 +225,19 @@ export class Requests extends Base{
 
         items.forEach(i=>{
             var tr=document.createElement("tr")
+        
             tr.innerHTML=`
                 <td>${i.id}</td>
                 <td>${i.reqdate}</td>
-                <td><a href="#requests" data-rid="${i.id}">${i.desc}</a></td>`;
-            this.$tbody.appendChild(tr);    
+                <td>${i.type=='IP' ? `<a href="#requests" data-rid="${i.id}">${i.desc}</a>` : `${i.desc}`}</td>`;
+            this.$tbody.appendChild(tr);
+
         })
 
         this.$tbody.querySelectorAll("[data-rid]").forEach(el=>{
             el.addEventListener('click',()=>{
-                UI.EmitChangeView('reqdetails',{"rid":el.dataset.rid})
+                //window.Application.rid=el.dataset.rid;
+                Router.go('reqdetails',{"rid":el.dataset.rid})
             });
         })
 
