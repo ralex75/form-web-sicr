@@ -32,6 +32,7 @@ const go=(view,args)=>{
         void target.offsetWidth;
         target.classList.add("fade-in");
        
+        
         switch(view.toLowerCase()){
             
             case "profile":
@@ -54,6 +55,14 @@ const go=(view,args)=>{
             break;
             case "reqdetails":
                 new RequestDetails(target,args);
+            break;
+            case "logout":
+                var wl=window.location;
+                var url=wl.href.substring(0,wl.href.indexOf("#"));
+                url+="Shibboleth.sso/Logout"
+                
+                return wl.replace(url);
+                //window.location.href="http://www.roma1.infn.it/conference/wwwsicr/supporto/Shibboleth.sso/Logout";
             break;
             case "result":
                 new Result(target,args);
