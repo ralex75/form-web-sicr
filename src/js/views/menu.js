@@ -70,7 +70,9 @@ export class NavMenu extends Base {
             {"text":`${loc["hosts"]}`,'view':'hosts'},
             {"text":`${loc["account"]}`,'view':'account'},
             {"text":`${loc["ip"]}`,'view':'ip'},
-            {"text":`${loc["wifi"]}`,'view':'wifi'}
+            {"text":`${loc["wifi"]}`,'view':'wifi'},
+           // {"text":`Logout`,'view':'logout'}
+
             
         ]
 
@@ -85,6 +87,8 @@ export class NavMenu extends Base {
                 tpl+=`<div class="bordato"><a href="#${i.view}" class="navi">${i.text}</a></div>`
 
             })
+            tpl+=`<div class="bordato"><a href="http://www.roma1.infn.it/conference/wwwsicr/supporto/Shibboleth.sso/Logout?return=http://www.roma1.infn.it/conference/wwwsicr/supporto" class="navi">Logout</a></div>`
+
         }
 
          
