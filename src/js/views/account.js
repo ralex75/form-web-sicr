@@ -317,7 +317,7 @@ export class Account extends Base{
                         }
                      },
                       
-                "ENG":{"header":"Email Account","user_has_account":"Warning, you already have an account email 'roma1.infn.it'",
+                "ENG":{"header":"Email Account","user_has_account":"Warning, you already have an Email account 'roma1.infn.it'",
                 "email_feedback":"Your email address will be",
                 "email_exists_pending":"Checking....",
                 "email_exists":"Email adress is already registered.",
@@ -362,7 +362,7 @@ export class Account extends Base{
 
         let user=Object.assign({},Application.user.current());
         this.userHasAccount=user.email!="";
-        this.userHasAccount=false;
+        //this.userHasAccount=false;
         if(this.userHasAccount)
         {
             tpl=tpl.replace("[EMAIL_FEEDBACK]",loc['user_has_account'])
