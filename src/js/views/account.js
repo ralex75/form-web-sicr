@@ -123,6 +123,8 @@ export class Account extends Base{
             ev.submitter.disabled=true;
             this.disableEnableSelect(true);
             let invalid= this.emailAddressIsInValid();
+
+         
             ev.submitter.disabled=false;
             this.disableEnableSelect(false);
            
@@ -133,6 +135,7 @@ export class Account extends Base{
             var confirm=loc.dialog.confirm;
             var msg=loc.dialog.msg;
            
+            //chiama il metodo per mostrare la Dialog
             this.showDialog(confirm,
                             `${msg}?
                             <br><br><b>${this.$email.innerText}</b>`,()=>{
@@ -271,9 +274,8 @@ export class Account extends Base{
         //quando si apre la dialog inizia la ricerca per indirizzo duplicato
         var html=this.$email.innerText+"<p><small class=\"check\">verifica indirizzo email scelto in corso...</small></p>"
         dlg.setMessage(html)
-        this.emailAddressExists().then(resp=>{
-            let exists=resp.exists;
-
+        this.emailAddressExists().then(exists=>{
+          
             if(!exists)
             {
                 dlg.setTitle(title);
@@ -315,7 +317,7 @@ export class Account extends Base{
                         }
                      },
                       
-                "ENG":{"header":"Email Account","user_has_account":"Warning, you already have an account email 'roma1.infn.it'",
+                "ENG":{"header":"Email Account","user_has_account":"Warning, you already have an Email account 'roma1.infn.it'",
                 "email_feedback":"Your email address will be",
                 "email_exists_pending":"Checking....",
                 "email_exists":"Email adress is already registered.",
@@ -360,6 +362,7 @@ export class Account extends Base{
 
         let user=Object.assign({},Application.user.current());
         this.userHasAccount=user.email!="";
+        //this.userHasAccount=false;
         if(this.userHasAccount)
         {
             tpl=tpl.replace("[EMAIL_FEEDBACK]",loc['user_has_account'])

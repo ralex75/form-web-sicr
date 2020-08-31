@@ -137,7 +137,7 @@ export class WIFI extends Base {
                 
           //this.target.querySelectorAll(".form_sez").forEach(el=>el.style.display="none")
           html+="<p style=\"width:80%;\">Attenzione, attualmente sei in possesso di un account roma1. \
-                    <br>Questo significa che per il WIFI puoi utilizzare le reti <b>eduroam</b> o <b>dot1x</b></p>"
+                    <br>Per il WIFI puoi utilizzare le reti <b>eduroam</b> o <b>dot1x</b></p>"
           html+="</div>"
                     this.target.innerHTML=html;
           return;

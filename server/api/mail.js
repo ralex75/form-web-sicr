@@ -10,9 +10,9 @@ router.get("/exists/:val",async (req,res)=>{
     try {
         
         users=await getUserLDAP(`(mail=${email})`);
-        console.log(users);
+        //console.log(users);
         exists = users && users.length>0;
-        console.log(exists);
+        //console.log(exists);
 
     }
     catch(err)

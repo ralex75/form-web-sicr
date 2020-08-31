@@ -89,6 +89,7 @@ export class Profile extends Base{
         */
         
         //let user = this.args || await services.user.read();
+        
         var content="";
 
         var loc=this.locale()[Application.language.current];
@@ -99,7 +100,6 @@ export class Profile extends Base{
                                      : ""
 
         
-        //Application.EmitEvent("showHideMenu")
 
         var html=`<div class="prof_intest" >
         <p>${user.name} ${user.surname}</p>

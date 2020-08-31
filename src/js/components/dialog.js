@@ -31,11 +31,12 @@ const template=`
     position:fixed;
     top:0;
     left:0;
+    
     background-color:rgba(100,100,100,0.5);
     z-index:1;
   }
 
-  .dialog .dlg-content{
+  .dlg-content{
     width:600px;
     min-height:100px;
     position:absolute;

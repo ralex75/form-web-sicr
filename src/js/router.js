@@ -16,13 +16,15 @@ const go=(view,args)=>{
        
 
         //controllo se utente è autorizzato prima di passare ad altra view
-        //utente potrebbe fare copia e incolla della route
+        //L'utente potrebbe fare copia e incolla della route
         //se non è autorizzato mostra la view del profilo
-        if(!Application.UserIsValid())
+       
+        if(view!='result' && !Application.UserIsValid())
         {
             window.history.pushState("","","#profile")
             view="profile";
         }
+       
        
         var target=document.querySelector("#colonne_content")
        
@@ -58,6 +60,7 @@ const go=(view,args)=>{
                 
                 if(args.status)
                 {
+                    debugger;
                     clearTimeout(timeout);
                     timeout=setTimeout(()=>{
                         var view=args.next || 'profile'
