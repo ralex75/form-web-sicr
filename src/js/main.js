@@ -58,16 +58,6 @@ const handleError=(err)=>{
 window.addEventListener('hashchange', ev=>{
     
     var view=window.location.hash.substr(1);
-    debugger;
-    if(view=='logout')
-    {
-        var wl=window.location;
-        var url=wl.href.substring(0,wl.href.indexOf("#"));
-        url+="Shibboleth.sso/Logout"
-        
-        return wl.href=url;
-    }
-    else
     Router.go(view);
 })
 
