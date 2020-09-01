@@ -20,7 +20,7 @@ const template=
         </div>
         <div class="form_col">
             <label for="port">[PORT]</label><br>
-            <select id="port" name="port" data-attr='formdata'></select>
+            <select id="port" class="ports" name="port" data-attr='formdata'></select>
             <small>Error Message</small>
         </div>
     </div> 
@@ -33,6 +33,10 @@ const template=
     select {
         background: transparent;
         outline:0;
+    }
+
+    select.ports option:disabled {
+        color: #DDD;
     }
     </style>
    
