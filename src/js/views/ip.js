@@ -427,9 +427,9 @@ export class IP extends Base{
         this.showDialog(`${lang!='ITA' ? 'Confirmation Request' : 'Richiesta di Conferma'}`,html,()=>{
             console.log("Send Form:",data)
             Application.SaveRequest(Application.RequestTypes.IP,data);
-            //UI.EmitSaveRequest('IP',data);
-        },()=>{});
-        //UI.EmitSaveRequest('IP',data);
+           
+        },()=>{this.useMacBusy=false});
+      
     }
 
     getReport(lang,data)
