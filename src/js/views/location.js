@@ -82,7 +82,7 @@ export class Location extends Base {
             
         )
 
-        this.buildOptions(this.$builds,[{'txt':'Marconi','value':'MARCONI'},{'txt':'Fermi','value':'Fermi'}])
+        this.buildOptions(this.$builds,[{'txt':'Marconi','value':'MARCONI'},{'txt':'Fermi','value':'FERMI'},{'txt':'Segre','value':'SEGRE'}])
 
         
 
