@@ -122,6 +122,7 @@ input::-webkit-calendar-picker-indicator {
 
 import {Base,UI} from './base.js'
 import {Application} from '../app.js'
+import moment from 'moment'
 
 export class WIFI extends Base {
 
@@ -130,6 +131,7 @@ export class WIFI extends Base {
        const user=Application.user.current();
        if(user.email)
        {
+
          var loc=this.locale();
          let html="<div class=\"form_sez\"><div class=\"form_intest\">"
          html+=loc.form.header

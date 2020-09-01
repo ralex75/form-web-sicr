@@ -1,6 +1,7 @@
 import {NavMenu} from './views/menu.js'
 import services from './services.js'
 import {Router} from './router.js'
+import moment from 'moment'
 
 //application data
 window.Application={"user":null,"lang":"ITA"};

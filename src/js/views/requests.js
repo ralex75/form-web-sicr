@@ -79,6 +79,7 @@ import {Base} from './base.js'
 import services from '../services.js'
 import {Router} from '../router.js'
 import {Application} from '../app.js'
+import moment from 'moment'
 
 
 const DATE_FORMAT="DD/MM/YYYY HH:mm"

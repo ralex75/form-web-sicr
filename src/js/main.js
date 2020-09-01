@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         var cont= document.querySelector("#colonne_content");
         cont.innerHTML="<style>"+cssLoaderClass+"</style>";
         cont.innerHTML+="<div class=\"inline\"><div class=\"loader\"></div>&nbsp;&nbsp;&nbsp; \
-                                                            <p class=\"info\" style=\"display:none\"><b>Attendere prego, controllo identità in corso...</b>\
+                                                            <p class=\"info\" style=\"opacity:0;transition:opacity 1s linear;\"><b>Attendere prego, controllo identità in corso...</b>\
                                                             <br>L'operazione potrebbe richiedere qualche secondo...<span class=\"timer\"></span></p> \
         </div>";
         
@@ -84,15 +84,17 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         subscription=interval(1000).subscribe(
             next=>
             {
+               
                 if(next>2)
                 {
-                    cont.querySelector(".info").style.display="block";
+                    cont.querySelector(".info").style.opacity="1";
                 }
                 countElem.innerText=`${next}s`
             }
         )
 
-        /*setTimeout(()=>{
+        /*
+        setTimeout(()=>{
 
             subscription.unsubscribe();
         },10000)
@@ -126,8 +128,8 @@ document.addEventListener('DOMContentLoaded',async ev=>{
     }
     finally
     {
-        if(subscription)
-            subscription.unsubscribe();
+        /*if(subscription)
+            subscription.unsubscribe();*/
     }
    
 })
