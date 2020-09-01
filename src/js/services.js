@@ -1,4 +1,6 @@
 import axios from "axios"
+//import regeneratorRuntime from "regenerator-runtime";
+import "regenerator-runtime/runtime.js"; //per webpack funzioni async 
 
 //axios.defaults.baseURL = 'http://webapp-dev.roma1.infn.it';
 axios.defaults.baseURL = 'http://localhost:3000/';
