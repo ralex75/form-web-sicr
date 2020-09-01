@@ -87,6 +87,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
                
                 if(next>2)
                 {
+                   
                     cont.querySelector(".info").style.opacity="1";
                 }
                 countElem.innerText=`${next}s`
@@ -128,8 +129,8 @@ document.addEventListener('DOMContentLoaded',async ev=>{
     }
     finally
     {
-        /*if(subscription)
-            subscription.unsubscribe();*/
+        if(subscription)
+            subscription.unsubscribe();
     }
    
 })
