@@ -113,7 +113,7 @@ export class Account extends Base{
         this.$form=this.target.querySelector("form");
         this.timeoutID=null;
 
-        if(this.userHasAccount) return;
+        //if(this.userHasAccount) return;
 
         this.$form.querySelector(".acc-submit").classList.add("show");
         
@@ -362,7 +362,7 @@ export class Account extends Base{
 
         let user=Object.assign({},Application.user.current());
         this.userHasAccount=user.email!="";
-        //this.userHasAccount=false;
+        this.userHasAccount=false;
         if(this.userHasAccount)
         {
             tpl=tpl.replace("[EMAIL_FEEDBACK]",loc['user_has_account'])

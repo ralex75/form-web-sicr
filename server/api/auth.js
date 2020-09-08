@@ -15,25 +15,30 @@ async function forceLDAPSync(req,res,next)
       response = await axios.get(url)
       console.log("DONE SYNC");
     } catch (err) {
+      console.log(err);
       console.log("ERROR SYNC");
       response=err.response;
     }
 
     res.locals.syncResultMessage=response.data ? response.data.message :response;
 
-    next();
+    setTimeout(()=>{
+      next();
+    },2000)
+    
 }
 
 
 function authToken(req,res,next){
   
    //Davide Vincenzo Biuso Rizzo
-   var testUUID="1a9c5151-0104-4875-ae07-f76efe1fff10"
+   //var testUUID="6c536aa5-da10-4416-8a6e-7efb2da13ddf"
 
     //fasanelli
     //var testUUID='f8d35e28-2532-43c8-989c-3faa58f5cba4';
 
-    testUUID='50699576-15eb-49c6-a645-c07c0de9c402'
+    //mio
+    var testUUID='50699576-15eb-49c6-a645-c07c0de9c402'
     
     var uid=req.headers["x-uuid"] || testUUID;
 
@@ -43,6 +48,7 @@ function authToken(req,res,next){
   
     req.userid=uid;
   
+
     next();
   }
 
