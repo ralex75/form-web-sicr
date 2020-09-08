@@ -362,7 +362,7 @@ export class Account extends Base{
 
         let user=Object.assign({},Application.user.current());
         this.userHasAccount=user.email!="";
-        //this.userHasAccount=false;
+        
         if(this.userHasAccount)
         {
             tpl=tpl.replace("[EMAIL_FEEDBACK]",loc['user_has_account'])
