@@ -18,13 +18,11 @@ const go=(view,args)=>{
         //controllo se utente è autorizzato prima di passare ad altra view
         //L'utente potrebbe fare copia e incolla della route
         //se non è autorizzato mostra la view del profilo
-       
-        if(view!='result' && !Application.UserIsValid())
+        if(!Application.UserIsValid())
         {
             window.history.pushState("","","#profile")
             view="profile";
         }
-       
        
         var target=document.querySelector("#colonne_content")
        
@@ -56,19 +54,14 @@ const go=(view,args)=>{
             case "reqdetails":
                 new RequestDetails(target,args);
             break;
-            /*case "logout":
-                var wl=window.location;
-                var url=wl.href.substring(0,wl.href.indexOf("#"));
-                url+="Shibboleth.sso/Logout"
-                
-                return wl.replace(url);
-            break;*/
+            case "logout":
+                return window.location.href="https://www.roma1.infn.it/Shibboleth.sso/Logout";
+            break;
             case "result":
                 new Result(target,args);
                 
                 if(args.status)
                 {
-                    debugger;
                     clearTimeout(timeout);
                     timeout=setTimeout(()=>{
                         var view=args.next || 'profile'
