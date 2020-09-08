@@ -71,7 +71,7 @@ export class NavMenu extends Base {
             {"text":`${loc["account"]}`,'view':'account'},
             {"text":`${loc["ip"]}`,'view':'ip'},
             {"text":`${loc["wifi"]}`,'view':'wifi'},
-           // {"text":`Logout`,'view':'logout'}
+            {"text":`Logout`,'view':'logout'}
 
             
         ]

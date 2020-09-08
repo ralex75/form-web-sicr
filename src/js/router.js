@@ -54,13 +54,9 @@ const go=(view,args)=>{
             case "reqdetails":
                 new RequestDetails(target,args);
             break;
-            /*case "logout":
-                var wl=window.location;
-                var url=wl.href.substring(0,wl.href.indexOf("#"));
-                url+="Shibboleth.sso/Logout"
-                
-                return wl.replace(url);
-            break;*/
+            case "logout":
+                return window.location.href="https://www.roma1.infn.it/Shibboleth.sso/Logout";
+            break;
             case "result":
                 new Result(target,args);
                 
