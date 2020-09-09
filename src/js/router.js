@@ -20,8 +20,11 @@ const go=(view,args)=>{
         //se non è autorizzato mostra la view del profilo
         if(!Application.UserIsValid())
         {
-            window.history.pushState("","","#profile")
-            view="profile";
+            if(view!="profile" && view!="logout")
+            {
+                window.history.pushState("","","#profile")
+                view="profile";
+            }
         }
        
         var target=document.querySelector("#colonne_content")

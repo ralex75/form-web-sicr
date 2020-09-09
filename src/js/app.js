@@ -102,7 +102,7 @@ const user={
         return UserIsValid()
     },
     current(){
-        return window.Application.user;
+        return Object.assign({},window.Application.user);
     }
 }
 

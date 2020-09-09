@@ -49,10 +49,12 @@ export class NavMenu extends Base {
         var loc= {"ITA":{"profile":"Il mio profilo",
                         "requests":"Richieste inviate",
                         "account":"Richiesta account di posta",
-                        "ip":"Richiesta indirizzo IP","hosts":"I miei nodi","wifi":"Richiesta WIFI temporaneo"},
-                "ENG":{"profile":"My profile","requests":"My requests",
-                "account":"Email account request",
-                "ip":"IP address request","hosts":"My hosts","wifi":"Temporary WIFI request"}
+                        "ip":"Richiesta indirizzo IP","hosts":"I miei nodi","wifi":"Richiesta WIFI temporaneo",
+                        "logout":"Esci"},
+                    "ENG":{"profile":"My profile","requests":"My requests",
+                    "account":"Email account request",
+                    "ip":"IP address request","hosts":"My hosts","wifi":"Temporary WIFI request",
+                    "logout":"Logout"}
                 }
 
         return loc[Application.language.current]
@@ -71,25 +73,25 @@ export class NavMenu extends Base {
             {"text":`${loc["account"]}`,'view':'account'},
             {"text":`${loc["ip"]}`,'view':'ip'},
             {"text":`${loc["wifi"]}`,'view':'wifi'},
-            {"text":`Logout`,'view':'logout'}
-
+            {"text":`${loc["logout"]}`,'view':'logout'}
             
         ]
 
+        
         let tpl=""
-       
-       
-        if(Application.UserIsValid())
+        let userIsValid=Application.UserIsValid();
+
+        if(!userIsValid)
         {
-            this.routes.forEach(i=>{
-            
-                //tpl+=`<div class="bordato"><a href="#" class="navi" data-route="${i.view}">${i.text}</a></div>`
-                tpl+=`<div class="bordato"><a href="#${i.view}" class="navi">${i.text}</a></div>`
-
-            })
-            //tpl+=`<div class="bordato"><a href="http://www.roma1.infn.it/conference/wwwsicr/Shibboleth.sso/Logout?return=http://www.roma1.infn.it/conference/wwwsicr/supporto" class="navi">Logout</a></div>`
-
+            this.routes=this.routes.filter(e=>{return e.view=="profile" || e.view=="logout"});
         }
+       
+        this.routes.forEach(i=>{
+        
+            tpl+= `<div class="bordato"><a href="#${i.view}" class="navi">${i.text}</a></div>` 
+
+        })
+       
 
          
         var template=`<div class=\"divisione\">
