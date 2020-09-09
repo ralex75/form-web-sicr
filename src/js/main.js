@@ -9,8 +9,8 @@ const cssLoaderClass=`.loader {
     border: 8px solid #f3f3f3; /* Light grey */
     border-top: 8px solid #3498db; /* Blue */
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
+    width: 50px;
+    height: 50px;
     animation: spin 2s linear infinite;
   }
   
@@ -24,6 +24,11 @@ const cssLoaderClass=`.loader {
       justify-content: left;
       align-items:center;
       padding:50px 50px;
+     
+  }
+  div.inline p{
+    margin-left:30px;
+    
   }
   .timer{
       font-weight:bold;
@@ -72,25 +77,29 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         //Loader
         var cont= document.querySelector("#colonne_content");
         cont.innerHTML="<style>"+cssLoaderClass+"</style>";
-        cont.innerHTML+="<div class=\"inline\"><div class=\"loader\"></div>&nbsp;&nbsp;&nbsp; \
-                                                            <p class=\"info\" style=\"opacity:0;transition:opacity 1s linear;\"><b>Attendere prego, controllo identità in corso...</b>\
-                                                            <br>L'operazione potrebbe richiedere qualche secondo...<span class=\"timer\"></span></p> \
-        </div>";
+        cont.innerHTML+="<div class=\"inline\"><div class=\"loader\"></div>\
+                                                            <p class=\"info\" style=\"opacity:0;transition:opacity 1s linear;\">\
+                                                            <b>Attendere prego, controllo identità in corso...</b>\
+                                                            <br>L'operazione potrebbe richiedere qualche secondo...<span class=\"timer\"></span>\
+                                                            <br><br>\
+                                                            <b>Please wait, identity checking...</b>\
+                                                            <br>The operation may take some seconds...<span  class=\"timer\"></span>\
+                                                            </p>\
+                                                        </div>";
         
-        var countElem= document.querySelector(".timer")
-
-        
+        var countElem= document.querySelectorAll(".timer")
+ 
        
         subscription=interval(1000).subscribe(
             next=>
             {
-               
+               console.log(next)
                 if(next>2)
                 {
                    
                     cont.querySelector(".info").style.opacity="1";
                 }
-                countElem.innerText=`${next}s`
+                countElem.forEach(e=>e.innerText=`${next}s`)
             }
         )
 
@@ -98,10 +107,11 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         setTimeout(()=>{
 
             subscription.unsubscribe();
-        },10000)
+
+        },20000)
         
-        return;*/
-        
+      
+        return*/
         //legge informazioni utente
         //potrebbe impiegare un pò se devi sincronizzare
         var {user,syncResultMessage}=await services.user.read();
@@ -116,6 +126,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
             window.history.pushState("","","#profile")
         }
        
+        user.disciplinare=false;
         //inizializza app
         Application.Init(user);
 
@@ -129,6 +140,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
     }
     finally
     {
+        
         if(subscription)
             subscription.unsubscribe();
     }

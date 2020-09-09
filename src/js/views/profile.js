@@ -42,16 +42,22 @@ export class Profile extends Base{
 
     currentUser()
     {
-        return window.Application.user;
+        return Application.user.current();
     }
 
     locale(){
 
         var user=this.currentUser();
 
-        var disciText_ita="Le linee guida della politica IT INFN (Disciplinare) non sono state ancora accettate."
-        var disciText_eng="The INFN IT policy guidelines (Disciplinare) has not yet been accepted."
-        var unauth_ita=`Gentile ${user.name} ${user.surname}, la sua identità risulta correttamente registrata nel sistema informativo centrale, 
+        var disciplinareUrl="http://www.infn.it/disciplinareRisorseInformatiche/index.php"
+
+        var disciText_ita=`Le linee guida della politica IT INFN (Disciplinare) non sono state ancora accettate.<br>Per accettarlo, prego seguire questo url: <a href="${disciplinareUrl}">${disciplinareUrl}</a>`
+        var disciText_eng=`The INFN IT policy guidelines (Disciplinare) has not yet been accepted.<br>To comply, please go to url: <a href="${disciplinareUrl}">${disciplinareUrl}</a>`
+
+        var unauth_ita="Spiacenti, si è verificato un problema, prego contattaci: support@roma1.infn.it"
+        var unauth_eng="Sorry, an error has occurred, please contact us: support@roma1.infn.it"
+
+        /*var unauth_ita=`Gentile ${user.name} ${user.surname}, la sua identità risulta correttamente registrata nel sistema informativo centrale, 
                         ma la sua utenza non è stata ancora associata alla sede di Roma.<br>
                         Se lei è membro registrato e attivo del dipartimento e la registrazione della sua identità è stata 
                         effettuata meno di 6h fa la preghiamo di attendere e riprovare in seguito, 
@@ -63,9 +69,11 @@ export class Profile extends Base{
                         If you are a registered and active member of the Department of Physics and your identity 
                         has been registered less than 6h ago, please wait and try again later, 
                         your user will be associated shortly.<br> 
-                        In all other cases please contact the Roma support via email at supporto@roma1.infn.it.`
+                        In all other cases please contact the Roma support via email at supporto@roma1.infn.it.`*/
 
-        return {"ITA":{"email":"E-mail","phone":"Telefono","role":"Ruolo","exp":"Scadenza",
+        return {
+                
+                "ITA":{"email":"E-mail","phone":"Telefono","role":"Ruolo","exp":"Scadenza",
                         "unauthorized":`<p class="prof-feedback">${unauth_ita}</p>`,
                         "disciplinare":`<p class="prof-feedback">${disciText_ita}</p>`},
                 "ENG":{"email":"E-mail","phone":"Phone","role":"Role","exp":"Expiration",
@@ -94,6 +102,7 @@ export class Profile extends Base{
 
         var loc=this.locale()[Application.language.current];
 
+        user.disciplinare=false;
        
         content = !user.isAuthorized ? `${loc['unauthorized']}`
                                      : !user.disciplinare ? `${loc["disciplinare"]}` 

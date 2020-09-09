@@ -245,8 +245,8 @@ export class Account extends Base{
 
     buildEmailText(names,surnames)
     {
-        let _names=replaceBadChars(names);
-        let _surnames=replaceBadChars(surnames);
+        let _names=this.replaceBadChars(names);
+        let _surnames=this.replaceBadChars(surnames);
         return _names.join(".")+"."+_surnames.join("")+"@roma1.infn.it"
     }
 
@@ -369,7 +369,7 @@ export class Account extends Base{
 
         let user=Object.assign({},Application.user.current());
         this.userHasAccount=user.email!="";
-        this.userHasAccount=false;
+      
         if(this.userHasAccount)
         {
             tpl=tpl.replace("[EMAIL_FEEDBACK]",loc['user_has_account'])
@@ -379,8 +379,7 @@ export class Account extends Base{
         {
           tpl=tpl.replace(`[${k.toUpperCase()}]`,loc[k]);
         }
-        user.name="Giovanni";
-        user.surname="Salmè"
+       
         this.names=user.name.split(" ");
         this.surnames=user.surname.split(" ");
         this.addressIsValid=true;

@@ -20,8 +20,11 @@ const go=(view,args)=>{
         //se non è autorizzato mostra la view del profilo
         if(!Application.UserIsValid())
         {
-            window.history.pushState("","","#profile")
-            view="profile";
+            if(view!="profile" && view!="logout")
+            {
+                window.history.pushState("","","#profile")
+                view="profile";
+            }
         }
        
         var target=document.querySelector("#colonne_content")
@@ -30,6 +33,7 @@ const go=(view,args)=>{
         void target.offsetWidth;
         target.classList.add("fade-in");
        
+        console.log("route:",view);
         
         switch(view.toLowerCase()){
             
@@ -55,7 +59,7 @@ const go=(view,args)=>{
                 new RequestDetails(target,args);
             break;
             case "logout":
-                return window.location.href="https://www.roma1.infn.it/Shibboleth.sso/Logout";
+                return window.location.replace("https://www.roma1.infn.it/Shibboleth.sso/Logout?return=http://www.roma1.infn.it/conference/wwwsicr/supporto");
             break;
             case "result":
                 new Result(target,args);
