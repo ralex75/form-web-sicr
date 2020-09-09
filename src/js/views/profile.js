@@ -102,7 +102,7 @@ export class Profile extends Base{
 
         var loc=this.locale()[Application.language.current];
 
-        user.disciplinare=false;
+        
        
         content = !user.isAuthorized ? `${loc['unauthorized']}`
                                      : !user.disciplinare ? `${loc["disciplinare"]}` 
