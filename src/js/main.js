@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
             window.history.pushState("","","#profile")
         }
        
-        user.disciplinare=false;
+       
         //inizializza app
         Application.Init(user);
 
