@@ -239,10 +239,17 @@ export class Account extends Base{
         
     }
 
+    replaceBadChars(words){
+        return words.map(e=>{return e.toLowerCase().replace(/à/g,"a").replace(/è/g,"e").replace(/ì/g,"i").replace(/ò/g,"o").replace(/ù/g,"u")})
+    }
+
     buildEmailText(names,surnames)
     {
-        return names.join(".")+"."+surnames.join("")+"@roma1.infn.it"
+        let _names=replaceBadChars(names);
+        let _surnames=replaceBadChars(surnames);
+        return _names.join(".")+"."+_surnames.join("")+"@roma1.infn.it"
     }
+
 
     //DIALOG PROMPT
     showDialog(title,message,yesCallback,noCallback)
@@ -362,7 +369,7 @@ export class Account extends Base{
 
         let user=Object.assign({},Application.user.current());
         this.userHasAccount=user.email!="";
-        
+        this.userHasAccount=false;
         if(this.userHasAccount)
         {
             tpl=tpl.replace("[EMAIL_FEEDBACK]",loc['user_has_account'])
@@ -372,8 +379,8 @@ export class Account extends Base{
         {
           tpl=tpl.replace(`[${k.toUpperCase()}]`,loc[k]);
         }
-        //user.name="Topolino Giorgio";
-        //user.surname="Pluto Paperino"
+        user.name="Giovanni";
+        user.surname="Salmè"
         this.names=user.name.split(" ");
         this.surnames=user.surname.split(" ");
         this.addressIsValid=true;
