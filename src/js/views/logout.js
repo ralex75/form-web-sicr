@@ -29,23 +29,26 @@ var template=`
 
 
 <div class="inline">
-                <div class="loader"></div><p> Logging out...</p>
+                <div class="loader"></div><p>[LOGOUT_MSG]...</p>
 </div>
                        
 
 `
 
 import {Base} from './base.js'
+import {Application} from '../app.js'
 
 export class Logout extends Base{
     
     init(){
         setTimeout(() => {
-           window.location.replace("https://www.roma1.infn.it/Shibboleth.sso/Logout?return=http://www.roma1.infn.it/conference/wwwsicr/supporto");
+           //window.location.replace("https://www.roma1.infn.it/Shibboleth.sso/Logout?return=http://www.roma1.infn.it/conference/wwwsicr/supporto");
         }, 200);
     }
 
     getContent(){
-        return template;
+        var loc={"ITA":"Disconnessione in corso","ENG":"Logging out"}
+        var tpl=template.replace(/\[LOGOUT_MSG\]/,loc[Application.language.current])
+        return tpl;
     }
 }
