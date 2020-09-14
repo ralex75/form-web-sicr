@@ -18,14 +18,14 @@ const go=(view,args)=>{
         //controllo se utente è autorizzato prima di passare ad altra view
         //L'utente potrebbe fare copia e incolla della route
         //se non è autorizzato mostra la view del profilo
-        if(!Application.UserIsValid())
+        /*if(!Application.UserIsValid())
         {
             if(view!="profile" && view!="logout")
             {
                 window.history.pushState("","","#profile")
                 view="profile";
             }
-        }
+        }*/
        
         var target=document.querySelector("#colonne_content")
        

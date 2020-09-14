@@ -118,15 +118,19 @@ document.addEventListener('DOMContentLoaded',async ev=>{
 
         console.log("message:",syncResultMessage)
  
-        
-        
         if(!window.location.hash)
         {
             //setta #profile nell'url senza fare reolad della pagina
             window.history.pushState("","","#profile")
         }
-       
-       
+
+        /*user.isAuthorized=false;
+
+        if(!user || !user.isAuthorized)
+        {
+            throw Error("Unauthorized user");
+        }*/
+        
         //inizializza app
         Application.Init(user);
 

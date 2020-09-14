@@ -8,9 +8,13 @@ const template=`
             color:#E00;
         }
 
+        h3.error{
+            padding:20px;
+            text-align:center;
+        }
+
         .res-content{
            padding:20px;
-         
          
         }
     </stle>
@@ -82,11 +86,18 @@ export class Result extends Base{
        
         var {status, reqdata}=this.args; 
         var content="";
-       
+
+      
+
         if(!status)
         {
+        
+            var url=`<a href="mailto:support@roma1.infn.it">support@roma1.infn.it </a>`
+            var loc={'ITA':`Spiacenti, si è verificato un problema, prego contattaci: ${url}`,
+                      'ENG':`Sorry, an error has occurred, please contact us: ${url}`
+                    }
            
-           content=`<h4 class="error">Si è verificato un errore.</h4><u>Contattare il Centro di Calcolo</u>`
+           content=`<h3 class="error">${loc[Application.language.current]}<h3>`
 
         }
         else{
