@@ -42,7 +42,7 @@ export class Logout extends Base{
     
     init(){
         setTimeout(() => {
-           //window.location.replace("https://www.roma1.infn.it/Shibboleth.sso/Logout?return=http://www.roma1.infn.it/conference/wwwsicr/supporto");
+           window.location.replace("https://www.roma1.infn.it/Shibboleth.sso/Logout?return=http://www.roma1.infn.it/conference/wwwsicr/supporto");
         }, 200);
     }
 
