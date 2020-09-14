@@ -71,6 +71,7 @@ window.addEventListener('hashchange', ev=>{
 document.addEventListener('DOMContentLoaded',async ev=>{
 
     let subscription=null;
+    let _user=null;
 
     try{
     
@@ -96,7 +97,6 @@ document.addEventListener('DOMContentLoaded',async ev=>{
                console.log(next)
                 if(next>2)
                 {
-                   
                     cont.querySelector(".info").style.opacity="1";
                 }
                 countElem.forEach(e=>e.innerText=`${next}s`)
@@ -114,6 +114,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         return*/
         //legge informazioni utente
         //potrebbe impiegare un pò se devi sincronizzare
+        
         var {user,syncResultMessage}=await services.user.read();
 
         console.log("message:",syncResultMessage)
@@ -124,15 +125,10 @@ document.addEventListener('DOMContentLoaded',async ev=>{
             window.history.pushState("","","#profile")
         }
 
-        /*user.isAuthorized=false;
-
-        if(!user || !user.isAuthorized)
-        {
-            throw Error("Unauthorized user");
-        }*/
-        
+      
         //inizializza app
         Application.Init(user);
+     
 
         //vai alla view profile
         Router.go(window.location.hash.substr(1));
@@ -140,6 +136,8 @@ document.addEventListener('DOMContentLoaded',async ev=>{
     }
     catch(exc)
     {
+        //inizializza senza user
+        Application.Init(null)
         handleError(exc);
     }
     finally

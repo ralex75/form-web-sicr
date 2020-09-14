@@ -8,7 +8,7 @@ window.Application={"user":null,"lang":"ITA"};
 
 const Init=(user)=>{
     
-       user.isAuthorized=false;
+       
        
        //salva info utente
        window.Application.user=user;
