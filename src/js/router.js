@@ -3,6 +3,7 @@ import {Profile} from './views/profile.js'
 import {HostList} from './views/hostlist.js'
 import {Requests} from './views/requests.js'
 import {RequestDetails} from './views/reqdetails.js'
+import {Logout} from './views/logout.js'
 
 import {IP} from './views/ip.js'
 import {Account} from './views/account.js'
@@ -18,14 +19,14 @@ const go=(view,args)=>{
         //controllo se utente è autorizzato prima di passare ad altra view
         //L'utente potrebbe fare copia e incolla della route
         //se non è autorizzato mostra la view del profilo
-        if(!Application.UserIsValid())
+        /*if(!Application.UserIsValid())
         {
             if(view!="profile" && view!="logout")
             {
                 window.history.pushState("","","#profile")
                 view="profile";
             }
-        }
+        }*/
        
         var target=document.querySelector("#colonne_content")
        
@@ -59,7 +60,7 @@ const go=(view,args)=>{
                 new RequestDetails(target,args);
             break;
             case "logout":
-                return window.location.replace("https://www.roma1.infn.it/Shibboleth.sso/Logout?return=http://www.roma1.infn.it/conference/wwwsicr/supporto");
+                new Logout(target,args);
             break;
             case "result":
                 new Result(target,args);

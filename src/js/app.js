@@ -8,26 +8,33 @@ window.Application={"user":null,"lang":"ITA"};
 
 const Init=(user)=>{
     
-      //user.email="";
+       
+       
        //salva info utente
        window.Application.user=user;
  
-       
        document.addEventListener("languageChanged",ev=>{
            
                 buildMenu();
        })
 
-       document.addEventListener("showHideMenu",ev=>{
+       /*document.addEventListener("showHideMenu",ev=>{
            
                showHide();
-       })
+       })*/
     
 
        buildMenu();
 
+
+       if(!user || !user.isAuthorized)
+       {
+           throw Error("Unauthorized user")
+       }
+
 }
 
+/*
 const showHide=()=>{
   
     var routes=document.querySelector("#routes");
@@ -35,7 +42,7 @@ const showHide=()=>{
     {
         routes.style.display = UserIsValid() ? 'block' : 'none'
     }
-}
+}*/
 
 const buildMenu=()=>{
     
@@ -46,8 +53,13 @@ const buildMenu=()=>{
 
 const UserIsValid=()=>{
     
+    var isValid=false;
     var user=window.Application.user
-    return user.isAuthorized && user.disciplinare;
+    if(user)
+    {
+        isValid = user.isAuthorized && user.disciplinare;
+    }
+    return isValid;
 }
 
 const EmitEvent=(name,args=null,bubbles=true)=>{

@@ -32,7 +32,6 @@ module.exports = app => {
   var user=null;
   var {syncResultMessage}=res.locals || "";
 
-  console.log("USERAUTH")
 
   try{
 
@@ -48,6 +47,7 @@ module.exports = app => {
 
   console.log("Invio risposta al client");
 
+  
   res.json({"user":user,"syncResultMessage":syncResultMessage})
 
 })

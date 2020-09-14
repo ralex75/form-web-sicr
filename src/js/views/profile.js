@@ -19,6 +19,12 @@ var template=`
         color:red;
     }
 
+    h3.unauth{
+        border:1px solid red;
+        padding:20px;
+        color:red;
+    }
+
     </style>
 `
 
@@ -54,8 +60,8 @@ export class Profile extends Base{
         var disciText_ita=`Le linee guida della politica IT INFN (Disciplinare) non sono state ancora accettate.<br>Per accettarlo, prego seguire questo url: <a href="${disciplinareUrl}">${disciplinareUrl}</a>`
         var disciText_eng=`The INFN IT policy guidelines (Disciplinare) has not yet been accepted.<br>To comply, please go to url: <a href="${disciplinareUrl}">${disciplinareUrl}</a>`
 
-        var unauth_ita="Spiacenti, si è verificato un problema, prego contattaci: support@roma1.infn.it"
-        var unauth_eng="Sorry, an error has occurred, please contact us: support@roma1.infn.it"
+        var unauth_ita=`Spiacenti, si è verificato un problema, prego contattaci: <a href="mailto:support@roma1.infn.it">support@roma1.infn.it</a>`
+        var unauth_eng=`Sorry, an error has occurred, please contact us: <a href="mailto:support@roma1.infn.it">support@roma1.infn.it</a>`
 
         /*var unauth_ita=`Gentile ${user.name} ${user.surname}, la sua identità risulta correttamente registrata nel sistema informativo centrale, 
                         ma la sua utenza non è stata ancora associata alla sede di Roma.<br>
@@ -102,7 +108,9 @@ export class Profile extends Base{
 
         var loc=this.locale()[Application.language.current];
 
-        content = !user.isAuthorized ? `${loc['unauthorized']}`
+        
+       
+        content = !user.isAuthorized ? `<h3 class="unauth">${loc['unauthorized']}</h3>`
                                      : !user.disciplinare ? `${loc["disciplinare"]}` 
                                      : ""
 

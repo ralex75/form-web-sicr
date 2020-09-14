@@ -369,7 +369,11 @@ export class Account extends Base{
 
         let user=Object.assign({},Application.user.current());
         this.userHasAccount=user.email!="";
+<<<<<<< HEAD
       
+=======
+       
+>>>>>>> master
         if(this.userHasAccount)
         {
             tpl=tpl.replace("[EMAIL_FEEDBACK]",loc['user_has_account'])
@@ -379,6 +383,10 @@ export class Account extends Base{
         {
           tpl=tpl.replace(`[${k.toUpperCase()}]`,loc[k]);
         }
+<<<<<<< HEAD
+=======
+        
+>>>>>>> master
        
         this.names=user.name.split(" ");
         this.surnames=user.surname.split(" ");
