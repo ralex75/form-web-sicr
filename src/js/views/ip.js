@@ -1,6 +1,7 @@
 const template=`
 <div id="dialogPlaceHolder"></div>
 <a href="#hostlist"  id="goBack" style="text-decoration:underline;">[GOBACK]</a>
+
 <form>
 				<div class="form_sez">
 					<div class="form_intest">

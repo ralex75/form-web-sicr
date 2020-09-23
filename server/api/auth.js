@@ -39,6 +39,8 @@ function authToken(req,res,next){
 
     //mio
     var testUUID='50699576-15eb-49c6-a645-c07c0de9c402'
+
+    testUUID='81637e47-fc7d-40b8-a0d8-01d5323a9c5d'
     
     var uid=req.headers["x-uuid"] || testUUID;
 
