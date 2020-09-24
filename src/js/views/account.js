@@ -369,7 +369,7 @@ export class Account extends Base{
 
         let user=Object.assign({},Application.user.current());
         let email=user.email;
-        this.userHasAccount=user.email!="";
+        this.userHasAccount=false;//user.email!="";
         
         if(this.userHasAccount)
         {
