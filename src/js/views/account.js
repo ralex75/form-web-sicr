@@ -291,7 +291,7 @@ export class Account extends Base{
                 dlg.showNoButton(noCallback)
             }
             else{
-                var error="L'indirizzo email scelto risulta duplicato.";
+                var error="L'indirizzo email scelto già esiste.";
                 html=this.$email.innerText+"<p><small class=\"error\">"+error+"</small></p>";
                 this.$err.innerHTML=error;
                 //dlg.showNoButton(noCallback,"Chiudi")
@@ -368,23 +368,30 @@ export class Account extends Base{
         var tpl=template;
 
         let user=Object.assign({},Application.user.current());
+        let email=user.email;
         this.userHasAccount=user.email!="";
-       
+        
         if(this.userHasAccount)
         {
             tpl=tpl.replace("[EMAIL_FEEDBACK]",loc['user_has_account'])
         }
+        else{
+
+            for(var k in loc)
+            {
+            tpl=tpl.replace(`[${k.toUpperCase()}]`,loc[k]);
+            }
+            
         
-        for(var k in loc)
-        {
-          tpl=tpl.replace(`[${k.toUpperCase()}]`,loc[k]);
+            this.names=user.name.split(" ");
+            this.surnames=user.surname.split(" ");
+            this.addressIsValid=true;
+            email=this.buildEmailText(this.names,this.surnames);
+
         }
         
-       
-        this.names=user.name.split(" ");
-        this.surnames=user.surname.split(" ");
-        this.addressIsValid=true;
-        tpl=tpl.replace("[EMAIL]",this.buildEmailText(this.names,this.surnames));
+        
+        tpl=tpl.replace("[EMAIL]",email);
 
         
         return tpl;

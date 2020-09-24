@@ -8,15 +8,22 @@ window.Application={"user":null,"lang":"ITA"};
 
 const Init=(user)=>{
     
+    document.addEventListener("languageChanged",ev=>{
+           
+        buildMenu();
+    })
+
+        if(!user || !user.isAuthorized)
+        {
+            throw Error("Unauthorized user")
+        }
        
        
        //salva info utente
        window.Application.user=user;
+
  
-       document.addEventListener("languageChanged",ev=>{
-           
-                buildMenu();
-       })
+      
 
        /*document.addEventListener("showHideMenu",ev=>{
            
@@ -27,10 +34,7 @@ const Init=(user)=>{
        buildMenu();
 
 
-       if(!user || !user.isAuthorized)
-       {
-           throw Error("Unauthorized user")
-       }
+       
 
 }
 
@@ -115,11 +119,15 @@ const user={
     },
     current(){
         return Object.assign({},window.Application.user);
+    },
+    remove(){
+        window.Application.user=null;
     }
 }
 
 const Application={
     Init,
+    buildMenu,
     UserIsValid,
     SaveRequest,
     EmitEvent,

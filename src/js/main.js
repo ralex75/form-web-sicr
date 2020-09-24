@@ -49,6 +49,10 @@ window.addEventListener('unhandledrejection', function(event) {
 const handleError=(err)=>{
     console.log(err);
    
+
+    //in caso di errore rimuoviamo utente;
+    Application.user.remove();
+    
     
     //TO DO
      //DUMP ERROR to file ?
@@ -71,7 +75,7 @@ window.addEventListener('hashchange', ev=>{
 document.addEventListener('DOMContentLoaded',async ev=>{
 
     let subscription=null;
-    let _user=null;
+  
 
     try{
     
@@ -136,8 +140,8 @@ document.addEventListener('DOMContentLoaded',async ev=>{
     }
     catch(exc)
     {
-        //inizializza senza user
-        Application.Init(null)
+        //inizializza menu base
+        Application.buildMenu();
         handleError(exc);
     }
     finally
@@ -145,6 +149,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         
         if(subscription)
             subscription.unsubscribe();
+
     }
    
 })
