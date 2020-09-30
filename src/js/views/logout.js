@@ -43,10 +43,10 @@ export class Logout extends Base{
     
 
     init(){
-        let fragment=Application.language.current=="ENG" ? "/en/":"/";
+        
+        let fragment = Application.language.current=="ENG" ? "/en/":"/";
         let returnUrl=`https://www.roma1.infn.it/Shibboleth.sso/Logout?return=http://www.roma1.infn.it/conference/wwwsicr${fragment}home.html`
        
-
         setTimeout(() => {
            window.location.replace(returnUrl);
         }, 200);

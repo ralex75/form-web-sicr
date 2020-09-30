@@ -113,8 +113,6 @@ document.addEventListener('DOMContentLoaded',async ev=>{
 
     let subscription=null;
   
-    
-
     let lang= location.href.match("/en/") ? "ENG" : "ITA"
 
     Application.generateNavigationMenu(lang)
