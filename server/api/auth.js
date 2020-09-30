@@ -40,7 +40,8 @@ function authToken(req,res,next){
     //mio
     var testUUID='50699576-15eb-49c6-a645-c07c0de9c402'
 
-    testUUID='7a75a5bc-af57-454a-99d1-7aa4411c2ae3'
+    testUUID='e0589a86-9b55-48b9-84dc-1324750a4237'  //zicoschi
+    //testUUID='9693b1cc-2c24-4a33-b0d2-40b03db16285'
     
     var uid=req.headers["x-uuid"] || testUUID;
 
