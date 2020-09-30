@@ -21,15 +21,19 @@ const go=(view,args)=>{
         //se non è autorizzato mostra la view del profilo
         if(!Application.UserIsValid())
         {
-            /*if(view!="profile" && view!="logout")
+           
+
+            if(view!="result" && view!="logout" && view!="profile")
             {
-                window.history.pushState("","","#profile")
                 view="profile";
-            }*/
-            if(view!="result" && view!="logout")
-            {
-                throw Error("No valid user");
+                history.pushState(null,null,"#"+view)
+                
+                if(!Application.user.current().isAuthorized)
+                {
+                    throw Error("No valid user");
+                }
             }
+
         }
        
        

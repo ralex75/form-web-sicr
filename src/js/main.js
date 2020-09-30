@@ -132,13 +132,13 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         
         console.log("message:",syncResultMessage)
  
-        if(!window.location.hash)
+        if(!location.hash)
         {
             //setta #profile nell'url senza fare reolad della pagina
-            window.history.pushState("","","#profile")
+            history.pushState("","","#profile")
         }
 
-        
+      
         //inizializza app
         Application.Init(user,lang);
      

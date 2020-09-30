@@ -81,12 +81,12 @@ export class NavMenu extends Base {
         
         let tpl=""
         let userIsValid=Application.UserIsValid();
-        let user=Application.user.current()
-
        
-        if(!userIsValid || !user.disciplinare)
+        if(!userIsValid)
         {
+            //con il disciplinare non accettato visualizziamo il profile
             this.routes=this.routes.filter(e=>{return e.view=="profile" || e.view=="logout"});
+            
         }
        
         this.routes.forEach(i=>{
