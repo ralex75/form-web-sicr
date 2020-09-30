@@ -95,8 +95,8 @@ const generateNavigationMenu=(lang)=>{
 					<li class="lisecondo"><a href="#">${items[7]}</a></li>
 				</ul>
 			</li>
-			<li class="liprimo"><a href="vpn.html">${items[8]}</a></li>
-			<li class="liprimo"><a href="staff.html">${items[9]}</a></li>
+			<li class="liprimo"><a href="${baseUrl}/${items[8].toLowerCase()}.html">${items[8]}</a></li>
+			<li class="liprimo"><a href="${baseUrl}/${items[9].toLowerCase()}.html">${items[9]}</a></li>
         </ul>`
     
         document.querySelector("#menu").innerHTML=html;
