@@ -48,7 +48,7 @@ export class Logout extends Base{
         {
             returnUrl+="/en"
         }
-        returnUrl+="home.html"
+        returnUrl+="/home.html"
 
         setTimeout(() => {
            window.location.replace(returnUrl);
