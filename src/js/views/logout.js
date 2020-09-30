@@ -40,9 +40,18 @@ import {Application} from '../app.js'
 
 export class Logout extends Base{
     
+    
+
     init(){
+        let returnUrl="https://www.roma1.infn.it/Shibboleth.sso/Logout?return=http://www.roma1.infn.it/conference/wwwsicr"
+        if(Application.language.current=="ENG")
+        {
+            returnUrl+="/en"
+        }
+        returnUrl+="home.html"
+
         setTimeout(() => {
-           window.location.replace("https://www.roma1.infn.it/Shibboleth.sso/Logout?return=http://www.roma1.infn.it/conference/wwwsicr/supporto");
+           window.location.replace(returnUrl);
         }, 200);
     }
 
