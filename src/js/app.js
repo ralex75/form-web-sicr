@@ -5,26 +5,25 @@ import moment from 'moment'
 
 const Init=(user,lang='ITA')=>{
     
-       
-        if(!user || !user.isAuthorized)
-        {
-            throw Error("Unauthorized user")
-        }
-       
-       
-       //salva info utente e lingua selezionata
+    
+        //salva info utente e lingua selezionata
        window.Application={"user":user,"lang":lang};
+  
 
        buildFlags(lang);
        
-       
-
        document.addEventListener("languageChanged",ev=>{
             let lang=Application.language.current;
             generateNavigationMenu(lang)
             buildFlags(lang)
             buildMenu();
        })
+
+        if(!user || !user.isAuthorized)
+        {
+            throw Error("Unauthorized user")
+        }
+       
  
        //genera menu
        buildMenu();
@@ -118,7 +117,7 @@ const UserIsValid=()=>{
    
     if(user)
     {
-        isValid = user.isAuthorized// && user.disciplinare;
+        isValid = user.isAuthorized && user.disciplinare;
     }
     return isValid;
 }
