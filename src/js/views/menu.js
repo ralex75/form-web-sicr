@@ -17,6 +17,7 @@ export class NavMenu extends Base {
         });
 
 
+        /*
         this.target.querySelectorAll("[data-lang]").forEach(el=>el.addEventListener("click",ev=>{
           
             Application.language.current= ev.target.dataset["lang"];
@@ -28,7 +29,7 @@ export class NavMenu extends Base {
             {
                 el.classList.add("selected");
             }
-        })
+        })*/
 
         this.highlightSelectedMenu()
 
@@ -96,11 +97,11 @@ export class NavMenu extends Base {
          
         var template=`<div class=\"divisione\">
                         <!--<input type="button" id="changeLang" value="ChangeLang" />-->
-                        <div class="language">
+                        <!--<div class="language">
                       
                             <div class="flag ita" tooltip="ita" data-lang="ITA"></div>
                             <div class="flag eng" tooltip="eng" data-lang="ENG"></div>
-                        </div>
+                        </div>-->
                         <p><span class=\"divisione_title\">Account e Rete</span></p>
                         <div id="routes">
                         ${tpl}

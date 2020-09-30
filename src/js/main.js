@@ -107,15 +107,19 @@ const showLoader=(lang)=>{
 
 }
 
+
 //listener DOM Loaded
 document.addEventListener('DOMContentLoaded',async ev=>{
 
     let subscription=null;
   
+    let lang= location.href.match("en") ? "ENG" : "ITA"
+
+    Application.generateNavigationMenu(lang)
 
     try{
     
-        let lang= location.href.match("en") ? "ENG" : "ITA"
+        
 
         //messaggio di attesa da mostrare utente mentre l'API sincronizza
         subscription=showLoader(lang)

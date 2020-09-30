@@ -5,11 +5,7 @@ import moment from 'moment'
 
 const Init=(user,lang='ITA')=>{
     
-        document.addEventListener("languageChanged",ev=>{
-            
-            buildMenu();
-        })
-    
+       
         if(!user || !user.isAuthorized)
         {
             throw Error("Unauthorized user")
@@ -19,10 +15,91 @@ const Init=(user,lang='ITA')=>{
        //salva info utente e lingua selezionata
        window.Application={"user":user,"lang":lang};
 
+       buildFlags(lang);
+       
+       
+
+       document.addEventListener("languageChanged",ev=>{
+            let lang=Application.language.current;
+            generateNavigationMenu(lang)
+            buildFlags(lang)
+            buildMenu();
+       })
  
        //genera menu
        buildMenu();
     
+
+}
+
+const buildFlags=(lang)=>
+{
+    let cl=document.querySelector("#ling")
+    cl.style.display="block"
+  
+    if(lang=="ITA")
+    {
+        cl.innerHTML=`<img src="img/lang_ita_sel.png" width="60" height="30" alt=""/>
+                      <a data-lang="ENG"><img src="img/lang_eng.png"  width="60" height="30" alt=""/></a>
+                     `
+    }
+    else{
+        cl.innerHTML=`<a data-lang="ITA"><img src="img/lang_ita.png" width="60" height="30" alt=""/></a>
+                      <img src="img/lang_eng_sel.png" width="60" height="30" alt=""/>`
+    }
+
+    cl.querySelectorAll("[data-lang]").forEach(el=>el.addEventListener("click",ev=>{
+        
+      
+        ev.preventDefault();
+        Application.language.current= ev.currentTarget.dataset["lang"];
+        
+   }));
+
+   
+}
+
+
+const generateNavigationMenu=(lang)=>{
+
+    let loc={"home":"home",
+                    "wifi":"wifi",
+                    "printers":"stampanti",
+                    "webmail":"webmail",
+                    "Tier2":"Tier2",
+                    "Support":"Supporto",
+                    "PC Technician & Device":"Tecnico PC & Device",
+                    "Account e Network":"Account e Rete",
+                    "VPN":"VPN",
+                    "Staff":"Staff"
+                    }
+            
+    let baseUrl=`http://www.roma1.infn.it/conference/wwwsicr/`
+    let items=Object.values(loc);
+    if(lang=="ENG")
+    {
+        baseUrl+="en"
+        items=Object.keys(loc);
+    }
+    
+
+    let html=`<ul id="ulprimo">
+      		<li class="liprimo" id="primavoce" name="primavoce"><a href="${baseUrl}/${items[0].toLowerCase()}.html">${items[0]}</a></li>
+			<li class="liprimo"><a href="${baseUrl}/${items[1].toLowerCase()}.html">${items[1]}</a></li>
+			<li class="liprimo"><a href="${baseUrl}/${items[2].toLowerCase()}.html">${items[2]}</a></li>
+			<li class="liprimo"><a href="${baseUrl}/${items[3].toLowerCase()}.html">${items[3]}</a></li>
+			<li class="liprimo"><a href="${baseUrl}/${items[4].toLowerCase()}.html">${items[4]}</a></li>
+			<li class="liprimo_sel"><a href="#">${items[5]} &nabla;</a>
+				<ul class="ulsecondo">
+					<li class="lisecondo" id="primavoce_sub" name="primavoce_sub"><a href="https://osticket.roma1.infn.it/support/index.php" target="_blank">${items[6]}</a></li>
+					<li class="lisecondo"><a href="#">${items[7]}</a></li>
+				</ul>
+			</li>
+			<li class="liprimo"><a href="vpn.html">${items[8]}</a></li>
+			<li class="liprimo"><a href="staff.html">${items[9]}</a></li>
+        </ul>`
+    
+        document.querySelector("#menu").innerHTML=html;
 
 }
 
@@ -107,6 +184,7 @@ const user={
 
 const Application={
     Init,
+    generateNavigationMenu,
     buildMenu,
     UserIsValid,
     SaveRequest,
