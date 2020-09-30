@@ -70,6 +70,42 @@ window.addEventListener('hashchange', ev=>{
     Router.go(view);
 })
 
+const showLoader=(lang)=>{
+
+    //Loader
+    var cont= document.querySelector("#colonne_content");
+    let html="<div class=\"inline\"><div class=\"loader\"></div>\
+                <p class=\"info\" style=\"opacity:0;transition:opacity 1s linear;\">"
+                if(lang=="ITA")
+                { 
+                    html+="<b>Attendere prego, controllo identità in corso...</b>\
+                            <br>L'operazione potrebbe richiedere qualche secondo...<span class=\"timer\"></span>"
+                }
+                else{
+                    html+="<b>Please wait, identity checking...</b>\
+                        <br>The operation may take some seconds...<span  class=\"timer\"></span>"
+                }
+                html+="</p></div>";
+
+    cont.innerHTML="<style>"+cssLoaderClass+"</style>"+html;
+    var countElem= document.querySelectorAll(".timer")
+
+   
+    let subscription=interval(1000).subscribe(
+        next=>
+        {
+           
+            if(next>2)
+            {
+                cont.querySelector(".info").style.opacity="1";
+            }
+            countElem.forEach(e=>e.innerText=`${next}s`)
+        }
+    )
+
+    return subscription;
+
+}
 
 //listener DOM Loaded
 document.addEventListener('DOMContentLoaded',async ev=>{
@@ -79,48 +115,17 @@ document.addEventListener('DOMContentLoaded',async ev=>{
 
     try{
     
-        //Loader
-        var cont= document.querySelector("#colonne_content");
-        cont.innerHTML="<style>"+cssLoaderClass+"</style>";
-        cont.innerHTML+="<div class=\"inline\"><div class=\"loader\"></div>\
-                                                            <p class=\"info\" style=\"opacity:0;transition:opacity 1s linear;\">\
-                                                            <b>Attendere prego, controllo identità in corso...</b>\
-                                                            <br>L'operazione potrebbe richiedere qualche secondo...<span class=\"timer\"></span>\
-                                                            <br><br>\
-                                                            <b>Please wait, identity checking...</b>\
-                                                            <br>The operation may take some seconds...<span  class=\"timer\"></span>\
-                                                            </p>\
-                                                        </div>";
+        let lang= location.href.match("en") ? "ENG" : "ITA"
+
+        //messaggio di attesa da mostrare utente mentre l'API sincronizza
+        subscription=showLoader(lang)
+
         
-        var countElem= document.querySelectorAll(".timer")
- 
-       
-        subscription=interval(1000).subscribe(
-            next=>
-            {
-               console.log(next)
-                if(next>2)
-                {
-                    cont.querySelector(".info").style.opacity="1";
-                }
-                countElem.forEach(e=>e.innerText=`${next}s`)
-            }
-        )
-
-        /*
-        setTimeout(()=>{
-
-            subscription.unsubscribe();
-
-        },20000)
-        
-      
-        return*/
         //legge informazioni utente
         //potrebbe impiegare un pò se devi sincronizzare
-        
         var {user,syncResultMessage}=await services.user.read();
 
+        
         console.log("message:",syncResultMessage)
  
         if(!window.location.hash)
@@ -129,9 +134,9 @@ document.addEventListener('DOMContentLoaded',async ev=>{
             window.history.pushState("","","#profile")
         }
 
-      
+        
         //inizializza app
-        Application.Init(user);
+        Application.Init(user,lang);
      
 
         //vai alla view profile
@@ -154,16 +159,3 @@ document.addEventListener('DOMContentLoaded',async ev=>{
    
 })
 
-
-//salva richiesta
-/*document.addEventListener(ApplicationEventBus.types.SaveRequest, async ev=> {
-   
-    var reqdata=ev.detail;
-
-    var success=await Application.SaveRequest(reqdata);
-
-    var result={"status":success, "reqdata":reqdata, "next":"requests"};
-
-    Router.changeView("result",result);
-   
-})*/

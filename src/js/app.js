@@ -3,50 +3,29 @@ import services from './services.js'
 import {Router} from './router.js'
 import moment from 'moment'
 
-//application data
-window.Application={"user":null,"lang":"ITA"};
-
-const Init=(user)=>{
+const Init=(user,lang='ITA')=>{
     
-    document.addEventListener("languageChanged",ev=>{
-           
-        buildMenu();
-    })
-
+        document.addEventListener("languageChanged",ev=>{
+            
+            buildMenu();
+        })
+    
         if(!user || !user.isAuthorized)
         {
             throw Error("Unauthorized user")
         }
        
        
-       //salva info utente
-       window.Application.user=user;
+       //salva info utente e lingua selezionata
+       window.Application={"user":user,"lang":lang};
 
  
-      
-
-       /*document.addEventListener("showHideMenu",ev=>{
-           
-               showHide();
-       })*/
-    
-
+       //genera menu
        buildMenu();
-
-
-       
+    
 
 }
 
-/*
-const showHide=()=>{
-  
-    var routes=document.querySelector("#routes");
-    if(routes)
-    {
-        routes.style.display = UserIsValid() ? 'block' : 'none'
-    }
-}*/
 
 const buildMenu=()=>{
     
@@ -59,9 +38,10 @@ const UserIsValid=()=>{
     
     var isValid=false;
     var user=window.Application.user
+   
     if(user)
     {
-        isValid = user.isAuthorized && user.disciplinare;
+        isValid = user.isAuthorized// && user.disciplinare;
     }
     return isValid;
 }
