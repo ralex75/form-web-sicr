@@ -83,7 +83,7 @@ export class NavMenu extends Base {
         let userIsValid=Application.UserIsValid();
         let user=Application.user.current()
 
-       debugger;
+       
         if(!userIsValid || !user.disciplinare)
         {
             this.routes=this.routes.filter(e=>{return e.view=="profile" || e.view=="logout"});
