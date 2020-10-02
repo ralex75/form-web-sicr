@@ -103,7 +103,7 @@ export class Profile extends Base{
                         "unauthorized_feedback":`${unauth_ita}`,
                         "disciplinare_feedback":`${disciText_ita}`},
                 "ENG":{"email":"E-mail","phone":"Phone","role":"Role","exp":"Expiration",
-                        "disciplinare":"Disciplinare approved","itsec":"IT security course",
+                        "disciplinare":"Usage policies resigned","itsec":"IT security course",
                         "itsec_feedback":`${itsec_eng}`,
                         "unauthorized_feedback":`${unauth_eng}`,
                         "disciplinare_feedback":`${disciText_eng}`}

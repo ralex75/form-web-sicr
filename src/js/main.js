@@ -144,6 +144,8 @@ document.addEventListener('DOMContentLoaded',async ev=>{
 
         console.log("message:",syncResultMessage)
        
+        user.name=user.name+" "+"Giovanni"+" "+"Alberto"
+        user.email="";
 
         if(!location.hash)
         {
