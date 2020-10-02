@@ -29,15 +29,12 @@ module.exports = app => {
 
  app.use('/auth/:uid?',authToken,forceLDAPSync, async (req,res,next)=>{
   
-  var user=null;
-  var {syncResultMessage}=res.locals || "";
+  let user=null;
+  let {syncResultMessage}=res.locals || "";
 
 
   try{
-
-    
-    var user = await getUser(req.userid);
-  
+     user = await getUser(req.userid);
   }
   catch(exc)
   {

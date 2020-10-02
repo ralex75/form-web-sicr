@@ -42,25 +42,25 @@ var parseLDAPUserInfo=function (user) {
     var minTime="01/01/1900"
     var userStatus=user.schacUserStatus;
     var isMemberOf=user.isMemberOf;
+    var disciplinare="" //disciplinare
+    var itsec="" //corso sicurezza informatica
  
-    cuser["isAuthorized"]=false;
-    cuser["expiration"]=minTime;
-    cuser["isAdmin"]=false; //è del centro calcolo
-    
+    //REGEXP
     var roleReg=/^i:infn:\w+\::(\w)/ //Role
     var disciplinareReg=/disciplinareict:approvato\+on=(\S+)/  //Disciplinare
-    var ttlReg=/\+ttl\=(\S+)/ //Expiration
-
+    var sicurezzaInfoReg=/sicurezzainformatica-base:superato\+on=(\S+)/ //corso sicurezza informatica
+    var ttlReg=/\+ttl\=(\S+)/ //TTL
+   
+    cuser["isAuthorized"]=false;
+    cuser["role"]=""
+    //cuser["isAdmin"]=false; //è del centro calcolo
     
     if(userStatus && Array.isArray(userStatus)){
-        for(var i=0;i<userStatus.length;i++){
+        for(let i=0;i<userStatus.length;i++){
 
-            var ttl=ttlReg.exec(userStatus[i]);
-            var disciplinare=disciplinareReg.exec(userStatus[i])
-          
-            if(disciplinare){
-                cuser["disciplinare"]=disciplinare[1];
-            }
+            let ttl=ttlReg.exec(userStatus[i]);
+            disciplinare=disciplinareReg.exec(userStatus[i]) || disciplinare
+            itsec=sicurezzaInfoReg.exec(userStatus[i]) || itsec
 
             if(ttl && minTime!="nolimit"){
                 curTime=ttl[1];
@@ -78,23 +78,40 @@ var parseLDAPUserInfo=function (user) {
          
         }
 
+        
+        cuser["disciplinare"]=disciplinare[1] || "";
+        cuser["itsec"]=itsec[1] || "";
         cuser["expiration"]=minTime;
     }
 
     
     if(isMemberOf){
 
-       
+        let role="";
         //controllo se autorizzato
-        _isMemberOf = Array.isArray(isMemberOf) ? isMemberOf.join(";") : isMemberOf;
+        _isMemberOf = !Array.isArray(isMemberOf) ? [isMemberOf] : isMemberOf;
         
 
+        _isMemberOf.forEach(e=>{
+            console.log(e);
+            let match=e.match(/i:infn:roma1::([d|o|a|v])\:(\w+)/);
+            if(match)
+            {
+                role=match[2]
+            }
+        })
+
+        cuser["isAuthorized"]=role!=""
+        cuser["role"]=role;
+
+        /*
         var role=""
 
         //valid roles
         var roles={"d":"dipendente","o":"ospite","a":"associato"}
        
         
+
         //find user role 
         _isMemberOf.split(";").filter(r=>r.startsWith("i:infn:")).forEach(e=>{
             var match=roleReg.exec(e);
@@ -104,11 +121,11 @@ var parseLDAPUserInfo=function (user) {
             if(e.indexOf("servizio_calcolo_e_reti")>-1){
                 cuser["isAdmin"]=true;
             }
-        })
+        })*/
         
-        cuser["roma1Member"]=_isMemberOf.indexOf("roma1")>-1;
-        cuser["role"]=role
-        cuser["isAuthorized"]=cuser["role"]!="" && cuser["roma1Member"];
+        //cuser["roma1Member"]=_isMemberOf.indexOf("roma1")>-1;
+        //cuser["role"]=role
+        //cuser["isAuthorized"]=cuser["role"]!="" && cuser["roma1Member"];
         
 
     }
