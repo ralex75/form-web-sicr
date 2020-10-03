@@ -39,16 +39,22 @@ var parseLDAPUserInfo=function (user) {
     
     var cuser=Object.assign({}, user);
 
+    
     var minTime="01/01/1900"
     var userStatus=user.schacUserStatus;
+    
+    //rimuove tutti gli indirizzi username@
+    cuser.mailAlternates=cuser.mailAlternates.map(e=>e.toLowerCase())
+                                             .filter(i=>i.indexOf(cuser.uid)<0 && i.indexOf(cuser.email.toLowerCase())<0)
+    
     var isMemberOf=user.isMemberOf;
-    var disciplinare="" //disciplinare
+    var policies="" //disciplinare
     var itsec="" //corso sicurezza informatica
  
     //REGEXP
-    var roleReg=/^i:infn:\w+\::(\w)/ //Role
-    var disciplinareReg=/disciplinareict:approvato\+on=(\S+)/  //Disciplinare
-    var sicurezzaInfoReg=/sicurezzainformatica-base:superato\+on=(\S+)/ //corso sicurezza informatica
+    //var roleReg=/^i:infn:\w+\::(\w)/ //Role
+    var policiesReg=/disciplinareict:approvato\+on=(\S+)/  //Disciplinare
+    var itsecReg=/sicurezzainformatica-base:superato\+on=(\S+)/ //corso sicurezza informatica
     var ttlReg=/\+ttl\=(\S+)/ //TTL
    
     cuser["isAuthorized"]=false;
@@ -59,8 +65,8 @@ var parseLDAPUserInfo=function (user) {
         for(let i=0;i<userStatus.length;i++){
 
             let ttl=ttlReg.exec(userStatus[i]);
-            disciplinare=disciplinareReg.exec(userStatus[i]) || disciplinare
-            itsec=sicurezzaInfoReg.exec(userStatus[i]) || itsec
+            policies=policiesReg.exec(userStatus[i]) || policies
+            itsec=itsecReg.exec(userStatus[i]) || itsec
 
             if(ttl && minTime!="nolimit"){
                 curTime=ttl[1];
@@ -79,7 +85,7 @@ var parseLDAPUserInfo=function (user) {
         }
 
         
-        cuser["disciplinare"]=disciplinare[1] || "";
+        cuser["policies"]=policies[1] || "";
         cuser["itsec"]=itsec[1] || "";
         cuser["expiration"]=minTime;
     }
@@ -104,28 +110,7 @@ var parseLDAPUserInfo=function (user) {
         cuser["isAuthorized"]=role!=""
         cuser["role"]=role;
 
-        /*
-        var role=""
-
-        //valid roles
-        var roles={"d":"dipendente","o":"ospite","a":"associato"}
        
-        
-
-        //find user role 
-        _isMemberOf.split(";").filter(r=>r.startsWith("i:infn:")).forEach(e=>{
-            var match=roleReg.exec(e);
-            if(match){
-                role=roles[match[1]];
-            }
-            if(e.indexOf("servizio_calcolo_e_reti")>-1){
-                cuser["isAdmin"]=true;
-            }
-        })*/
-        
-        //cuser["roma1Member"]=_isMemberOf.indexOf("roma1")>-1;
-        //cuser["role"]=role
-        //cuser["isAuthorized"]=cuser["role"]!="" && cuser["roma1Member"];
         
 
     }

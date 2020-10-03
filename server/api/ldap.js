@@ -72,7 +72,8 @@ const getUserLDAP=async function(query){
                                 usr.source="LDAP";
                                 usr.phone=ejson.telephoneNumber;
                                 usr.schacUserStatus=ejson.schacUserStatus;
-                                //usr.mailAlternate=ejson.mailAlternateAddress;
+                                usr.mailAlternates=Array.isArray(ejson.mailAlternateAddress) ? ejson.mailAlternateAddress : [ejson.mailAlternateAddress];
+                               
                                 usr_list.push(usr);
                             }
                             catch(exc)

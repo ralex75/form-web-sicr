@@ -49,6 +49,7 @@ export class Profile extends Base{
     }
 
     emptyOrDefault(value){
+        
         return value ? value : "---"
     }
 
@@ -97,12 +98,12 @@ export class Profile extends Base{
 
         return {
                 
-                "ITA":{"email":"E-mail","phone":"Telefono","role":"Ruolo","exp":"Scadenza",
+                "ITA":{"email":"E-mail","email_alt":"E-mail alternativi","phone":"Telefono","role":"Ruolo","exp":"Scadenza",
                         "disciplinare":"Disciplinare accettato","itsec":"Corso sicurezza informatica",
                         "itsec_feedback":`${itsec_ita}`,
                         "unauthorized_feedback":`${unauth_ita}`,
                         "disciplinare_feedback":`${disciText_ita}`},
-                "ENG":{"email":"E-mail","phone":"Phone","role":"Role","exp":"Expiration",
+                "ENG":{"email":"E-mail","email_alt":"Alternate Emails Address","phone":"Phone","role":"Role","exp":"Expiration",
                         "disciplinare":"Usage policies resigned","itsec":"IT security course",
                         "itsec_feedback":`${itsec_eng}`,
                         "unauthorized_feedback":`${unauth_eng}`,
@@ -115,6 +116,7 @@ export class Profile extends Base{
       
         var user=this.currentUser();
 
+        console.log(user)
 
         //var resp=await services.requests.list(false,Application.RequestTypes.ACCOUNT);
 
@@ -138,7 +140,7 @@ export class Profile extends Base{
         }
         else{
             let messages=[]
-            if(!user.disciplinare){
+            if(!user.policies){
                 messages.push(`${loc["disciplinare_feedback"]}`)
             }
             
@@ -169,6 +171,12 @@ export class Profile extends Base{
         <p class="email">${this.emptyOrDefault(user.email)}</p>
         </div>
         <div class="prof_lab">
+        <p>${loc["email_alt"]}</p>
+        </div>
+        <div class="prof_val">
+        <p>${this.emptyOrDefault(this.showList(user.mailAlternates))}</p>
+        </div>
+        <div class="prof_lab">
         <p>${loc["phone"]}</p>
         </div>
         <div class="prof_val">
@@ -184,7 +192,7 @@ export class Profile extends Base{
         <p>${loc["disciplinare"]}</p>
         </div>
         <div class="prof_val">
-        <p>${this.emptyOrDefault(this.parseDate(user.disciplinare))}</p>
+        <p>${this.emptyOrDefault(this.parseDate(user.policies))}</p>
         </div>
         <div class="prof_lab">
         <p>${loc["itsec"]}</p>
@@ -245,6 +253,12 @@ export class Profile extends Base{
             
         }*/
 
+    }
+
+    showList(items)
+    {
+        var list=Array.isArray(items) ? items : [items];
+        return list.join("<br>")
     }
 
     parseDate(date){

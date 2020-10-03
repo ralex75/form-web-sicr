@@ -146,6 +146,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
        
         user.name=user.name+" "+"Giovanni"+" "+"Alberto"
         user.email="";
+        //user.mailAlternates=[]
 
         if(!location.hash)
         {
