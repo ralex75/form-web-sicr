@@ -138,15 +138,8 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         //potrebbe impiegare un pò se devi sincronizzare
         var {user,syncResultMessage}=await services.user.read();
      
-        /*user.isAuthorized=false;
-        user.disciplinare=""
-        user.itsec=""*/
-
         console.log("message:",syncResultMessage)
        
-        user.name=user.name+" "+"Giovanni"+" "+"Alberto"
-        user.email="";
-        //user.mailAlternates=[]
 
         if(!location.hash)
         {
