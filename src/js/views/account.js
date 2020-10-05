@@ -390,17 +390,16 @@ export class Account extends Base{
         let email=user.email;
         this.userHasAccount=false;//user.email!="";
         
+        for(var k in loc)
+        {
+            tpl=tpl.replace(`[${k.toUpperCase()}]`,loc[k]);
+        }
+
         if(this.userHasAccount)
         {
             tpl=tpl.replace("[EMAIL_FEEDBACK]",loc['user_has_account'])
         }
         else{
-
-            for(var k in loc)
-            {
-            tpl=tpl.replace(`[${k.toUpperCase()}]`,loc[k]);
-            }
-            
         
             this.names=user.name.split(" ");
             this.surnames=user.surname.split(" ");
