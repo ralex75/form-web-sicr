@@ -140,13 +140,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
      
         console.log("message:",syncResultMessage)
         
-        if(user.surname.toLowerCase()=='de salvo')
-        {
-            user.name="Alessandro Massimo"
-          
-            user.mailAlternates=[user.email]
-            user.email=""
-        }
+       
 
         if(!location.hash)
         {

@@ -119,6 +119,7 @@ export class Account extends Base{
         this.$form=this.target.querySelector("form");
         this.timeoutID=null;
 
+        debugger;
         if(this.userHasAccount) return;
 
         this.$form.querySelector(".acc-submit").classList.add("show");
@@ -390,10 +391,8 @@ export class Account extends Base{
         let email=user.email;
         this.userHasAccount=user.email!="";
         
-        for(var k in loc)
-        {
-            tpl=tpl.replace(`[${k.toUpperCase()}]`,loc[k]);
-        }
+        
+       
 
         if(this.userHasAccount)
         {
@@ -408,6 +407,10 @@ export class Account extends Base{
 
         }
         
+        for(var k in loc)
+        {
+            tpl=tpl.replace(`[${k.toUpperCase()}]`,loc[k]);
+        }
         
         tpl=tpl.replace("[EMAIL]",email);
 
