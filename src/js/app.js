@@ -3,36 +3,37 @@ import services from './services.js'
 import {Router} from './router.js'
 import moment from 'moment'
 
-const Init=(user,lang='ITA')=>{
+const Init=(user)=>{
     
-    
-        //salva info utente e lingua selezionata
-       window.Application={"user":user,"lang":lang};
-  
-
-       buildFlags(lang);
+       window.Application.user=user;
+       
+       generateLanguageSelection(Application.language.current);
        
        document.addEventListener("languageChanged",ev=>{
             let lang=Application.language.current;
             generateNavigationMenu(lang)
-            buildFlags(lang)
+            generateLanguageSelection(lang)
             buildMenu();
        })
 
-        if(!user || !user.isAuthorized)
-        {
-            throw Error("Unauthorized user")
-        }
        
- 
        //genera menu
        buildMenu();
     
+       //vai alla view profile
+       Router.go(window.location.hash.substr(1));
+
+       if(!user)
+       {
+           throw Error("user is null")
+       }
 
 }
 
-const buildFlags=(lang)=>
+
+const generateLanguageSelection=(lang)=>
 {
+    
     let cl=document.querySelector("#ling")
     cl.style.display="block"
   
@@ -57,6 +58,7 @@ const buildFlags=(lang)=>
 
    
 }
+
 
 
 const generateNavigationMenu=(lang)=>{
@@ -113,11 +115,11 @@ const buildMenu=()=>{
 const UserIsValid=()=>{
     
     var isValid=false;
-    var user=window.Application.user
+    var user=window.Application && window.Application.user
    
     if(user)
     {
-        isValid = user.isAuthorized && user.disciplinare;
+        isValid = user.isAuthorized && user.policies && user.itsec;
     }
     return isValid;
 }
@@ -177,7 +179,8 @@ const user={
         return Object.assign({},window.Application.user);
     },
     remove(){
-        window.Application.user=null;
+        if(window.Application && window.Application.user)
+            window.Application.user=null;
     }
 }
 

@@ -36,10 +36,12 @@ const cssLoaderClass=`.loader {
   `
 
 window.addEventListener('error', function(event) { 
+    
     handleError(event);
 })
 
 window.addEventListener('unhandledrejection', function(event) {
+    
     //console.error('Unhandled rejection (promise: ', event.promise, ', reason: ', event.reason, ').');
     //document.querySelector("#col_sin_menu").innerHTML="";
     handleError(event);
@@ -97,7 +99,9 @@ const showLoader=(lang)=>{
            
             if(next>2)
             {
-                cont.querySelector(".info").style.opacity="1";
+                let info=cont.querySelector(".info")
+                if (info)
+                    info.style.opacity="1";
             }
             countElem.forEach(e=>e.innerText=`${next}s`)
         }
@@ -108,19 +112,24 @@ const showLoader=(lang)=>{
 }
 
 
+
+
 //listener DOM Loaded
 document.addEventListener('DOMContentLoaded',async ev=>{
 
-    let subscription=null;
-  
     let lang= location.href.match("/en/") ? "ENG" : "ITA"
+
+    let subscription=null;
+   
+
+    //salva info utente e lingua selezionata
+    window.Application={"user":null,"lang":lang};
+
 
     Application.generateNavigationMenu(lang)
 
     try{
-    
-        
-
+      
         //messaggio di attesa da mostrare utente mentre l'API sincronizza
         subscription=showLoader(lang)
 
@@ -128,38 +137,32 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         //legge informazioni utente
         //potrebbe impiegare un pò se devi sincronizzare
         var {user,syncResultMessage}=await services.user.read();
-
-        
+     
         console.log("message:",syncResultMessage)
- 
+       
+
         if(!location.hash)
         {
             //setta #profile nell'url senza fare reolad della pagina
             history.pushState("","","#profile")
         }
 
-      
-        //inizializza app
-        Application.Init(user,lang);
-     
-
-        //vai alla view profile
-        Router.go(window.location.hash.substr(1));
-
+        Application.Init(user);
     }
     catch(exc)
     {
-        //inizializza menu base
-        Application.buildMenu();
         handleError(exc);
     }
     finally
     {
-        
+         
         if(subscription)
             subscription.unsubscribe();
 
     }
+
+     
+   
    
 })
 

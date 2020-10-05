@@ -6,8 +6,8 @@ const getUserLDAP=async function(query){
     const usr_list=[];
 
     const ldap_conf={
-             //url: 'ldap://dsa.roma1.infn.it',
-             url: 'ldap://aaitestds.lnf.infn.it',
+             url: 'ldap://dsa.roma1.infn.it',
+             //url: 'ldap://aaitestds.lnf.infn.it',
         username: 'cn=daemon,dc=roma1,dc=infn,dc=it',
          userpwd: 'B9B80BE8-CC98-4A6C-9A92-463A87A6B147',
     }
@@ -72,7 +72,8 @@ const getUserLDAP=async function(query){
                                 usr.source="LDAP";
                                 usr.phone=ejson.telephoneNumber;
                                 usr.schacUserStatus=ejson.schacUserStatus;
-                                //usr.mailAlternate=ejson.mailAlternateAddress;
+                                usr.mailAlternates=Array.isArray(ejson.mailAlternateAddress) ? ejson.mailAlternateAddress : [ejson.mailAlternateAddress];
+                               
                                 usr_list.push(usr);
                             }
                             catch(exc)

@@ -53,10 +53,16 @@ const template=`
 
     .error{
         color:red;
+        font-size:16px;
     }
     .error > span{
         color:green;
     }
+
+    .acc_success{
+        color:green
+    }
+
     .form_pied{
         padding:1px;
       }
@@ -118,6 +124,7 @@ export class Account extends Base{
         this.$form.querySelector(".acc-submit").classList.add("show");
         
         this.$form.addEventListener("submit",async ev=>{
+            
             ev.preventDefault();
             
             ev.submitter.disabled=true;
@@ -134,11 +141,13 @@ export class Account extends Base{
 
             var confirm=loc.dialog.confirm;
             var msg=loc.dialog.msg;
+            var accountMsg= Application.language.current=="ITA" ? "Account di posta richiesto" : "Requested email account"
+           
            
             //chiama il metodo per mostrare la Dialog
             this.showDialog(confirm,
-                            `${msg}?
-                            <br><br><b>${this.$email.innerText}</b>`,()=>{
+                            `${accountMsg}:<p><b>${this.$email.innerText}</b></p><br>${msg}?`
+                            ,()=>{
                                 //console.log(this.$email.innerText)
                                 this.submitForm();
                             },()=>{});
@@ -164,10 +173,10 @@ export class Account extends Base{
 
     submitForm(){
 
-        var data=Object.assign({},Application.user.current());
-        data.email=this.$email.innerText;
+        //var data=Object.assign({},Application.user.current());
+        //data.email=this.$email.innerText;
         
-        Application.SaveRequest(Application.RequestTypes.ACCOUNT,data);
+        Application.SaveRequest(Application.RequestTypes.ACCOUNT,{"email":this.$email.innerText});
     }
 
     disableSumbmit(disabled)
@@ -217,7 +226,8 @@ export class Account extends Base{
     {
         let loc=this.locale();
         clearTimeout(this.timeoutID);
-        this.$err.innerHTML=`${loc["email_exists_pending"]}`
+        this.$err.innerHTML=`<p class="acc_success">${loc["email_exists_pending"]}</p>`
+        
         return new Promise((resolve,reject)=>{
             this.timeoutID=setTimeout(async ()=>{
                 
@@ -232,6 +242,8 @@ export class Account extends Base{
 
                 this.$err.innerHTML=msg;
               
+
+
                 resolve(exists);
 
             },2000)
@@ -276,30 +288,37 @@ export class Account extends Base{
 
         //dlg.setTitle("Verifica indirizz");
         
-        dlg.showHide();
+        //dlg.showHide();
 
         //quando si apre la dialog inizia la ricerca per indirizzo duplicato
-        var html=this.$email.innerText+"<p><small class=\"check\">verifica indirizzo email scelto in corso...</small></p>"
-        dlg.setMessage(html)
+        //var html=this.$email.innerText+"<p><small class=\"check\">verifica indirizzo email scelto in corso...</small></p>"
+        //dlg.setMessage(html)
+        let butt=document.querySelector('input[type="submit"]')
+        
+        butt.disabled=true;
         this.emailAddressExists().then(exists=>{
           
             if(!exists)
             {
+                //message=`<h3 class="success">L'indirizzo mail scelto non esiste</h3>`+message
                 dlg.setTitle(title);
                 dlg.setMessage(message)
                 dlg.showYesButton(yesCallback)
                 dlg.showNoButton(noCallback)
+                dlg.showHide();
             }
             else{
                 var error="L'indirizzo email scelto già esiste.";
-                html=this.$email.innerText+"<p><small class=\"error\">"+error+"</small></p>";
-                this.$err.innerHTML=error;
+                //html=this.$email.innerText+"<p><small class=\"error\">"+error+"</small></p>";
+                this.$err.innerHTML=`<p class=\"error\">${error}</p>`;
                 //dlg.showNoButton(noCallback,"Chiudi")
-                dlg.setMessage(html)
+                //dlg.setMessage(html)
             }
 
            
            
+        }).finally(_=>{
+            butt.disabled=false;
         })
 
       
@@ -311,10 +330,10 @@ export class Account extends Base{
         const loc= {
 
                 "ITA":{"header":"Account di posta","user_has_account":"<p>Attenzione, hai già un account di posta 'roma1.infn.it'</p>",
-                        "email_feedback":"Il tuo indirizzo di posta sarà",
-                        "email_exists_pending":"Verifica in corso...",
+                        "email_feedback":"Il tuo indirizzo di posta sarà:",
+                        "email_exists_pending":"Controllo che l'account di mail scelto non sia già in uso...",
                         "email_exists":"L'indirizzo di posta risulta già registrato.",
-                        "email_invalid":"Indirizzo di posta scelto non valido.<br>Selezionare una parte del nome e una parte del cognome.",
+                        "email_invalid":"Indirizzo di posta scelto non valido.<br>Selezionare le parti del nome e le parti del cognome che vorresti vedere nel tuo account di posta.",
                         "send":"Invia","send":"Invia","name":"Nome","surname":"Cognome",
                        
                         "legend":{"name":"Seleziona le parti del nome","surname":"Seleziona le parti del cognome"},
@@ -325,12 +344,12 @@ export class Account extends Base{
                      },
                       
                 "ENG":{"header":"Email Account","user_has_account":"Warning, you already have an Email account 'roma1.infn.it'",
-                "email_feedback":"Your email address will be",
-                "email_exists_pending":"Checking....",
+                "email_feedback":"Your email address will be:",
+                "email_exists_pending":"Checking the selected email address is not yet in use...",
                 "email_exists":"Email adress is already registered.",
-                "email_invalid":"Selected mail address is invalid.<br>Select name's parts and surname's parts.",
+                "email_invalid":"Selected mail address is invalid.<br>Select the parts of your name and surname you want to show in your email account",
                 "to":"To","send":"Submit","name":"Name","surname":"Surname",
-                "legend":{"name":"Select name's parts","surname":"Select surname's parts"},
+                "legend":{"name":"Select the parts of your name","surname":"Select the parts of your surname"},
                 "dialog":{
                         "confirm":"Confirm request",
                         "msg":"Do you want submit the request"

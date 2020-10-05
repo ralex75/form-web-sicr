@@ -11,7 +11,7 @@ const template=`
         </select>
     </div>
     
-    <table id="tbreq">
+    <table id="tbreq" style="width:100%">
     <thead>
         <tr id="table_intest">
             <td>ID</td>
@@ -182,12 +182,12 @@ export class Requests extends Base{
         var types=Application.RequestTypes;
         var items=[];
         list.forEach(item => {
-                  
+            
             var desc=""
             switch (item.rtype)
             {
                 case types.WIFI:
-                 var format=DATE_FORMAT.split(" ")[0];
+                 //var format=DATE_FORMAT.split(" ")[0];
                  desc=`${loc["wifi"]["desc"]} ${moment(item.data.from).format(`${loc["wifi"]["format"]}`)} - ${moment(item.data.to).format(`${loc["wifi"]["format"]}`)}`;
                 break;
                 case types.IP:
@@ -199,7 +199,7 @@ export class Requests extends Base{
                 break;
                 case types.ACCOUNT:
                   var d=item.data;
-                  desc=`${loc["account"]["desc"]}`;
+                  desc=`${loc["account"]["desc"]}:<br>${d.email}`;
                 break;
 
             }

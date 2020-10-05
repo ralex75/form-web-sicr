@@ -22,13 +22,15 @@ const go=(view,args)=>{
         if(!Application.UserIsValid())
         {
            
+            Application.buildMenu()
 
             if(view!="result" && view!="logout" && view!="profile")
             {
                 view="profile";
                 history.pushState(null,null,"#"+view)
                 
-                if(!Application.user.current().isAuthorized)
+                
+                if(!Application.user.current())
                 {
                     throw Error("No valid user");
                 }

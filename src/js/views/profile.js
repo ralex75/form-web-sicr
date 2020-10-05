@@ -11,10 +11,16 @@ var template=`
 
     .prof-feedback{
         text-align:justify;
-        width:80%;
-        font-size:16px;
+        width:90%;
+        font-size:18px;
     }
 
+    .prof-feedback a{
+        color:red;
+    }
+    .prof-feedback a:hover{
+        text-decoration:underline
+    }
     .error u{
         color:red;
     }
@@ -43,7 +49,8 @@ export class Profile extends Base{
     }
 
     emptyOrDefault(value){
-        return value ? value : "--"
+        
+        return value ? value : "---"
     }
 
     currentUser()
@@ -53,38 +60,54 @@ export class Profile extends Base{
 
     locale(){
 
-        var user=this.currentUser();
-
+       
         var disciplinareUrl="http://www.infn.it/disciplinareRisorseInformatiche/index.php"
+        var itSecCourseUrl= "https://elearning.infn.it"
+        var href={'disci':`<a class="prof-feedback" target="_blank" href="${disciplinareUrl}">${disciplinareUrl}</a>`,
+                  'supp':`<a class="prof-feedback" href="mailto:support@roma1.infn.it">support@roma1.infn.it</a>`,
+                  'itsec':`<a class="prof-feedback" target="_blank" href="${itSecCourseUrl}">${itSecCourseUrl}</a>`}
+        
+        
+        
+        var disciText_ita=`Le linee guida della politica IT INFN (Disciplinare) non sono state ancora accettate.<br>Per accettarle, prego seguire questo url: ${href.disci}`
+        var disciText_eng=`The INFN IT policy guidelines (Disciplinare) has not yet been accepted.<br>To comply, please go to url: ${href.disci}`
 
-        var disciText_ita=`Le linee guida della politica IT INFN (Disciplinare) non sono state ancora accettate.<br>Per accettarlo, prego seguire questo url: <a href="${disciplinareUrl}">${disciplinareUrl}</a>`
-        var disciText_eng=`The INFN IT policy guidelines (Disciplinare) has not yet been accepted.<br>To comply, please go to url: <a href="${disciplinareUrl}">${disciplinareUrl}</a>`
-
+        /*
         var unauth_ita=`Spiacenti, si è verificato un problema, prego contattaci: <a href="mailto:support@roma1.infn.it">support@roma1.infn.it</a>`
         var unauth_eng=`Sorry, an error has occurred, please contact us: <a href="mailto:support@roma1.infn.it">support@roma1.infn.it</a>`
+        */
 
-        /*var unauth_ita=`Gentile ${user.name} ${user.surname}, la sua identità risulta correttamente registrata nel sistema informativo centrale, 
-                        ma la sua utenza non è stata ancora associata alla sede di Roma.<br>
-                        Se lei è membro registrato e attivo del dipartimento e la registrazione della sua identità è stata 
-                        effettuata meno di 6h fa la preghiamo di attendere e riprovare in seguito, 
-                        la sua utenza verrà associata a breve.<br>In caso contrario è pregato di contattare 
-                        il supporto di Roma all'indirizzo supporto@roma1.infn.it.`
+        var itsec_ita= `Per utilizzare le risorse informatiche dell’INFN è necessario aver seguito il corso obbligatorio di sicurezza informatica, 
+                        disponibile all’indirizzo ${href.itsec}, 
+                        dopo aver effettuato la login con le sue credenziali AAI.<br>
+                        <u>La preghiamo pertanto di effettuare il corso prima di procedere con qualunque richiesta.</u>`
         
-        var unauth_eng=`Dear ${user.name} ${user.surname}, your identity is correctly registered in the central IT systems, 
-                        but your user is not yet  associated to the site of Roma.<br> 
-                        If you are a registered and active member of the Department of Physics and your identity 
-                        has been registered less than 6h ago, please wait and try again later, 
-                        your user will be associated shortly.<br> 
-                        In all other cases please contact the Roma support via email at supporto@roma1.infn.it.`*/
+        var itsec_eng= `In order to use the INFN IT resources you need to follow the IT security course, 
+                        available at ${href.itsec}, 
+                        logging in with your AAI credentials.<br>
+                        <u>You are requested to follow the course before proceeding with any further request.</u>`
+
+
+        var unauth_ita=`La sua identità risulta correttamente registrata nel sistema informativo centrale, 
+                        ma la sua utenza non è stata ancora associata alla sede di Roma.<br><br>
+                        Contattare il supporto di Roma all'indirizzo: ${href.supp}`
+        
+        var unauth_eng=`Your identity is correctly registered in the central IT systems, 
+                        but your user is not yet  associated to the site of Roma.<br><br>
+                        Please contact the Roma support via email at: ${href.supp}`
 
         return {
                 
-                "ITA":{"email":"E-mail","phone":"Telefono","role":"Ruolo","exp":"Scadenza",
-                        "unauthorized":`<p class="prof-feedback">${unauth_ita}</p>`,
-                        "disciplinare":`<p class="prof-feedback">${disciText_ita}</p>`},
-                "ENG":{"email":"E-mail","phone":"Phone","role":"Role","exp":"Expiration",
-                        "unauthorized":`<p class="prof-feedback">${unauth_eng}</p>`,
-                        "disciplinare":`<p class="prof-feedback">${disciText_eng}</p>`}
+                "ITA":{"email":"E-mail","email_alt":"E-mail alternativi","phone":"Telefono","role":"Ruolo","exp":"Scadenza",
+                        "disciplinare":"Disciplinare accettato","itsec":"Corso sicurezza informatica",
+                        "itsec_feedback":`${itsec_ita}`,
+                        "unauthorized_feedback":`${unauth_ita}`,
+                        "disciplinare_feedback":`${disciText_ita}`},
+                "ENG":{"email":"E-mail","email_alt":"Alternate Emails Address","phone":"Phone","role":"Role","exp":"Expiration",
+                        "disciplinare":"Usage policies resigned","itsec":"IT security course",
+                        "itsec_feedback":`${itsec_eng}`,
+                        "unauthorized_feedback":`${unauth_eng}`,
+                        "disciplinare_feedback":`${disciText_eng}`}
             }
     }
 
@@ -93,9 +116,11 @@ export class Profile extends Base{
       
         var user=this.currentUser();
 
-        var resp=await services.requests.list(false,Application.RequestTypes.ACCOUNT);
+        console.log(user)
 
-        let requests=resp.data;
+        //var resp=await services.requests.list(false,Application.RequestTypes.ACCOUNT);
+
+        //let requests=resp.data;
 
         /*
         user.isAuthorized=this.auth;
@@ -108,18 +133,30 @@ export class Profile extends Base{
 
         var loc=this.locale()[Application.language.current];
 
-        
        
-        content = !user.isAuthorized ? `<h3 class="unauth">${loc['unauthorized']}</h3>`
-                                     : !user.disciplinare ? `${loc["disciplinare"]}` 
-                                     : ""
+        if(!user.isAuthorized)
+        {
+            content=`${loc['unauthorized_feedback']}`
+        }
+        else{
+            let messages=[]
+            if(!user.policies){
+                messages.push(`${loc["disciplinare_feedback"]}`)
+            }
+            
+            if(!user.itsec){
+                messages.push(`${loc["itsec_feedback"]}`)
+            }
 
+            content=messages.join("<br><br>")
+        }
         
 
-        var html=`<div class="prof_intest" >
+
+        var html=`<div class="prof_intest">
         <p>${user.name} ${user.surname}</p>
         
-        ${content}
+        <p class="prof-feedback">${content}</p>
         </div>
         <div class="prof_lab">
         <p>Username</p>
@@ -134,6 +171,12 @@ export class Profile extends Base{
         <p class="email">${this.emptyOrDefault(user.email)}</p>
         </div>
         <div class="prof_lab">
+        <p>${loc["email_alt"]}</p>
+        </div>
+        <div class="prof_val">
+        <p>${this.emptyOrDefault(this.showList(user.mailAlternates))}</p>
+        </div>
+        <div class="prof_lab">
         <p>${loc["phone"]}</p>
         </div>
         <div class="prof_val">
@@ -146,13 +189,24 @@ export class Profile extends Base{
         <p>${user.role}</p>
         </div>
         <div class="prof_lab">
+        <p>${loc["disciplinare"]}</p>
+        </div>
+        <div class="prof_val">
+        <p>${this.emptyOrDefault(this.parseDate(user.policies))}</p>
+        </div>
+        <div class="prof_lab">
+        <p>${loc["itsec"]}</p>
+        </div>
+        <div class="prof_val">
+        <p>${this.emptyOrDefault(this.parseDate(user.itsec))}</p>
+        </div>
+        <div class="prof_lab">
         <p>${loc["exp"]}</p>
         </div>
         <div class="prof_val">
-        <p>${user.expiration}</p>
+        <p>${this.parseDate(user.expiration)}</p>
         </div>`
        
-        console.log("Profile")
        
         this.target.querySelector("#udata").innerHTML=html;
         
@@ -199,6 +253,19 @@ export class Profile extends Base{
             
         }*/
 
+    }
+
+    showList(items)
+    {
+        var list=Array.isArray(items) ? items : [items];
+        return list.join("<br>")
+    }
+
+    parseDate(date){
+        if(!date) return
+        if(date=="nolimit") return (Application.language.current=="ITA" ? "nessuna" :"never")
+        let date_format={'ITA':"DD/MM/YYYY",'ENG':"MM/DD/YYYY"}
+        return moment(date).format(date_format[Application.language.current])
     }
     
     getContent(){
