@@ -38,7 +38,7 @@ function authToken(req,res,next){
     //var testUUID='f8d35e28-2532-43c8-989c-3faa58f5cba4';
 
     //mio
-    var testUUID='50699576-15eb-49c6-a645-c07c0de9c402'
+    //var testUUID='50699576-15eb-49c6-a645-c07c0de9c402'
 
     testUUID='33ad801a-39e0-405c-8abb-ed4b871d7ef7'
     //testUUID='e0589a86-9b55-48b9-84dc-1324750a4237'  //zicoschi
