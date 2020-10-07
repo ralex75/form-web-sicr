@@ -133,21 +133,10 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         //messaggio di attesa da mostrare utente mentre l'API sincronizza
         subscription=showLoader(lang)
 
-        
         //legge informazioni utente
         //potrebbe impiegare un pò se devi sincronizzare
         var {user,syncResultMessage}=await services.user.read();
      
-        console.log("message:",syncResultMessage)
-        
-        if(user.surname.toLowerCase()=='de salvo')
-        {
-            user.name="Alessandro Massimo"
-          
-            user.mailAlternates=[user.email]
-            user.email=""
-        }
-
         if(!location.hash)
         {
             //setta #profile nell'url senza fare reolad della pagina

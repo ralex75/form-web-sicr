@@ -119,7 +119,8 @@ const UserIsValid=()=>{
    
     if(user)
     {
-        isValid = user.isAuthorized && user.policies && user.itsec;
+        //isValid = user.isAuthorized && user.policies && user.itsec;
+        isValid = user.isAuthorized && user.policies;
     }
     return isValid;
 }

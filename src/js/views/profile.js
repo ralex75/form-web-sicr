@@ -143,10 +143,10 @@ export class Profile extends Base{
             if(!user.policies){
                 messages.push(`${loc["disciplinare_feedback"]}`)
             }
-            
+            /*
             if(!user.itsec){
                 messages.push(`${loc["itsec_feedback"]}`)
-            }
+            }*/
 
             content=messages.join("<br><br>")
         }
