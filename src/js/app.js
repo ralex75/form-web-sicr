@@ -165,7 +165,7 @@ const language={
             //location.href= url.match("/en/") ? "http://www.roma1.infn.it/conference/wwwsicr/supporto/" : "http://www.roma1.infn.it/conference/wwwsicr/en/supporto/"
            
             url=url.match("/en/") ? url.split("/").filter(e=>e!="en").join("/") : url.split("/").splice(5,0,"en").join("/")
-            history.pushState(url);
+            history.pushState("","",url);
 
             window.Application.lang=lang;
             EmitEvent("languageChanged")
