@@ -161,8 +161,11 @@ const language={
     set current(lang){
         if(window.Application.lang!=lang)
         {
-            window.Application.lang=lang;
-            EmitEvent("languageChanged")
+            let url=location.href;
+            location.href= url.match("/en/") ? "http://www.roma1.infn.it/conference/wwwsicr/supporto/" : "http://www.roma1.infn.it/conference/wwwsicr/en/supporto/"
+           
+            //window.Application.lang=lang;
+            //EmitEvent("languageChanged")
         }
     },
     get current(){
