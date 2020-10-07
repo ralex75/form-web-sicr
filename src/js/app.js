@@ -164,7 +164,17 @@ const language={
             let url=location.href;
             //location.href= url.match("/en/") ? "http://www.roma1.infn.it/conference/wwwsicr/supporto/" : "http://www.roma1.infn.it/conference/wwwsicr/en/supporto/"
            
-            url=url.match("/en/") ? url.split("/").filter(e=>e!="en").join("/") : url.split("/").splice(5,0,"en").join("/")
+            if(url.match("/en/"))
+            {
+                url=url.split("/").filter(e=>e!="en").join("/")
+            }
+            else{
+                url=url.split("/");
+                url.splice(5,0,'en');
+                url=url.join("/");
+            }
+
+            //url=url.match("/en/") ? url.split("/").filter(e=>e!="en").join("/") : url.split("/").splice(5,0,"en").join("/")
             history.pushState("","",url);
 
             window.Application.lang=lang;
