@@ -162,10 +162,13 @@ const language={
         if(window.Application.lang!=lang)
         {
             let url=location.href;
-            location.href= url.match("/en/") ? "http://www.roma1.infn.it/conference/wwwsicr/supporto/" : "http://www.roma1.infn.it/conference/wwwsicr/en/supporto/"
+            //location.href= url.match("/en/") ? "http://www.roma1.infn.it/conference/wwwsicr/supporto/" : "http://www.roma1.infn.it/conference/wwwsicr/en/supporto/"
            
-            //window.Application.lang=lang;
-            //EmitEvent("languageChanged")
+            url=url.match("/en/") ? url.split("/").filter(e=>e!="en").join("/") : url.split("/").splice(5,0,"en").join("/")
+            history.pushState(url);
+
+            window.Application.lang=lang;
+            EmitEvent("languageChanged")
         }
     },
     get current(){
