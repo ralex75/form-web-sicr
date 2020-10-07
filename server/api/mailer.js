@@ -5,7 +5,7 @@ const nodeMailer = require('nodemailer');
 function sendMail(to,subj,body){
     
     //solo per debug
-    to="alessandro.ruggieri@roma1.infn.it"
+    //to="alessandro.ruggieri@roma1.infn.it"
     
     let transporter = nodeMailer.createTransport({
         host: 'smtp.roma1.infn.it',

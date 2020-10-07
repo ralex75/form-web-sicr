@@ -144,9 +144,9 @@ export class Profile extends Base{
                 messages.push(`${loc["disciplinare_feedback"]}`)
             }
             
-            if(!user.itsec){
+            /*if(!user.itsec){
                 messages.push(`${loc["itsec_feedback"]}`)
-            }
+            }*/
 
             content=messages.join("<br><br>")
         }
