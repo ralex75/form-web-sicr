@@ -6,18 +6,19 @@ const template=`
         [HEADER]
         </div>
 
-
-        <p class="acc-email-text">[EMAIL_FEEDBACK]</p>
-        <h4 class="account-email">[EMAIL]</h4>
-        <small class="error"></small>
-     
-        <div class="account_content"></div>
-    
-        </div>
-        <div class="form_sez acc-submit">
-        <div class="form_pied cbutton">
-            <input type="submit" class="button_m" value="[SEND]" />
-        </div>	
+        <section id="account-req" style="display:none;">
+            <p class="acc-email-text">[EMAIL_FEEDBACK]</p>
+            <h4 class="account-email">[EMAIL]</h4>
+            <small class="error"></small>
+        
+            <div class="account_content"></div>
+        
+            </div>
+            <div class="form_sez acc-submit">
+            <div class="form_pied cbutton">
+                <input type="submit" class="button_m" value="[SEND]" />
+            </div>	
+        </section>
     </div>		
 </form>
 
@@ -106,6 +107,7 @@ import {Base} from './base.js'
 import {Application} from '../app.js'
 import {Dialog} from '../components/dialog.js'
 import services from '../services.js'
+import moment from 'moment'
 
 export class Account extends Base{
 
@@ -113,14 +115,53 @@ export class Account extends Base{
 
        
 
+        let sec=this.target.querySelector("#account-req");
+        let loc=this.locale();
+
+        let html=sec.innerHTML;
+
+        sec.innerHTML="";
+        sec.style.display="block";
+
+      
+        //utente ha già account
+        if(this.userHasAccount)
+        {
+            sec.innerHTML=html;
+            return;
+        };
+
+
+      
+        //controlla se ha fatto richiesta e quando
+        var resp=await services.requests.list(false,Application.RequestTypes.ACCOUNT);
+
+       
+        let requests=resp.data;
+
+
+        if(requests.length>0)
+        {
+            let lastreq=requests[0]
+           
+            let days=moment().diff(moment(lastreq.req_date),'days')
+           
+            if(days<5){
+                
+                let date=moment(lastreq.req_date);
+                date=date.format( Application.language.current=="ITA" ? "DD/MM/YYYY" : "MM/DD/YYYY");
+                sec.innerHTML=`<h4>${loc["request_already_sent"]} ${date}</h4>`
+                return;
+            }
+        }
+
+        sec.innerHTML=html;
+        
         let $content=this.target.querySelector(".account_content");
         this.$email=this.target.querySelector(".account-email")
         this.$err=this.target.querySelector(".error");
         this.$form=this.target.querySelector("form");
         this.timeoutID=null;
-
-        debugger;
-        if(this.userHasAccount) return;
 
         this.$form.querySelector(".acc-submit").classList.add("show");
         
@@ -153,7 +194,7 @@ export class Account extends Base{
                                 this.submitForm();
                             },()=>{});
 
-            console.log("submit");
+            
         })
 
         $content.innerHTML=""
@@ -336,6 +377,7 @@ export class Account extends Base{
                         "email_exists":"L'indirizzo di posta risulta già registrato.",
                         "email_invalid":"Indirizzo di posta scelto non valido.<br>Selezionare le parti del nome e le parti del cognome che vorresti vedere nel tuo account di posta.",
                         "send":"Invia","send":"Invia","name":"Nome","surname":"Cognome",
+                        "request_already_sent":"Attenzione, hai già inviato la richiesta di creazione account in data:",
                        
                         "legend":{"name":"Seleziona le parti del nome","surname":"Seleziona le parti del cognome"},
                         "dialog":{
@@ -350,6 +392,7 @@ export class Account extends Base{
                 "email_exists":"Email adress is already registered.",
                 "email_invalid":"Selected mail address is invalid.<br>Select the parts of your name and surname you want to show in your email account",
                 "to":"To","send":"Submit","name":"Name","surname":"Surname",
+                "request_already_sent":"Warning, you have already sent an account request creation on date:",
                 "legend":{"name":"Select the parts of your name","surname":"Select the parts of your surname"},
                 "dialog":{
                         "confirm":"Confirm request",
@@ -391,8 +434,6 @@ export class Account extends Base{
         let email=user.email;
         this.userHasAccount=user.email!="";
         
-        
-       
 
         if(this.userHasAccount)
         {
@@ -400,12 +441,14 @@ export class Account extends Base{
         }
         else{
         
+         
             this.names=user.name.split(" ");
             this.surnames=user.surname.split(" ");
             this.addressIsValid=true;
             email=this.buildEmailText(this.names,this.surnames);
 
         }
+        
         
         for(var k in loc)
         {

@@ -141,6 +141,11 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         console.log("message:",syncResultMessage)
         
        
+        if(user.uid='aruggier')
+        {
+            user.email=""
+        }
+       
 
         if(!location.hash)
         {

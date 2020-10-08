@@ -164,7 +164,7 @@ const language={
             let url=location.href;
        
             url=url.match("/en/") ? url.replace("wwwsicr/en/","wwwsicr/") : url.replace("wwwsicr/","wwwsicr/en/")
-            history.pushState(url);
+            history.pushState("","",url);
 
             window.Application.lang=lang;
             EmitEvent("languageChanged")
