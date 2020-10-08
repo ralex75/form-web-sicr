@@ -139,6 +139,7 @@ export class Account extends Base{
        
         let requests=resp.data;
 
+        let DAYS_LIMIT=5;
 
         if(requests.length>0)
         {
@@ -146,7 +147,8 @@ export class Account extends Base{
            
             let days=moment().diff(moment(lastreq.req_date),'days')
            
-            if(days<5){
+            //se non sono passati DAYS_LIMIT allora non può fare nuova richiesta
+            if(days<DAYS_LIMIT){
                 
                 let date=moment(lastreq.req_date);
                 date=date.format( Application.language.current=="ITA" ? "DD/MM/YYYY" : "MM/DD/YYYY");
@@ -279,6 +281,7 @@ export class Account extends Base{
                 
                 if(exists)
                 {
+                    debugger;
                     msg=loc["email_exists"]
                 }
 
@@ -342,22 +345,12 @@ export class Account extends Base{
           
             if(!exists)
             {
-                //message=`<h3 class="success">L'indirizzo mail scelto non esiste</h3>`+message
                 dlg.setTitle(title);
                 dlg.setMessage(message)
                 dlg.showYesButton(yesCallback)
                 dlg.showNoButton(noCallback)
                 dlg.showHide();
             }
-            else{
-                var error="L'indirizzo email scelto già esiste.";
-                //html=this.$email.innerText+"<p><small class=\"error\">"+error+"</small></p>";
-                this.$err.innerHTML=`<p class=\"error\">${error}</p>`;
-                //dlg.showNoButton(noCallback,"Chiudi")
-                //dlg.setMessage(html)
-            }
-
-           
            
         }).finally(_=>{
             butt.disabled=false;
