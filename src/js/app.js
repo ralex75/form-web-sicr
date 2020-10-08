@@ -162,6 +162,7 @@ const language={
         if(window.Application.lang!=lang)
         {
             let url=location.href;
+<<<<<<< HEAD
             //location.href= url.match("/en/") ? "http://www.roma1.infn.it/conference/wwwsicr/supporto/" : "http://www.roma1.infn.it/conference/wwwsicr/en/supporto/"
            
             if(url.match("/en/"))
@@ -175,6 +176,10 @@ const language={
             }
 
             //url=url.match("/en/") ? url.split("/").filter(e=>e!="en").join("/") : url.split("/").splice(5,0,"en").join("/")
+=======
+       
+            url=url.match("/en/") ? url.replace("wwwsicr/en/","wwwsicr/") : url.replace("wwwsicr/","wwwsicr/en/")
+>>>>>>> prevent-multi-acc-request
             history.pushState("","",url);
 
             window.Application.lang=lang;

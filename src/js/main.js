@@ -137,6 +137,18 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         //potrebbe impiegare un pò se devi sincronizzare
         var {user,syncResultMessage}=await services.user.read();
      
+<<<<<<< HEAD
+=======
+        console.log("message:",syncResultMessage)
+        
+       
+        if(user.uid='aruggier')
+        {
+            user.email=""
+        }
+       
+
+>>>>>>> prevent-multi-acc-request
         if(!location.hash)
         {
             //setta #profile nell'url senza fare reolad della pagina

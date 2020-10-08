@@ -2,9 +2,9 @@ const pgp = require('pg-promise')({});
 
 
 const nqdb=pgp({
-    host:'webapp2.roma1.infn.it',
+    host:'webapp-dev.roma1.infn.it',
 	port:5432,
-	database: "netquery",
+	database: "netquery_db",
 	user: 'nq-admin',
 	password: 'F1rm4NQ'	
 });
