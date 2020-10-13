@@ -121,7 +121,9 @@ const UserIsValid=()=>{
     {
         isValid = user.isAuthorized && user.policies;
     }
+
     return isValid;
+    
 }
 
 const EmitEvent=(name,args=null,bubbles=true)=>{

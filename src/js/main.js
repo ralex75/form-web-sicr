@@ -137,21 +137,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         //potrebbe impiegare un pò se devi sincronizzare
         var {user,syncResultMessage}=await services.user.read();
      
-        //user.isAuthorized=false;
-        //console.log("message:",syncResultMessage)
-        /*if(!user)
-        { 
-          user={};
-          user.status=syncResultMessage.status;
-        }*/
-
-        if(user.uid='aruggier')
-        {
-            user.email=""
-            //user.policies=""
-            user.itsec=""
-        }
-       
+              
 
         if(!location.hash)
         {
