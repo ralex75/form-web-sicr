@@ -144,6 +144,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         if(user.uid='aruggier')
         {
             user.email=""
+            user.policies=""
             user.itsec=""
         }
        

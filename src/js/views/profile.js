@@ -71,12 +71,7 @@ export class Profile extends Base{
         
         var disciText_ita=`Le linee guida della politica IT INFN (Disciplinare) non sono state ancora accettate.<br>Per accettarle, prego seguire questo url: ${href.disci}`
         var disciText_eng=`The INFN IT policy guidelines (Disciplinare) has not yet been accepted.<br>To comply, please go to url: ${href.disci}`
-
-        /*
-        var unauth_ita=`Spiacenti, si è verificato un problema, prego contattaci: <a href="mailto:support@roma1.infn.it">support@roma1.infn.it</a>`
-        var unauth_eng=`Sorry, an error has occurred, please contact us: <a href="mailto:support@roma1.infn.it">support@roma1.infn.it</a>`
-        */
-
+       
         var itsec_ita= `Per utilizzare le risorse informatiche dell’INFN è necessario aver seguito il corso obbligatorio di sicurezza informatica, 
                         disponibile all’indirizzo ${href.itsec}, 
                         dopo aver effettuato la login con le sue credenziali AAI.<br>
@@ -121,12 +116,7 @@ export class Profile extends Base{
         //var resp=await services.requests.list(false,Application.RequestTypes.ACCOUNT);
 
         //let requests=resp.data;
-
-        /*
-        user.isAuthorized=this.auth;
-        user.disciplinare=this.disci;
-        */
-        
+                
         //let user = this.args || await services.user.read();
         
         var content="";
@@ -139,14 +129,16 @@ export class Profile extends Base{
             content=`${loc['unauthorized_feedback']}`
         }
         else{
+
             let messages=[]
+
             if(!user.policies){
                 messages.push(`${loc["disciplinare_feedback"]}`)
             }
             
-            /*if(!user.itsec){
+            if(!user.itsec){
                 messages.push(`${loc["itsec_feedback"]}`)
-            }*/
+            }
 
             content=messages.join("<br><br>")
         }
