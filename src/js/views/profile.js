@@ -63,9 +63,11 @@ export class Profile extends Base{
        
         var disciplinareUrl="http://www.infn.it/disciplinareRisorseInformatiche/index.php"
         var itSecCourseUrl= "https://elearning.infn.it"
+        var signupUrl="https://signup.app.infn.it"
         var href={'disci':`<a class="prof-feedback" target="_blank" href="${disciplinareUrl}">${disciplinareUrl}</a>`,
                   'supp':`<a class="prof-feedback" href="mailto:support@roma1.infn.it">support@roma1.infn.it</a>`,
-                  'itsec':`<a class="prof-feedback" target="_blank" href="${itSecCourseUrl}">${itSecCourseUrl}</a>`}
+                  'itsec':`<a class="prof-feedback" target="_blank" href="${itSecCourseUrl}">${itSecCourseUrl}</a>`,
+                  'signup':`<a class="prof-feedback" target="_blank" href="${signupUrl}">${signupUrl}</a>`}
         
         
         
@@ -84,12 +86,20 @@ export class Profile extends Base{
 
 
         var unauth_ita=`La sua identità risulta correttamente registrata nel sistema informativo centrale, 
-                        ma la sua utenza non è stata ancora associata alla sede di Roma.<br><br>
-                        Contattare il supporto di Roma all'indirizzo: ${href.supp}`
+                        ma la sua utenza non è stata ancora associata alla sede di Roma.<br>
+                        Da un controllo preliminare lei risulta essere presente nel database del dipartimento di Fisica.<br>
+                        La preghiamo quindi di controllare che l'email registrata nel sistema informativo centrale corrisponda a quella registrata al dipartimento e, 
+                        in caso contrario, di aggiungerla come mail alternativa accedendo all'indirizzo: ${href.signup}
+                        <br><br>
+                        In caso di domande ulteriori contattare il supporto di Roma all'indirizzo: ${href.supp}`
         
-        var unauth_eng=`Your identity is correctly registered in the central IT systems, 
-                        but your user is not yet  associated to the site of Roma.<br><br>
-                        Please contact the Roma support via email at: ${href.supp}`
+        var unauth_eng=`You identity is correctly registered in the INFN Central Information System,
+                        but your user has not been associated to the Roma site yet.<br>
+                        From a preliminary check you are present in the database of the Physics Department. <br>
+                        You are then kindly asked to check that the email registered in the INFN Central Information System is matching the one you have registered in the Physics Department and, 
+                        if not, to add it in the Central Information System as alternate email, using the link ${href.signup}
+                        <br><br>
+                        In case of further questions please contact the Roma support at this url: ${href.supp}`
 
         return {
                 

@@ -20,7 +20,9 @@ async function forceLDAPSync(req,res,next)
       response=err.response;
     }
 
-    res.locals.syncResultMessage=response.data ? response.data.message :response;
+    res.locals.syncResultMessage={"status":response.status,"message":response.data ? response.data.message :response}
+
+    //res.locals.syncResultMessage=response.data ? response.data.message :response;
 
     setTimeout(()=>{
       next();
