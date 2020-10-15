@@ -1,8 +1,10 @@
 
 import services from './services.js'
 import {Router} from './router.js'
-import {Application} from './app.js'
+//import {Application} from './app.js'
 import { interval } from 'rxjs';
+import {Profile} from './views/profile'
+import {Account} from './views/account'
 
 
 const cssLoaderClass=`.loader {
@@ -46,6 +48,28 @@ window.addEventListener('unhandledrejection', function(event) {
     //document.querySelector("#col_sin_menu").innerHTML="";
     handleError(event);
 });
+
+const router=()=>{
+
+    let routes=[
+        {"path":"#profile",view:Profile},
+        {"path":"#account",view:Account}
+    ]
+
+    let path=location.hash;
+
+    let matchPath=routes.find(r=>r.path==path);
+    if(!matchPath)
+    {
+        matchPath=routes[0];
+        history.pushState("","",matchPath.path);
+    }
+
+    let comp = new matchPath.view();
+    document.querySelector("#colonne_content").innerHTML=comp.getHTML();
+    comp.mounted();
+
+}
 
 
 const handleError=(err)=>{
