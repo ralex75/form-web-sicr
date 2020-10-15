@@ -22,8 +22,8 @@ async function forceLDAPSync(req,res,next)
 
     res.locals.syncResultMessage={"status":response.status,"message":response.data ? response.data.message :response}
 
+    //timeout 5000 quando il sync è andato bene --- diamo tempo al db Godiva di sistemarsi...
     let timeout= response.status!=200 ? 1 : 5000;
-    //res.locals.syncResultMessage=response.data ? response.data.message :response;
 
     setTimeout(()=>{
       next();
