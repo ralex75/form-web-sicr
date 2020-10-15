@@ -103,15 +103,15 @@ const template=`
 
 
 
-import {Base} from './base.js'
+import Abstract from './abstract.js'
 import {Application} from '../app.js'
 import {Dialog} from '../components/dialog.js'
 import services from '../services.js'
 import moment from 'moment'
 
-export class Account extends Base{
+export class Account extends Abstract{
 
-    async init(){
+    async mounted(){
 
        
 

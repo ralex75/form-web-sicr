@@ -20,12 +20,16 @@ const template=`
     </stle>
 `
 
-import {Base} from './base.js'
-import {Application} from '../app.js'
+
+import {Application} from '../main'
 
 
-export class Result extends Base{
+export class Result {
         
+    constructor(args){
+        this.args=args;
+    }
+
     displayUserRequestIPFeedback(data)
     {
        
@@ -102,8 +106,9 @@ export class Result extends Base{
         }
         else{
 
+       
             var {type,data} = reqdata;
-            var types=Application.RequestTypes;
+            var types=Application.requestTypes;
 
             switch(type)
             {

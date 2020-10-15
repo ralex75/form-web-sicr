@@ -40,26 +40,39 @@ const template=`
 `
 
 
-import {Base,UI} from './base.js'
+import Abstract from './abstract.js'
 import {Dialog} from '../components/dialog.js'
 import services from '../services.js'
-import {Router} from '../router.js'
-//import { isMoment } from 'moment'
-import {Application} from '../app.js'
-
-export class HostList extends Base{
+import {Application} from './../main'
+import { IP } from './ip.js'
 
 
-    async init(){
+
+
+export class HostList extends Abstract{
+
+    constructor(target,params){
+        super(target,params)
+    }
+
+    async mounted(){
         
         this.hosts=await this.getHosts();
        
         this.$tbody=this.target.querySelector("#tb-body");
-        this.$tbody=this.target.querySelector("#tb-body");
         this.$table=this.$tbody.parentElement;
-        this.$addlnk=this.$table.querySelector("thead > tr > td > a");
-        this.$addlnk.addEventListener('click',ev=>{this.editItemHanlder(ev.target.dataset['edit'])})
+        
+        this.$table.addEventListener("click",(ev)=>{
+            
+            ev.preventDefault();
 
+            if(ev.target.matches("[data-edit]"))
+            {
+
+                this.editItemHanlder(ev.target.dataset['edit'])
+            }
+        })
+      
        
         this.$search=this.target.querySelector("input[type=text]");
         
@@ -82,14 +95,18 @@ export class HostList extends Base{
 
     }
 
-    getContent(){
+    async getContent(){
        
         var tpl=template;
+       
+        //current lang
         var loc=this.locale();
+
         for(var k in loc)
         {
             tpl=tpl.replace(`[${k.toUpperCase()}]`,loc[k]);
         }
+        
         return tpl;
        
     }
@@ -134,16 +151,8 @@ export class HostList extends Base{
 
 
 
-        //this.$tbody.innerHTML=rows;
-        //this.$table.style.display= rows.length>0 ? 'block' : 'none';
         this.target.querySelector('#feedback').style.display = list.length>0 ? 'none' : 'block';
-        this.$tbody.querySelectorAll("a").forEach(el=>{
-            el.addEventListener('click',ev=>{
-                ev.preventDefault();
-               
-                this.editItemHanlder(ev.target.dataset['edit']);
-            })
-        })
+       
     }
 
     locale(){
@@ -172,8 +181,17 @@ export class HostList extends Base{
         switch(action)
         {
             case 'edit':
-                //UI.EmitChangeView('ip',{"eHost":h});
-                Router.go('ip',{"eHost":h})
+                if(!h)
+                {
+                    navigateTo("ip",{"eHost":h});
+                }
+                else{
+
+                    let ip=new IP(this.target,{"eHost":h})
+                    this.target.innerHTML=ip.getContent();
+                    ip.mounted();
+                    
+                }
             break;
             case 'del':
                 this.showDialog(
@@ -238,7 +256,7 @@ export class HostList extends Base{
                     'to':null,
                     'action':'delete'}
 
-         Application.SaveRequest('IP',data);
+         this.SaveRequest('IP',data);
      }
     
 

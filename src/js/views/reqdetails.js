@@ -26,14 +26,16 @@ const style=`
 `
 
 
-import {Base} from './base.js'
+import Abstract from './abstract'
 import services from '../services.js'
-import {Router} from '../router.js'
-import {Application} from '../app.js'
+import {Application} from '../main.js'
 
-export class RequestDetails extends Base {
+export class RequestDetails extends Abstract {
 
-    init(){
+    constructor(target,args){
+        super(target,args)
+    }
+    mounted(){
 
         var loc=this.locale()[Application.language.current]
         this.getRequest();
@@ -109,14 +111,12 @@ export class RequestDetails extends Base {
 
         this.target.innerHTML+=html+style;
 
-        var goBack=this.target.querySelector("#goBack");
-       
-        goBack.addEventListener('click',ev=>{
-         
+        this.target.querySelector("#goBack").addEventListener("click",(ev)=>{
             ev.preventDefault();
-            Router.go("requests")
-            
+            Application.navigateTo("requests")
         })
+        
+       
     }
 
     fullName(h)

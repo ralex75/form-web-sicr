@@ -143,17 +143,23 @@ div.grid div.c2{
 </style>
 `
 
-import {Base} from './base.js'
-import {Application} from '../app.js'
+//import {Base} from './base.js'
+//import {Application} from '../app.js'
+import Abstract from './abstract'
 import {Location} from './location.js'
 import {Dialog} from '../components/dialog.js'
 import services from '../services.js'
-import { Router } from '../router.js'
+import { Application } from './../main'
+//import { Router } from '../router.js'
 
 
 
-export class IP extends Base{
+export class IP extends Abstract{
   
+    constructor(target,args){
+      
+        super(target,args)
+    }
     //restituisce il template
     getContent(){
         var tpl=template;
@@ -229,6 +235,11 @@ export class IP extends Base{
         }
     }
 
+    currentLanguage()
+    {
+        return Application.language.current
+    }
+
     locale(){
 
         const loc= {"ITA":{"form":{"mac":"Indirizzo Mac","config":"Configurazione","name":"Nome","domain":"Dominio","send":"Invia","notes":"Note",
@@ -245,7 +256,7 @@ export class IP extends Base{
                                     "no-free-ports":"No free ports"}}
             }
 
-        return loc[Application.language.current];
+        return loc[this.currentLanguage()];
     }
 
 
@@ -263,7 +274,7 @@ export class IP extends Base{
          if(!_dataIsChanged){
            
  
-             var lang=Application.language.current;
+             var lang=this.currentLanguage();
              var headerText= lang=="ITA" ? "Richiesta di Conferma" : "Confirmation Request"
              var contentText= lang=="ITA" ? "Attenzione: non ci sono modifiche ai dati. <br> <b>La sua richiesta non verrà inserita.</b><br><br>Si vuole procedere?":
                                         "Warning: no changes in data. <br> <b>Your request will not be submitted.</b><br><br>Do you want to proceed?"
@@ -271,7 +282,7 @@ export class IP extends Base{
                                    
  
  
-             return this.showDialog(headerText,contentText,()=>{ Router.go("hosts")}, ()=>{});
+             return this.showDialog(headerText,contentText,()=>{ navigateTo("hosts")}, ()=>{});
             
          }
        
@@ -323,7 +334,7 @@ export class IP extends Base{
                
                 if(duplicateMac)
                 {
-                    var lang=Application.language.current;
+                    var lang=this.currentLanguage();
                     var errText=lang=="ITA" ? "Il mac address inserito risulta già registrato." : "The MAC address typed is already registered."
                     var question = lang=="ITA" ? "Si intende utilizzarlo comunque?" : "Do you want to use it anyway?"
                     var headerText= lang=="ITA" ? "Richiesta di conferma" : "Confirmation request"
@@ -421,13 +432,13 @@ export class IP extends Base{
 
            
 
-        var lang=Application.language.current;
+        var lang=this.currentLanguage();
 
         var html=this.getReport(lang,data.to);
 
         this.showDialog(`${lang!='ITA' ? 'Confirmation Request' : 'Richiesta di Conferma'}`,html,()=>{
             console.log("Send Form:",data)
-            Application.SaveRequest(Application.RequestTypes.IP,data);
+            this.SaveRequest(Application.requestTypes.IP,data);
            
         },()=>{this.useMacBusy=false});
       
@@ -547,7 +558,7 @@ export class IP extends Base{
     }
     
 
-     async init(){
+     async mounted(){
 
         
         var trg=this.target;
@@ -557,7 +568,7 @@ export class IP extends Base{
         goBack.addEventListener('click',ev=>{
          
             ev.preventDefault();
-            Router.go("hosts")
+            Application.navigateTo("hosts")
             
         })
 
@@ -585,6 +596,7 @@ export class IP extends Base{
         this.usermaclist=await this.getHosts();
        
         //il nodo di edit
+      
         this.eHost=this.args ? this.args.eHost : null;
 
     
@@ -788,7 +800,7 @@ export class IP extends Base{
         if(eHostFullName!=hostFullName)
         {
             var duplicateName=await this.checkDuplicateName(hostFullName);
-            var lang=Application.language.current;
+            var lang=this.currentLanguage()
             if(duplicateName)
             {
                 err= (lang=="ITA") ? "Il nome inserito risulta già registrato." : "The name typed is already registered."
@@ -799,6 +811,7 @@ export class IP extends Base{
         return err;
         
     }
+
 
 
     

@@ -1,6 +1,6 @@
 var template=`
     
-    <div id="udata"></div>
+    [UDATA]
 
     <style scoped>
     .prof_intest div{
@@ -34,18 +34,20 @@ var template=`
     </style>
 `
 
-import {Base} from './base.js'
+import Abstract from './abstract.js'
 import {Application} from '../app.js'
 import services from '../services.js'
 import moment from 'moment'
 
-export class Profile extends Base{
-    
-    init()
+export class Profile extends Abstract{
+
+    constructor(target,params)
     {
-      
-       this.fillUserData()
-       
+        super(target,params)
+    }
+    
+    mounted()
+    {
     }
 
     emptyOrDefault(value){
@@ -55,7 +57,8 @@ export class Profile extends Base{
 
     currentUser()
     {
-        return Application.user.current();
+        //return Application.user.current();
+        return window.Application.user;
     }
 
     locale(){
@@ -116,19 +119,11 @@ export class Profile extends Base{
             }
     }
 
-    async fillUserData(){
+    fillUserData(){
 
       
         var user=this.currentUser();
 
-        console.log(user)
-
-        //var resp=await services.requests.list(false,Application.RequestTypes.ACCOUNT);
-
-        //let requests=resp.data;
-                
-        //let user = this.args || await services.user.read();
-        
         var content="";
 
         var loc=this.locale()[Application.language.current];
@@ -210,50 +205,7 @@ export class Profile extends Base{
         </div>`
        
        
-        this.target.querySelector("#udata").innerHTML=html;
-        
-
-        /*
-        if(!user.email || user.email.indexOf("@roma1.infn.it")<0 || this.createAcc)
-        {
-            var req=requests[0];
-            var diff=3;
-            var link=``
-           
-            if(req)
-            {
-               
-                diff=moment(moment().format('YYYY-MM-DD')).diff(moment(req.req_date).format("YYYY-MM-DD"),'days')
-                console.log("Date Diff:",diff);
-                if(diff<9)
-                {
-                    link="Richiesta inviata, account di Posta in lavorazione..."
-                }
-            }
-            else
-            {
-                link=`<input type="button" value="Richiedi Creazione Account di Posta" />`
-            }
-
-            if(this.createAcc && !link)
-            {
-                link=`<input type="button" value="Richiedi Creazione Account di Posta" />`
-            }
-
-           
-            this.target.querySelector(".email").innerHTML=link;
-
-            let ctrl=this.target.querySelector(".email input")
-
-            if(ctrl)
-            {
-                ctrl.addEventListener("click",ev=>{
-                    Application.SaveRequest(Application.RequestTypes.ACCOUNT,user);
-                })
-            }
-          
-            
-        }*/
+        return html;
 
     }
 
@@ -271,6 +223,7 @@ export class Profile extends Base{
     }
     
     getContent(){
-        return template;
+        let html=this.fillUserData()
+        return template.replace(/\[UDATA\]/g,html);
     }
 }

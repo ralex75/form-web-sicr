@@ -5,46 +5,16 @@ import { Router } from '../router.js';
 import {Application} from '../app.js'
 
 
-export class NavMenu extends Base {
+export default class {
 
     
-    init()
+    constructor(routes)
     {
-       console.log("Menu created")
        
-        window.addEventListener('hashchange', ev=>{
-            this.highlightSelectedMenu()
-        });
-
-
-        /*
-        this.target.querySelectorAll("[data-lang]").forEach(el=>el.addEventListener("click",ev=>{
-          
-            Application.language.current= ev.target.dataset["lang"];
-        
-        }));
-
-        this.target.querySelectorAll("[data-lang]").forEach(el=>{
-            if(el.dataset["lang"]==Application.language.current)
-            {
-                el.classList.add("selected");
-            }
-        })*/
-
-        this.highlightSelectedMenu()
+        this.routes=routes;
 
     }
 
-    highlightSelectedMenu()
-    {
-       
-        this.target.querySelectorAll('a.navi').forEach(el=>{
-          
-            el.className= window.location.hash.indexOf(el.hash)>-1 ? 'navi selected' : 'navi';
-
-        })
-        
-    }
 
     locale(){
         var loc= {"ITA":{"profile":"Il mio profilo",
@@ -58,7 +28,7 @@ export class NavMenu extends Base {
                     "logout":"Logout"}
                 }
 
-        return loc[Application.language.current]
+        return loc[Application.language.current || 'ITA']
     }
    
 
@@ -66,20 +36,12 @@ export class NavMenu extends Base {
 
         var loc = this.locale()
 
-        this.routes=[
-
-            {"text":`${loc["profile"]}`,"view":"profile"},
-            {"text":`${loc["requests"]}`,'view':'requests'},
-            {"text":`${loc["hosts"]}`,'view':'hosts'},
-            {"text":`${loc["account"]}`,'view':'account'},
-            {"text":`${loc["ip"]}`,'view':'ip'},
-            {"text":`${loc["wifi"]}`,'view':'wifi'},
-            {"text":`${loc["logout"]}`,'view':'logout'}
-            
-        ]
+        this.routes=this.routes.map(r=>{
+            return {"text":`${loc[r.name]}`,"path":r.path}
+        })
 
         
-        let tpl=""
+        /*let tpl=""
         let userIsValid=Application.UserIsValid();
        
         if(!userIsValid)
@@ -87,23 +49,21 @@ export class NavMenu extends Base {
             //con il disciplinare non accettato visualizziamo il profile
             this.routes=this.routes.filter(e=>{return e.view=="profile" || e.view=="logout"});
             
-        }
+        }*/
        
-        this.routes.forEach(i=>{
         
-            tpl+= `<div class="bordato"><a href="#${i.view}" class="navi">${i.text}</a></div>` 
+        let path=location.hash
 
-        })
+        
+        let tpl=this.routes.map(r=>{
+        
+            let _class = path==r.path ? "navi selected": "navi"
+            return `<div class="bordato"><a href="${r.path}" class="${_class}">${r.text}</a></div>` 
+
+        }).join("")
        
-
          
-        var template=`<div class=\"divisione\">
-                        <!--<input type="button" id="changeLang" value="ChangeLang" />-->
-                        <!--<div class="language">
-                      
-                            <div class="flag ita" tooltip="ita" data-lang="ITA"></div>
-                            <div class="flag eng" tooltip="eng" data-lang="ENG"></div>
-                        </div>-->
+        let template=`<div class=\"divisione\">
                         <p><span class=\"divisione_title\">Account e Rete</span></p>
                         <div id="routes">
                         ${tpl}
@@ -149,6 +109,7 @@ export class NavMenu extends Base {
                      </style>
                      `
 
+       
         return template;
     }
 

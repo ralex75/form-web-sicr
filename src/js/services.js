@@ -3,9 +3,9 @@ import axios from "axios"
 import "regenerator-runtime/runtime.js"; //per webpack funzioni async 
 
 //axios.defaults.baseURL = 'http://webapp-dev.roma1.infn.it';
-//axios.defaults.baseURL = 'http://localhost:3000/';
+axios.defaults.baseURL = 'http://localhost:3000/';
 //axios.defaults.baseURL = 'http://www.roma1.infn.it/conference/wwwsicr/supporto/';
-axios.defaults.baseURL = 'http://webapp2.roma1.infn.it:3000/';
+//axios.defaults.baseURL = 'http://webapp2.roma1.infn.it:3000/';
 
 function checkUserAuth(fail=null){
    

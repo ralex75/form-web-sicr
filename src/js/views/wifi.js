@@ -120,13 +120,20 @@ input::-webkit-calendar-picker-indicator {
 
 `
 
-import {Base,UI} from './base.js'
-import {Application} from '../app.js'
+
+//import {Application} from '../app.js'
+import Abstract from './abstract'
+import { Application } from '../main'
+
 import moment from 'moment'
 
-export class WIFI extends Base {
+export class WIFI extends Abstract {
 
-    init()
+  constructor(target,args){
+    super(target,args)
+  }
+
+   mounted()
     {
        const user=Application.user.current();
        if(user.email)
@@ -217,7 +224,7 @@ export class WIFI extends Base {
         to:this.$to.value,
       }
       
-      Application.SaveRequest(Application.RequestTypes.WIFI,data);
+      this.SaveRequest(Application.requestTypes.WIFI,data);
     }
 
     getContent()

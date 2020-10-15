@@ -75,18 +75,21 @@ const template=`
     </style>
 `
 
-import {Base} from './base.js'
+import Abstract from './abstract'
 import services from '../services.js'
-import {Router} from '../router.js'
-import {Application} from '../app.js'
+import {RequestDetails} from './reqdetails'
+import {navigateTo,Application} from '../main.js'
 import moment from 'moment'
 
 
 const DATE_FORMAT="DD/MM/YYYY HH:mm"
 
-export class Requests extends Base{
+export class Requests extends Abstract{
 
-    init()
+    constructor(target,args){
+        super(target,args)
+    }
+    mounted()
     {
         var target=this.target;
         
@@ -179,7 +182,7 @@ export class Requests extends Base{
     mapItems(list)
     {
         var loc=this.locale()[Application.language.current];
-        var types=Application.RequestTypes;
+        var types=Application.requestTypes;
         var items=[];
         list.forEach(item => {
             
@@ -235,11 +238,22 @@ export class Requests extends Base{
 
         })
 
-        this.$tbody.querySelectorAll("[data-rid]").forEach(el=>{
+        /*this.$tbody.querySelectorAll("[data-rid]").forEach(el=>{
             el.addEventListener('click',()=>{
                 //window.Application.rid=el.dataset.rid;
-                Router.go('reqdetails',{"rid":el.dataset.rid})
+                navigateTo('reqdetails',{"rid":el.dataset.rid})
             });
+        })*/
+
+        this.$tbody.addEventListener("click",(ev)=>{
+            ev.preventDefault();
+            if(ev.target.matches("[data-rid]"))
+            {
+                let details=new RequestDetails(this.target,{"rid":ev.target.dataset.rid});
+                this.target.innerHTML=details.getContent();
+                details.mounted();
+            }
+
         })
 
         var className=items && items.length>0 ? '' :'hide';
