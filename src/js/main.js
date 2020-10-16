@@ -1,8 +1,5 @@
 
 import services from './services.js'
-//import {Router} from './router.js'
-//import {Application} from './app.js'
-import { interval } from 'rxjs';
 import {Profile} from './views/profile'
 import {Account} from './views/account'
 import {HostList} from './views/hostlist'
@@ -10,39 +7,13 @@ import {IP} from './views/ip'
 import {WIFI} from './views/wifi'
 import {Requests} from './views/requests'
 import {RequestDetails} from './views/reqdetails'
+import {UI} from './views/ui'
 import menu from './views/menu'
 
 
 
-const cssLoaderClass=`.loader {
-    border: 8px solid #f3f3f3; /* Light grey */
-    border-top: 8px solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 2s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
-  .inline{
-      display:flex;
-      justify-content: left;
-      align-items:center;
-      padding:50px 50px;
-     
-  }
-  div.inline p{
-    margin-left:30px;
-    
-  }
-  .timer{
-      font-weight:bold;
-  }
-  `
+
+
 
 window.addEventListener('error', function(event) { 
     
@@ -58,6 +29,8 @@ window.addEventListener('unhandledrejection', function(event) {
 
 let timeoutID=null;
 
+
+
 const navigateTo=(view,args)=>{
     
     history.pushState(args,"",`#${view}`)
@@ -71,6 +44,11 @@ const navigateToWithDelay=(view,delay)=>{
     },delay)
 }
 
+const EmitEvent=(name,args=null,bubbles=true)=>{
+   
+    document.dispatchEvent(new CustomEvent(name,{'detail':args,bubbles:bubbles}))
+}
+
 export const language={
     set current(lang){
         if(window.Application.lang!=lang)
@@ -81,7 +59,7 @@ export const language={
             history.pushState("","",url);
 
             window.Application.lang=lang;
-            EmitEvent("languageChanged")
+            EmitEvent("LanguageChanged")
         }
     },
     get current(){
@@ -118,6 +96,8 @@ export const Application={
     requestTypes:{"WIFI":"WIFI","IP":"IP","ACCOUNT":"ACCOUNT"}
 }
 
+
+
 const router=async ()=>{
 
     clearTimeout(timeoutID)
@@ -143,6 +123,7 @@ const router=async ()=>{
     {
         matchPath=null;
     }
+  
 
     if(!matchPath)
     {
@@ -160,12 +141,12 @@ const router=async ()=>{
     container.classList.add("fade-in");
 
     let comp = new matchPath.view(container,history.state);
-    container.innerHTML=loader();
+    container.innerHTML=UI.loader();
 
     setTimeout(async ()=>{
         container.innerHTML=await comp.getContent();
         comp.mounted();
-    },200)
+    },50)
 
     
 }
@@ -190,62 +171,22 @@ const handleError=(err)=>{
     //Router.go('result',{'status':false})
 }
 
-/*
-window.addEventListener('hashchange', ev=>{
-    
-    //var view=window.location.hash.substr(1);
-    //Router.go(view);
-})*/
 
-const loader=()=>{
-    return `<style>${cssLoaderClass}</style><div class=\"inline\"><div class=\"loader\"></div>`
-}
 
-const showLoader=(lang)=>{
 
-    //Loader
-    var cont= document.querySelector("#colonne_content");
-    let html="<div class=\"inline\"><div class=\"loader\"></div>\
-                <p class=\"info\" style=\"opacity:0;transition:opacity 1s linear;\">"
-                if(lang=="ITA")
-                { 
-                    html+="<b>Attendere prego, controllo identità in corso...</b>\
-                            <br>L'operazione potrebbe richiedere qualche secondo...<span class=\"timer\"></span>"
-                }
-                else{
-                    html+="<b>Please wait, identity checking...</b>\
-                        <br>The operation may take some seconds...<span  class=\"timer\"></span>"
-                }
-                html+="</p></div>";
-
-    cont.innerHTML="<style>"+cssLoaderClass+"</style>"+html;
-    var countElem= document.querySelectorAll(".timer")
-
-   
-    let subscription=interval(1000).subscribe(
-        next=>
-        {
-           
-            if(next>2)
-            {
-                let info=cont.querySelector(".info")
-                if (info)
-                    info.style.opacity="1";
-            }
-            countElem.forEach(e=>e.innerText=`${next}s`)
-        }
-    )
-
-    return subscription;
-
-}
 
 
 window.addEventListener('hashchange', ev=>{
     router()
 });
 
-
+document.addEventListener("LanguageChanged",()=>{
+   
+    UI.generateLanguageSelection(Application.language.current);
+    UI.generateNavigationMenu(Application.language.current)
+    debugger;
+    navigateTo("profile")
+})
 
 //listener DOM Loaded
 document.addEventListener('DOMContentLoaded',async ev=>{
@@ -263,7 +204,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
     try{
       
         //messaggio di attesa da mostrare utente mentre l'API sincronizza
-        subscription=showLoader(lang)
+        subscription=UI.showUserWaiting(lang)
 
         //legge informazioni utente
         //potrebbe impiegare un pò se devi sincronizzare
@@ -288,9 +229,9 @@ document.addEventListener('DOMContentLoaded',async ev=>{
 
     }
 
-     
+    UI.generateLanguageSelection(Application.language.current)
+    UI.generateNavigationMenu(Application.language.current)
 
-   
    
 })
 

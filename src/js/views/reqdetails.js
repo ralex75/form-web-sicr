@@ -43,7 +43,7 @@ export class RequestDetails extends Abstract {
                         "STATICVM":`${loc["configMAP"]["staticvm"]}`,
                         "DHCP":`${loc["configMAP"]["dhcp"]}`}
 
-        
+                        
        
     }
 
