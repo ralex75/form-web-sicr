@@ -2,7 +2,7 @@ const template=`
 
    
     <h1>[request-header] - [ID]</h1>
-    <a href="#requests" id="goBack" style="text-decoration:underline;">[go-back]</a>
+    <!--<a href="#requests" id="goBack" style="text-decoration:underline;">[go-back]</a>-->
    
     
 `
@@ -111,10 +111,10 @@ export class RequestDetails extends Abstract {
 
         this.target.innerHTML+=html+style;
 
-        this.target.querySelector("#goBack").addEventListener("click",(ev)=>{
+        /*this.target.querySelector("#goBack").addEventListener("click",(ev)=>{
             ev.preventDefault();
             Application.navigateTo("requests")
-        })
+        })*/
         
        
     }

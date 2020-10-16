@@ -36,8 +36,8 @@ export default class {
 
         var loc = this.locale()
 
-        this.routes=this.routes.map(r=>{
-            return {"text":`${loc[r.name]}`,"path":r.path}
+        this.routes=this.routes.filter(r=>!r.hide).map(r=>{
+            return {"text":`${loc[r.name]}`,"path":r.path,"name":r.name}
         })
 
         
@@ -56,7 +56,7 @@ export default class {
 
         
         let tpl=this.routes.map(r=>{
-        
+            
             let _class = path==r.path ? "navi selected": "navi"
             return `<div class="bordato"><a href="${r.path}" class="${_class}">${r.text}</a></div>` 
 

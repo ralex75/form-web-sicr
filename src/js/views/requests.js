@@ -78,7 +78,7 @@ const template=`
 import Abstract from './abstract'
 import services from '../services.js'
 import {RequestDetails} from './reqdetails'
-import {navigateTo,Application} from '../main.js'
+import {Application} from '../main.js'
 import moment from 'moment'
 
 
@@ -249,9 +249,10 @@ export class Requests extends Abstract{
             ev.preventDefault();
             if(ev.target.matches("[data-rid]"))
             {
-                let details=new RequestDetails(this.target,{"rid":ev.target.dataset.rid});
+                /*let details=new RequestDetails(this.target,{"rid":ev.target.dataset.rid});
                 this.target.innerHTML=details.getContent();
-                details.mounted();
+                details.mounted();*/
+                Application.navigateTo("requests/details",{"rid":ev.target.dataset.rid})
             }
 
         })

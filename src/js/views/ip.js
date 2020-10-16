@@ -1,8 +1,13 @@
 const template=`
 <div id="dialogPlaceHolder"></div>
-<a href="#hostlist"  id="goBack" style="text-decoration:underline;">[GOBACK]</a>
+<!--<a href="#hostlist"  id="goBack" style="text-decoration:underline;">[GOBACK]</a>-->
+
+
 
 <form>
+                <div class="form_sez" style="padding:20px 0 10px 0;" id="isUpdate">
+                    
+                </div>
 				<div class="form_sez">
 					<div class="form_intest">
 					  [HEADER-HOST]
@@ -244,11 +249,13 @@ export class IP extends Abstract{
 
         const loc= {"ITA":{"form":{"mac":"Indirizzo Mac","config":"Configurazione","name":"Nome","domain":"Dominio","send":"Invia","notes":"Note",
                                "header-host":"IDENTIFICATIVO NODO","header-notes":"ULTERIORI INFORMAZIONI","goback":"Torna Indietro",
+                               "host-edit-info":"Richiesta di modifica dei dati del nodo",
                                "config-option-static":"STATICO","config-option-staticvm":"STATICO - Virtuale","config-option-dhcp":"DHCP"},
                         "errors":{"invalid":"Il campo non è valido","yourmac":"L'indirizzo MAC inserito appartiene ad un altro tuo nodo",
                                   "port-no-set":"La porta non è stata selezionata.","port-busy":"La porta selezionata risulta occupata.",
                                   "no-free-ports":"Non ci sono porte libere selezionabili"}},
                 "ENG":{"form":{"mac":"Mac Address","config":"Configuration","name":"Name","domain":"Domain","send":"Send","notes":"Notes",
+                                "host-edit-info":"Edit request for node",
                                 "header-host":"NODE IDENTIFIER","header-notes":"Additional Information","goback":"Go Back",
                                 "config-option-static":"STATIC","config-option-staticvm":"STATIC - Virtual","config-option-dhcp":"DHCP"},
                         "errors":{"invalid":"Field is invalid","yourmac":"The MAC address you typed belongs to another node of yours",
@@ -563,6 +570,7 @@ export class IP extends Abstract{
         
         var trg=this.target;
         
+        /*
         var goBack=trg.querySelector("#goBack");
         goBack.style.display = window.location.hash=='#hosts' ? 'inline-block' : 'none';
         goBack.addEventListener('click',ev=>{
@@ -570,7 +578,17 @@ export class IP extends Abstract{
             ev.preventDefault();
             Application.navigateTo("hosts")
             
-        })
+        })*/
+
+        //var goBack=trg.querySelector("#goBack");
+       
+        /*
+        goBack.addEventListener('click',ev=>{
+         
+            ev.preventDefault();
+            Application.navigateTo("hosts")
+            
+        })*/
 
 
         this.formdata={};
@@ -603,6 +621,13 @@ export class IP extends Abstract{
         //setta i valori di default
         if(this.eHost)
         {
+            var loc=this.locale()["form"];
+            
+            let ctrl=document.querySelector("#isUpdate")
+            let name= this.eHost.name ? this.eHost.name+"."+this.eHost.domain : 'DHCP';
+            name+=" - "+this.eHost.mac;
+            ctrl.innerHTML=`<div class="divisione_title">${loc["host-edit-info"]}:<br><span style="padding:5px">-- ${name} --</span></div>`
+           
             //imposta edificio piano stanza porta
             await this.location.setDefault(this.eHost.location);
             for(var k in this.formdata)

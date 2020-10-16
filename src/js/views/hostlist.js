@@ -181,17 +181,8 @@ export class HostList extends Abstract{
         switch(action)
         {
             case 'edit':
-                if(!h)
-                {
-                    navigateTo("ip",{"eHost":h});
-                }
-                else{
-
-                    let ip=new IP(this.target,{"eHost":h})
-                    this.target.innerHTML=ip.getContent();
-                    ip.mounted();
-                    
-                }
+                let url= h ? "hosts/edit" :"ip"
+                Application.navigateTo(url,{"eHost":h});
             break;
             case 'del':
                 this.showDialog(

@@ -9,6 +9,7 @@ import {HostList} from './views/hostlist'
 import {IP} from './views/ip'
 import {WIFI} from './views/wifi'
 import {Requests} from './views/requests'
+import {RequestDetails} from './views/reqdetails'
 import menu from './views/menu'
 
 
@@ -55,11 +56,19 @@ window.addEventListener('unhandledrejection', function(event) {
     handleError(event);
 });
 
+let timeoutID=null;
 
-export const navigateTo=(view,args)=>{
+const navigateTo=(view,args)=>{
     
     history.pushState(args,"",`#${view}`)
     router();
+}
+
+const navigateToWithDelay=(view,delay)=>{
+    clearTimeout(timeoutID);
+    timeoutID=setTimeout(()=>{
+        navigateTo(view);
+    },delay)
 }
 
 export const language={
@@ -105,25 +114,35 @@ export const Application={
     language:language,
     user:user,
     navigateTo:navigateTo,
+    navigateToWithDelay:navigateToWithDelay,
     requestTypes:{"WIFI":"WIFI","IP":"IP","ACCOUNT":"ACCOUNT"}
 }
 
 const router=async ()=>{
 
-    
+    clearTimeout(timeoutID)
+
     let routes=[
+
         {"path":"#profile","name":'profile',view:Profile},
-        
         {"path":"#hosts","name":'hosts',view:HostList},
         {"path":"#requests","name":'requests',view:Requests},
+        {"path":"#requests/details","name":'requests',view:RequestDetails,'hide':true,'requireArgs':true},
         {"path":"#account","name":'account',view:Account},
         {"path":"#ip","name":'ip',view:IP},
+        {"path":"#hosts/edit","name":'hosts',view:IP, 'hide':true,'requireArgs':true},
         {"path":"#wifi","name":'wifi',view:WIFI}
+
     ]
 
     let path=location.hash;
 
     let matchPath=routes.find(r=>r.path==path);
+
+    if(matchPath && matchPath.requireArgs && !history.state)
+    {
+        matchPath=null;
+    }
 
     if(!matchPath)
     {
@@ -142,23 +161,15 @@ const router=async ()=>{
 
     let comp = new matchPath.view(container,history.state);
     container.innerHTML=loader();
-    container.innerHTML=await comp.getContent();
-    comp.mounted();
+
+    setTimeout(async ()=>{
+        container.innerHTML=await comp.getContent();
+        comp.mounted();
+    },200)
 
     
 }
 
-/*
-const setContent=(target,html)=>{
-    
-    debugger
-    target.classList.remove("fade-in");
-    void target.offsetWidth;
-    target.classList.add("fade-in");
-    target.innerHTML=loader();
-    target.innerHTML=html;
-
-}*/
 
 
 const handleError=(err)=>{

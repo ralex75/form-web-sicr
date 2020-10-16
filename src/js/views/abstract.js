@@ -40,9 +40,11 @@ export default class {
 
         let res=new Result(result)
        
-        setTimeout(()=>{
+        /*setTimeout(()=>{
             Application.navigateTo(result.next)
-        },5000);
+        },5000);*/
+
+        Application.navigateToWithDelay(result.next,5000)
 
         //Application.setContent(this.target,res.getContent())
         this.target.classList.remove("fade-in");
@@ -51,6 +53,6 @@ export default class {
         this.target.innerHTML=res.getContent();
 
       
-
+       
     }
 }
