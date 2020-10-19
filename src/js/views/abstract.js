@@ -19,8 +19,6 @@ export default class {
         
         var success=false;
        
-        throw Error("MMIIIIAA")
-
         if(data)
         {
            

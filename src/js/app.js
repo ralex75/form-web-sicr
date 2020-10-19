@@ -85,6 +85,7 @@ export const Application={
     requestTypes:{"WIFI":"WIFI","IP":"IP","ACCOUNT":"ACCOUNT"}
 }
 
+let latestView={"name":"","args":null}
 
 const router=async ()=>{
 
@@ -106,6 +107,7 @@ const router=async ()=>{
 
     ]
 
+    
     let path=location.hash;
 
     let matchPath=routes.find(r=>r.path==path);
@@ -122,7 +124,12 @@ const router=async ()=>{
         history.pushState("","",matchPath.path);
     }
 
-    
+    //salva ultima view selzionata con argomenti
+    //ci serve nel caso si seleziona lingua diversa e si vuole rimanere sulla stessa form
+    latestView.name=matchPath.path.substr(1);
+    latestView.args=history.state;
+
+   
     if(!User.isValid())
     {
         let user=User.current();
@@ -153,7 +160,7 @@ const selectedLanguage=(lang)=>{
    
     UI.generateLanguageSelection(lang);
     UI.generateNavigationMenu(lang)
-
+    
 }
 
 
@@ -190,7 +197,7 @@ window.addEventListener('hashchange', ev=>{
 document.addEventListener("LanguageChanged",()=>{
    
     selectedLanguage(Application.language.current);
-    navigateTo("profile")
+    navigateTo(latestView.name || 'profile',latestView.args);
 })
 
 //listener DOM Loaded

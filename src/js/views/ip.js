@@ -604,7 +604,7 @@ export class IP extends Abstract{
         })
 
         this.formdata["mac"].addEventListener("input",ev=>{
-            ev.target.value=ev.target.value.replace("-",":")
+            ev.target.value=ev.target.value.replace("-",":").toUpperCase();
         })
 
         //lista di nodi gestiti dall'utente per controllo su nodo di cui è proprietario

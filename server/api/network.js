@@ -7,7 +7,7 @@ const {authToken} =require('./auth')
 //check if exists
 router.get("/exists/:val",(req,res)=>{
     var value=req.params.val.toLowerCase();
-    nqdb.any(`select count(*) from vw_network_status_ex_3 where lower(host_name)='${value}' or lower(host_mac::text)='${value}'`).then(data=>{
+    nqdb.any(`select count(*) from vw_network_status_ex_3 where lower(host_name)='${value}' or lower(host_mac::text)=lower('${value}')`).then(data=>{
         res.status(200).json(data[0].count>0);
     }).catch(err=>{
         console.log(err)
@@ -18,7 +18,7 @@ router.get("/exists/:val",(req,res)=>{
 //check if exists
 router.get("/hosts/:mac",(req,res)=>{
     var value=req.params.mac.toLowerCase();
-    nqdb.any(`select loc_id ,loc_building as "build",loc_floor as "floor",loc_name, host_name,host_domain,host_mac,pp_port_code from vw_network_status_ex_3 where lower(host_mac::text)='${value}'`).then(data=>{
+    nqdb.any(`select loc_id ,loc_building as "build",loc_floor as "floor",loc_name, host_name,host_domain,host_mac,pp_port_code from vw_network_status_ex_3 where lower(host_mac::text)=lower('${value}')`).then(data=>{
         res.status(200).json(data[0]);
     }).catch(err=>{
         console.log(err)
