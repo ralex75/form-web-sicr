@@ -99,7 +99,7 @@ var parseLDAPUserInfo=function (user) {
         
 
         _isMemberOf.forEach(e=>{
-            console.log(e);
+            //console.log(e);
             let match=e.match(/i:infn:roma1::([d|o|a|v])\:(\w+)/);
             if(match)
             {
