@@ -1,4 +1,4 @@
-import {Application} from '../main'
+import {Application} from '../app'
 import { interval } from 'rxjs';
 
 const generateLanguageSelection=(lang)=>

@@ -36,7 +36,7 @@ var template=`
 `
 
 import Abstract from './abstract'
-import {Application} from '../main.js'
+import {Application} from '../app.js'
 
 export class Logout extends Abstract{
     

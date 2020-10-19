@@ -28,7 +28,7 @@ const style=`
 
 import Abstract from './abstract'
 import services from '../services.js'
-import {Application} from '../main.js'
+import {Application} from '../app.js'
 
 export class RequestDetails extends Abstract {
 

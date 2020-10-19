@@ -134,7 +134,7 @@ const template=`
 </style>
 `
 
-import {Application} from '../main'
+import {Application} from '../app'
 
 export class Dialog{
    

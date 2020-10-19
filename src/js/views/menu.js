@@ -1,7 +1,7 @@
 
 
 
-import {Application} from '../main'
+import {Application} from '../app'
 
 
 export default class {

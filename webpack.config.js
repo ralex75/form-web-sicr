@@ -1,5 +1,5 @@
 
-//const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+let HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const configureAPI=require('./server/configureAPI');
 
@@ -15,12 +15,16 @@ module.exports = {
     //mode:'production',
     devtool: 'inline-source-map',
     entry: [
-      './src/js/main.js',
+      './src/js/app.js',
     ],
     output: {
       filename: 'bundle.js',
       path: path.resolve(__dirname, 'dist'),
     },
+    plugins: [new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: './src/index.html'
+    })],
     devServer: {
       port:3000,
       contentBase:path.join(__dirname,"dist"),

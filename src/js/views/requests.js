@@ -78,7 +78,7 @@ const template=`
 import Abstract from './abstract'
 import services from '../services.js'
 import {RequestDetails} from './reqdetails'
-import {Application} from '../main.js'
+import {Application} from '../app.js'
 import moment from 'moment'
 
 

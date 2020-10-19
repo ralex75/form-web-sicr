@@ -43,7 +43,7 @@ const template=`
 import Abstract from './abstract.js'
 import {Dialog} from '../components/dialog.js'
 import services from '../services.js'
-import {Application} from './../main'
+import {Application} from '../app'
 import { IP } from './ip.js'
 
 

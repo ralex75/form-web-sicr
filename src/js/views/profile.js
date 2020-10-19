@@ -35,7 +35,7 @@ var template=`
 `
 
 import Abstract from './abstract.js'
-import {Application} from '../main'
+import {Application} from '../app'
 import moment from 'moment'
 
 export class Profile extends Abstract{

@@ -21,7 +21,7 @@ const template=`
 `
 
 import Abstract from './abstract'
-import {Application} from '../main'
+import {Application} from '../app'
 
 
 export class Result extends Abstract{

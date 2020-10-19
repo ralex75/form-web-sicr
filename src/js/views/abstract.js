@@ -1,4 +1,4 @@
-import {Application} from '../main'
+import {Application} from '../app'
 //import {Result} from './result'
 import services from '../services.js'
 

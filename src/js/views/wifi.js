@@ -123,7 +123,7 @@ input::-webkit-calendar-picker-indicator {
 
 //import {Application} from '../app.js'
 import Abstract from './abstract'
-import { Application } from '../main'
+import { Application } from '../app'
 
 import moment from 'moment'
 

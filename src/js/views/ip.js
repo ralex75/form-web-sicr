@@ -148,15 +148,11 @@ div.grid div.c2{
 </style>
 `
 
-//import {Base} from './base.js'
-//import {Application} from '../app.js'
 import Abstract from './abstract'
-import {Location} from './location.js'
+import {Location} from '../components/location.js'
 import {Dialog} from '../components/dialog.js'
 import services from '../services.js'
-import { Application } from './../main'
-//import { Router } from '../router.js'
-
+import { Application } from '../app'
 
 
 export class IP extends Abstract{
