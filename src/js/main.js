@@ -7,29 +7,13 @@ import {IP} from './views/ip'
 import {WIFI} from './views/wifi'
 import {Requests} from './views/requests'
 import {RequestDetails} from './views/reqdetails'
+import {Logout} from './views/logout'
+import {Result} from './views/result'
 import {UI} from './views/ui'
 import menu from './views/menu'
 
 
-
-
-
-
-window.addEventListener('error', function(event) { 
-    
-    handleError(event);
-})
-
-window.addEventListener('unhandledrejection', function(event) {
-    
-    //console.error('Unhandled rejection (promise: ', event.promise, ', reason: ', event.reason, ').');
-    //document.querySelector("#col_sin_menu").innerHTML="";
-    handleError(event);
-});
-
 let timeoutID=null;
-
-
 
 const navigateTo=(view,args)=>{
     
@@ -67,40 +51,45 @@ export const language={
     }
 }
 
-const user={
+const User={
     isValid(){
         var isValid=false;
-        var user=window.Application && window.Application.user
+        let _user=User.current();
     
-        if(user)
+        if(_user)
         {
-            isValid = user.isAuthorized && user.policies;
+            isValid = _user.isAuthorized && _user.policies;
         }
 
         return isValid;
     },
     current(){
-        return Object.assign({},window.Application.user);
+        let _user=null;
+        if(window.Application && window.Application.user)
+        {
+            _user=Object.assign({},window.Application.user);
+        }
+        return _user;
     },
     remove(){
-        if(window.Application && window.Application.user)
+        if(User.current())
             window.Application.user=null;
     }
 }
 
 export const Application={
     language:language,
-    user:user,
+    user:User,
     navigateTo:navigateTo,
     navigateToWithDelay:navigateToWithDelay,
     requestTypes:{"WIFI":"WIFI","IP":"IP","ACCOUNT":"ACCOUNT"}
 }
 
 
-
 const router=async ()=>{
 
     clearTimeout(timeoutID)
+
 
     let routes=[
 
@@ -111,7 +100,9 @@ const router=async ()=>{
         {"path":"#account","name":'account',view:Account},
         {"path":"#ip","name":'ip',view:IP},
         {"path":"#hosts/edit","name":'hosts',view:IP, 'hide':true,'requireArgs':true},
-        {"path":"#wifi","name":'wifi',view:WIFI}
+        {"path":"#wifi","name":'wifi',view:WIFI},
+        {"path":"#logout","name":'logout',view:Logout},
+        {"path":"#result","name":'result',view:Result,'hide':true}
 
     ]
 
@@ -124,13 +115,19 @@ const router=async ()=>{
         matchPath=null;
     }
   
-
+    
     if(!matchPath)
     {
         matchPath=routes[0];
         history.pushState("","",matchPath.path);
     }
 
+    
+    if(!User.isValid())
+    {
+        let user=User.current();
+        routes=routes.filter(r=>(user && r.name=="profile") || r.name=="logout")
+    }
     
     document.querySelector("#col_sin_menu").innerHTML= new menu(routes).getContent();
 
@@ -152,28 +149,38 @@ const router=async ()=>{
 }
 
 
-
-const handleError=(err)=>{
-    console.log(err);
+const selectedLanguage=(lang)=>{
    
+    UI.generateLanguageSelection(lang);
+    UI.generateNavigationMenu(lang)
 
-    //in caso di errore rimuoviamo utente;
-    //Application.user.remove();
-    
-    
-    //TO DO
-     //DUMP ERROR to file ?
-
-    //rimuove pannello di navigazione ?
-    //document.querySelector("#col_sin_menu").innerHTML="";
-   
-    //show error
-    //Router.go('result',{'status':false})
 }
 
 
 
+const handleError=(err)=>{
+    console.log(err);
+   
+    
+    User.remove()
 
+    navigateTo('result',{'status':false})
+
+}
+
+
+
+window.addEventListener('error', function(event) { 
+    
+    handleError(event);
+})
+
+window.addEventListener('unhandledrejection', function(event) {
+    
+    //console.error('Unhandled rejection (promise: ', event.promise, ', reason: ', event.reason, ').');
+    //document.querySelector("#col_sin_menu").innerHTML="";
+    handleError(event);
+});
 
 
 window.addEventListener('hashchange', ev=>{
@@ -182,9 +189,7 @@ window.addEventListener('hashchange', ev=>{
 
 document.addEventListener("LanguageChanged",()=>{
    
-    UI.generateLanguageSelection(Application.language.current);
-    UI.generateNavigationMenu(Application.language.current)
-    debugger;
+    selectedLanguage(Application.language.current);
     navigateTo("profile")
 })
 
@@ -198,9 +203,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
     //salva info utente e lingua selezionata
     window.Application={"user":null,"lang":lang};
 
-
-    //Application.generateNavigationMenu(lang)
-
+    
     try{
       
         //messaggio di attesa da mostrare utente mentre l'API sincronizza
@@ -211,14 +214,25 @@ document.addEventListener('DOMContentLoaded',async ev=>{
       
         var {user,syncResultMessage}=await services.user.read();
      
-        user.email=""
+        //user.email=""
+        //user.isAuthorized=true;
+        //user.policies=false
+        
+      
+       
+        if(!user)
+        {
+            throw Error("No user found")
+        }
+        
         window.Application.user=user;
         
-        router();
+        navigateTo("profile");
        
     }
     catch(exc)
     {
+       
         handleError(exc);
     }
     finally
@@ -229,8 +243,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
 
     }
 
-    UI.generateLanguageSelection(Application.language.current)
-    UI.generateNavigationMenu(Application.language.current)
+    selectedLanguage(Application.language.current)
 
    
 })

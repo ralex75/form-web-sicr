@@ -35,6 +35,7 @@ export class RequestDetails extends Abstract {
     constructor(target,args){
         super(target,args)
     }
+    
     mounted(){
 
         var loc=this.locale()[Application.language.current]

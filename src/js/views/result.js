@@ -20,15 +20,17 @@ const template=`
     </stle>
 `
 
-
+import Abstract from './abstract'
 import {Application} from '../main'
 
 
-export class Result {
+export class Result extends Abstract{
         
-    constructor(args){
-        this.args=args;
+    constructor(target,args){
+        super(target,args)
+       
     }
+
 
     displayUserRequestIPFeedback(data)
     {
@@ -88,10 +90,8 @@ export class Result {
     getContent(){
 
        
-        var {status, reqdata}=this.args; 
+        var {status, type, data, next}=this.args; 
         var content="";
-
-      
 
         if(!status)
         {
@@ -106,8 +106,6 @@ export class Result {
         }
         else{
 
-       
-            var {type,data} = reqdata;
             var types=Application.requestTypes;
 
             switch(type)
@@ -122,6 +120,8 @@ export class Result {
                     content=this.displayUserRequestWiFiFeedback(data);
                 break;
             }
+
+            Application.navigateToWithDelay(next||'profile',3000);
          
         }
 

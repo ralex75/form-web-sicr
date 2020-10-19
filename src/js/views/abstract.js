@@ -1,5 +1,5 @@
 import {Application} from '../main'
-import {Result} from './result'
+//import {Result} from './result'
 import services from '../services.js'
 
 export default class {
@@ -9,9 +9,7 @@ export default class {
         this.args=args
     }
 
-    mounted(){
-        throw Error("Abstract component")
-    }
+    mounted(){}
 
     getContent(){
         return "<h1>Abstract Component</h1>"
@@ -21,6 +19,8 @@ export default class {
         
         var success=false;
        
+        throw Error("MMIIIIAA")
+
         if(data)
         {
            
@@ -36,21 +36,21 @@ export default class {
 
         }
 
+        
+        /*
         var result={"status":success, "reqdata":{'type':type,'data':data}, "next":"requests"};
 
         let res=new Result(result)
-       
-        /*setTimeout(()=>{
-            Application.navigateTo(result.next)
-        },5000);*/
-
+     
         Application.navigateToWithDelay(result.next,5000)
 
         //Application.setContent(this.target,res.getContent())
         this.target.classList.remove("fade-in");
         void this.target.offsetWidth;
         this.target.classList.add("fade-in");
-        this.target.innerHTML=res.getContent();
+        this.target.innerHTML=res.getContent();*/
+
+        Application.navigateTo("result",{'status':success,'type':type,'data':data,"next":"requests"})
 
       
        

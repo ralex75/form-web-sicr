@@ -41,17 +41,24 @@ const template=
     </style>
    
 `
-import {Base} from './base.js'
+
 import services from '../services.js'
-import {Application} from '../app.js';
+import {Application} from '../main';
 
 
 
-export class Location extends Base {
+export class Location{
     
-    
+    constructor(target,args)
+    {
+        this.target=target;
+        this.args=args
 
-    init(){
+        this.target.innerHTML=this.getContent();
+        this.mounted()
+    }
+
+    mounted(){
 
         this.$builds=document.querySelector("#build");
         this.$floors=document.querySelector("#floor")

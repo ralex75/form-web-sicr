@@ -104,7 +104,7 @@ const template=`
 
 
 import Abstract from './abstract.js'
-import {Application} from '../app.js'
+import {Application} from '../main'
 import {Dialog} from '../components/dialog.js'
 import services from '../services.js'
 import moment from 'moment'
@@ -134,7 +134,7 @@ export class Account extends Abstract{
 
       
         //controlla se ha fatto richiesta e quando
-        var resp=await services.requests.list(false,Application.RequestTypes.ACCOUNT);
+        var resp=await services.requests.list(false,Application.requestTypes.ACCOUNT);
 
        
         let requests=resp.data;
@@ -217,10 +217,7 @@ export class Account extends Abstract{
 
     submitForm(){
 
-        //var data=Object.assign({},Application.user.current());
-        //data.email=this.$email.innerText;
-        
-        Application.SaveRequest(Application.RequestTypes.ACCOUNT,{"email":this.$email.innerText});
+        Application.SaveRequest(Application.requestTypes.ACCOUNT,{"email":this.$email.innerText});
     }
 
     disableSumbmit(disabled)

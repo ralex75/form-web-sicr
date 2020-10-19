@@ -35,14 +35,14 @@ var template=`
 
 `
 
-import {Base} from './base.js'
-import {Application} from '../app.js'
+import Abstract from './abstract'
+import {Application} from '../main.js'
 
-export class Logout extends Base{
+export class Logout extends Abstract{
     
     
 
-    init(){
+    mounted(){
         
         let fragment = Application.language.current=="ENG" ? "/en/":"/";
         let returnUrl=`https://www.roma1.infn.it/Shibboleth.sso/Logout?return=http://www.roma1.infn.it/conference/wwwsicr${fragment}home.html`

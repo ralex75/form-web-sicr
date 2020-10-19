@@ -283,13 +283,13 @@ export class IP extends Abstract{
  
              var lang=this.currentLanguage();
              var headerText= lang=="ITA" ? "Richiesta di Conferma" : "Confirmation Request"
-             var contentText= lang=="ITA" ? "Attenzione: non ci sono modifiche ai dati. <br> <b>La sua richiesta non verrà inserita.</b><br><br>Si vuole procedere?":
+             var contentText= lang=="ITA" ? "Attenzione: non ci sono state modifiche ai dati. <br> <b>La sua richiesta non verrà inserita.</b><br><br>Si vuole procedere?":
                                         "Warning: no changes in data. <br> <b>Your request will not be submitted.</b><br><br>Do you want to proceed?"
                                         
                                    
  
  
-             return this.showDialog(headerText,contentText,()=>{ navigateTo("hosts")}, ()=>{});
+             return this.showDialog(headerText,contentText,()=>{ Application.navigateTo("hosts")}, ()=>{});
             
          }
        
@@ -596,6 +596,7 @@ export class IP extends Abstract{
 
         //istanzia oggetto location
         this.location=new Location(trg.querySelector("#location"));
+      
         
         trg.querySelectorAll("[data-attr='formdata']").forEach(el=>{
            
@@ -779,6 +780,7 @@ export class IP extends Abstract{
  
         var dlgplace=this.target.querySelector("#dialogPlaceHolder")
         var dlg=new Dialog(dlgplace);
+        
         //callback anonymous function non serve il .bind(this)
         dlg.showYesButton(okCallback)
             .showNoButton(noCallback)

@@ -133,11 +133,19 @@ const template=`
 
 </style>
 `
-import {Base} from '../views/base.js'
-import {Application} from '../app.js'
 
-export class Dialog extends Base{
+import {Application} from '../main'
+
+export class Dialog{
    
+    constructor(target,args)
+    {
+        this.target=target;
+        this.args=args;
+        this.target.innerHTML=this.getContent();
+        this.mounted();
+    }
+
     showYesButton(cb=null)
     {
         if(cb)
@@ -200,7 +208,7 @@ export class Dialog extends Base{
         return tpl;
     }
     
-    init()
+    mounted()
     {
         
         this.callback={"yes":null,"no":null};

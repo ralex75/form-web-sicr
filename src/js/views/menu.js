@@ -1,8 +1,7 @@
 
 
-import {Base,UI} from './base.js'
-import { Router } from '../router.js';
-import {Application} from '../app.js'
+
+import {Application} from '../main'
 
 
 export default class {
