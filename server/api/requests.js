@@ -15,6 +15,7 @@ router.get("/:rid",(req,res)=>{
     })
 })
 
+
 //lista richieste 
 //userid implicito 
 router.post('/list',(req,res)=>{
@@ -87,4 +88,9 @@ router.post('/save', (req,res)=>{
   
 })
 
-module.exports=router;
+const getFirst=async (userid)=>
+{
+    return await db.any("select req_date from user_requests where uid=$1 order by req_date ASC limit 1",[userid]);
+}
+
+module.exports={router,getFirst};

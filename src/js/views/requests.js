@@ -111,6 +111,15 @@ export class Requests extends Abstract{
             this.getRequests();
         })
 
+        this.$tbody.addEventListener("click",(ev)=>{
+            ev.preventDefault();
+           
+            if(ev.target.matches("[data-rid]"))
+            {
+                Application.navigateTo("requests/details",{"rid":ev.target.dataset.rid})
+            }
+
+        })
       
 
         this.getRequests();
@@ -160,21 +169,10 @@ export class Requests extends Abstract{
     async getRequests()
     {
        this.items=[]
-       
-
-       //try{
             
-        var resp=await services.requests.list(false,this.$types.value)
-        this.items=this.mapItems(resp.data);
-            //this.buildRows(this.items);
-       /*}
-       catch(exc)
-       {
-           this.setFeedbackMessage('error','si è verificato un errore...')
-           console.log("Errore:",exc);
-       }*/
-
-        
+       var resp=await services.requests.list(false,this.$types.value)
+       this.items=this.mapItems(resp.data);
+      
        this.buildRows(this.items);
 
     }
@@ -225,6 +223,7 @@ export class Requests extends Abstract{
 
     buildRows(items)
     {
+        
         this.$tbody.innerHTML="";
 
         items.forEach(i=>{
@@ -238,24 +237,6 @@ export class Requests extends Abstract{
 
         })
 
-        /*this.$tbody.querySelectorAll("[data-rid]").forEach(el=>{
-            el.addEventListener('click',()=>{
-                //window.Application.rid=el.dataset.rid;
-                navigateTo('reqdetails',{"rid":el.dataset.rid})
-            });
-        })*/
-
-        this.$tbody.addEventListener("click",(ev)=>{
-            ev.preventDefault();
-            if(ev.target.matches("[data-rid]"))
-            {
-                /*let details=new RequestDetails(this.target,{"rid":ev.target.dataset.rid});
-                this.target.innerHTML=details.getContent();
-                details.mounted();*/
-                Application.navigateTo("requests/details",{"rid":ev.target.dataset.rid})
-            }
-
-        })
 
         var className=items && items.length>0 ? '' :'hide';
         this.$table.className=className;

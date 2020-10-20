@@ -72,19 +72,31 @@ export class Profile extends Abstract{
                   'signup':`<a class="prof-feedback" target="_blank" href="${signupUrl}">${signupUrl}</a>`}
         
         
+        var user=this.currentUser();
+
+        var days=Math.max(Application.itsecGraceTime-moment().diff(moment(user.firstReqDate),'days'),0)
+        
         
         var disciText_ita=`Le linee guida della politica IT INFN (Disciplinare) non sono state ancora accettate.<br>Per accettarle, prego seguire questo url: ${href.disci}`
         var disciText_eng=`The INFN IT policy guidelines (Disciplinare) has not yet been accepted.<br>To comply, please go to url: ${href.disci}`
        
         var itsec_ita= `Per utilizzare le risorse informatiche dell’INFN è necessario aver seguito il corso obbligatorio di sicurezza informatica, 
                         disponibile all’indirizzo ${href.itsec}, 
-                        dopo aver effettuato la login con le sue credenziali AAI.<br>
-                        <u>La preghiamo pertanto di effettuare il corso prima di procedere con qualunque richiesta.</u>`
+                        dopo aver effettuato la login con le sue credenziali AAI.<br>`
+                        if(Application.user.isValid()){
+                            itsec_ita+=`<b style="color:red">La invitiamo pertanto a seguire e completare il corso prima dello scadere dei 15g.</b><br>`
+                        }
+                        itsec_ita+=`Giorni rimasti: <b>${days}</b>.`
         
         var itsec_eng= `In order to use the INFN IT resources you need to follow the IT security course, 
                         available at ${href.itsec}, 
-                        logging in with your AAI credentials.<br>
-                        <u>You are requested to follow the course before proceeding with any further request.</u>`
+                        logging in with your AAI credentials.<br>`
+
+                        if(Application.user.isValid()){
+                            itsec_eng+=`<b style="color:red">We invite you to follow and complete the course before the 15 days expire.</b><br>`
+                        }
+
+                        itsec_eng+=`Days left: <b>${days}</b>.`
 
 
         var unauth_ita=`La sua identità risulta correttamente registrata nel sistema informativo centrale, 
@@ -115,7 +127,7 @@ export class Profile extends Abstract{
                         "itsec_feedback":`${itsec_eng}`,
                         "unauthorized_feedback":`${unauth_eng}`,
                         "disciplinare_feedback":`${disciText_eng}`}
-            }
+                }
     }
 
     fillUserData(){

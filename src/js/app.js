@@ -11,9 +11,11 @@ import {Logout} from './views/logout'
 import {Result} from './views/result'
 import {UI} from './views/ui'
 import menu from './views/menu'
+import moment from 'moment'
 
 
 let timeoutID=null;
+const ITSEC_GRACE_TIME=15;
 
 const navigateTo=(view,args)=>{
     
@@ -53,15 +55,21 @@ export const language={
 
 const User={
     isValid(){
-        var isValid=false;
+
+        let _isValid=false;
         let _user=User.current();
     
         if(_user)
         {
-            isValid = _user.isAuthorized && _user.policies;
+            _isValid = _user.isAuthorized && _user.policies;
+            if(_isValid && !_user.itsec)
+            {
+                let days= moment().diff(moment(_user.firstReqDate),'days')
+                _isValid=days<ITSEC_GRACE_TIME;
+            }
         }
 
-        return isValid;
+        return _isValid;
     },
     current(){
         let _user=null;
@@ -78,6 +86,7 @@ const User={
 }
 
 export const Application={
+    itsecGraceTime:ITSEC_GRACE_TIME,
     language:language,
     user:User,
     navigateTo:navigateTo,
@@ -166,8 +175,6 @@ const selectedLanguage=(lang)=>{
 
 
 const handleError=(err)=>{
-    console.log(err);
-   
     
     User.remove()
 
@@ -203,6 +210,7 @@ document.addEventListener("LanguageChanged",()=>{
 //listener DOM Loaded
 document.addEventListener('DOMContentLoaded',async ev=>{
 
+    
     let lang= location.href.match("/en/") ? "ENG" : "ITA"
 
     let subscription=null;
@@ -218,15 +226,9 @@ document.addEventListener('DOMContentLoaded',async ev=>{
 
         //legge informazioni utente
         //potrebbe impiegare un pò se devi sincronizzare
-      
         var {user,syncResultMessage}=await services.user.read();
      
-        //user.email=""
-        //user.isAuthorized=true;
-        //user.policies=false
-        
-      
-       
+        user.itsec=false;
         if(!user)
         {
             throw Error("No user found")
