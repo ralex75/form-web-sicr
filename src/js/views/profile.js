@@ -84,7 +84,7 @@ export class Profile extends Abstract{
                         disponibile all’indirizzo ${href.itsec}, 
                         dopo aver effettuato la login con le sue credenziali AAI.<br>`
                         if(Application.user.isValid()){
-                            itsec_ita+=`<b style="color:red">La invitiamo pertanto a seguire e completare il corso prima dello scadere dei 15g.</b><br>`
+                            itsec_ita+=`<b style="color:red">La invitiamo pertanto a seguire e completare il corso prima dello scadere dei 15g da ora.</b><br>`
                         }
                         itsec_ita+=`Giorni rimasti: <b>${days}</b>.`
         
@@ -93,7 +93,7 @@ export class Profile extends Abstract{
                         logging in with your AAI credentials.<br>`
 
                         if(Application.user.isValid()){
-                            itsec_eng+=`<b style="color:red">We invite you to follow and complete the course before the 15 days expire.</b><br>`
+                            itsec_eng+=`<b style="color:red">We therefore invite you to attend and complete the course within 15 days from now.</b><br>`
                         }
 
                         itsec_eng+=`Days left: <b>${days}</b>.`

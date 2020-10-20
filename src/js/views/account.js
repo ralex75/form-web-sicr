@@ -267,7 +267,7 @@ export class Account extends Abstract{
     {
         let loc=this.locale();
         clearTimeout(this.timeoutID);
-        this.$err.innerHTML=`<p class="acc_success">${loc["email_exists_pending"]}</p>`
+        this.$err.innerHTML=`<p class="acc_success"><img src='img/loader.gif' valign="middle"/>&nbsp;${loc["email_exists_pending"]}</p>`
         
         return new Promise((resolve,reject)=>{
             this.timeoutID=setTimeout(async ()=>{
@@ -278,14 +278,11 @@ export class Account extends Abstract{
                 
                 if(exists)
                 {
-                    debugger;
                     msg=loc["email_exists"]
                 }
 
                 this.$err.innerHTML=msg;
               
-
-
                 resolve(exists);
 
             },2000)

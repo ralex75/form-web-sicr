@@ -229,6 +229,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         var {user,syncResultMessage}=await services.user.read();
      
         user.itsec=false;
+        
         if(!user)
         {
             throw Error("No user found")
