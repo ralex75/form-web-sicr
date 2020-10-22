@@ -34,14 +34,17 @@ async function forceLDAPSync(req,res,next)
 
 function authToken(req,res,next){
   
-   //Davide Vincenzo Biuso Rizzo
-   //var testUUID="6c536aa5-da10-4416-8a6e-7efb2da13ddf"
-
-    //fasanelli
-    //var testUUID='f8d35e28-2532-43c8-989c-3faa58f5cba4';
-
     //mio
     var testUUID='50699576-15eb-49c6-a645-c07c0de9c402'
+
+    //fasanelli
+    testUUID='f8d35e28-2532-43c8-989c-3faa58f5cba4';
+
+    //anzel
+    //testUUID='c7da859d-0960-4fee-993d-917b9090620c'
+
+    //brunengo
+    //testUUID='0c792919-5d17-488d-b5df-bd66aea4ad22'
 
     //testUUID='33ad801a-39e0-405c-8abb-ed4b871d7ef7'
     //testUUID='e0589a86-9b55-48b9-84dc-1324750a4237'  //zicoschi

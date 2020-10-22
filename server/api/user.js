@@ -43,10 +43,17 @@ var parseLDAPUserInfo=function (user) {
     var minTime="01/01/1900"
     var userStatus=user.schacUserStatus;
     
-    //rimuove tutti gli indirizzi username@
+    //rimuove dall'alternateMailAddress se esiste mail principale per evitare duplicati
     cuser.mailAlternates=cuser.mailAlternates.map(e=>e.toLowerCase())
-                                             .filter(i=>i.indexOf(cuser.uid)<0 && i.indexOf(cuser.email.toLowerCase())<0)
+                                             .filter(e=>e.indexOf(cuser.email.toLowerCase())<0).sort()
     
+
+    let ma=cuser.mailAlternates;
+    
+    cuser.mailAlternates=ma.filter(e=>e.match(/\w+\.\w+@/)).sort()
+                        .concat(ma.filter(e=>!e.match(/\w+\.\w+@/)).sort())
+
+
     var isMemberOf=user.isMemberOf;
     var policies="" //disciplinare
     var itsec="" //corso sicurezza informatica

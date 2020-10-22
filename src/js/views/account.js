@@ -418,10 +418,11 @@ export class Account extends Abstract{
         var tpl=template;
 
         let user=Object.assign({},Application.user.current());
-        let email=user.email;
-        this.userHasAccount=user.email!="";
-        
 
+        let email=user.roma1Email();
+      
+        this.userHasAccount=email!="";
+        
         if(this.userHasAccount)
         {
             tpl=tpl.replace("[EMAIL_FEEDBACK]",loc['user_has_account'])
@@ -441,6 +442,7 @@ export class Account extends Abstract{
         {
             tpl=tpl.replace(`[${k.toUpperCase()}]`,loc[k]);
         }
+        
         
         tpl=tpl.replace("[EMAIL]",email);
 

@@ -85,6 +85,8 @@ const User={
     }
 }
 
+
+
 export const Application={
     itsecGraceTime:ITSEC_GRACE_TIME,
     language:language,
@@ -139,6 +141,8 @@ const router=async ()=>{
     latestView.args=history.state;
 
    
+   
+
     if(!User.isValid())
     {
         let user=User.current();
@@ -228,10 +232,15 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         //potrebbe impiegare un pò se devi sincronizzare
         var {user,syncResultMessage}=await services.user.read();
      
-        
         if(!user)
         {
             throw Error("No user found")
+        }
+
+        user.roma1Email=function(){
+            
+            let email=this.mailAlternates.concat(this.email).filter(m=>m.match(/(\w+\.\w+)@roma1.infn.it/))
+            return email[0] || ""
         }
         
         window.Application.user=user;
@@ -241,7 +250,6 @@ document.addEventListener('DOMContentLoaded',async ev=>{
     }
     catch(exc)
     {
-       
         handleError(exc);
     }
     finally

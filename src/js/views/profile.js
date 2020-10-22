@@ -118,12 +118,12 @@ export class Profile extends Abstract{
         return {
                 
                 "ITA":{"email":"E-mail","email_alt":"E-mail alternativi","phone":"Telefono","role":"Ruolo","exp":"Scadenza",
-                        "disciplinare":"Disciplinare accettato","itsec":"Corso sicurezza informatica",
+                        "disciplinare":"Disciplinare accettato","itsec":"Corso sicurezza informatica base",
                         "itsec_feedback":`${itsec_ita}`,
                         "unauthorized_feedback":`${unauth_ita}`,
                         "disciplinare_feedback":`${disciText_ita}`},
                 "ENG":{"email":"E-mail","email_alt":"Alternate Emails Address","phone":"Phone","role":"Role","exp":"Expiration",
-                        "disciplinare":"Usage policies resigned","itsec":"IT security course",
+                        "disciplinare":"Usage policies resigned","itsec":"IT security base course",
                         "itsec_feedback":`${itsec_eng}`,
                         "unauthorized_feedback":`${unauth_eng}`,
                         "disciplinare_feedback":`${disciText_eng}`}
@@ -194,7 +194,7 @@ export class Profile extends Abstract{
         <p>${loc["role"]}</p>
         </div>
         <div class="prof_val">
-        <p>${user.role}</p>
+        <p>${this.emptyOrDefault(user.role)}</p>
         </div>
         <div class="prof_lab">
         <p>${loc["disciplinare"]}</p>

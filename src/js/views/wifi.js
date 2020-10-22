@@ -135,20 +135,31 @@ export class WIFI extends Abstract {
 
    mounted()
     {
-       const user=Application.user.current();
-       if(user.email)
+       //const user=Application.user.current();
+       let email=Application.user.current().roma1Email();
+       if(email)
        {
 
-         var loc=this.locale();
-         let html="<div class=\"form_sez\"><div class=\"form_intest\">"
-         html+=loc.form.header
-         html+="</div>"
-                
-          //this.target.querySelectorAll(".form_sez").forEach(el=>el.style.display="none")
-          html+="<p style=\"width:80%;\">Attenzione, attualmente sei in possesso di un account roma1. \
-                    <br>Per il WIFI puoi utilizzare le reti <b>eduroam</b> o <b>dot1x</b></p>"
+          var loc=this.locale();
+          var isEng=Application.language.current=='ENG';
+          
+          let html="<div class=\"form_sez\"><div class=\"form_intest\">"
+          html+=loc.form.header
           html+="</div>"
-                    this.target.innerHTML=html;
+          if(!isEng)
+          {
+            html+="<p style=\"width:80%;\">Attenzione, attualmente sei in possesso di un account roma1. \
+                    <br>Per il WIFI puoi utilizzare le reti <b>eduroam</b> o <b>dot1x</b></p>"
+          }
+          else{
+            html+="<p style=\"width:80%;\">Warning, you currently have a roma1 account. \
+                    <br>Therefore you can use the <b>eduroam</b> or <b>dot1x</b> wifi.</p>"
+          }
+          html+="</div>"
+
+          
+          this.target.innerHTML=html;
+          
           return;
        }
 
