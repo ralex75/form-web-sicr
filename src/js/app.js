@@ -232,6 +232,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         //potrebbe impiegare un pò se devi sincronizzare
         var {user,syncResultMessage}=await services.user.read();
      
+
         if(!user)
         {
             throw Error("No user found")

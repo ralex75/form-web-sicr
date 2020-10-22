@@ -38,7 +38,7 @@ function authToken(req,res,next){
     var testUUID='50699576-15eb-49c6-a645-c07c0de9c402'
 
     //fasanelli
-    testUUID='f8d35e28-2532-43c8-989c-3faa58f5cba4';
+    //testUUID='f8d35e28-2532-43c8-989c-3faa58f5cba4';
 
     //anzel
     //testUUID='c7da859d-0960-4fee-993d-917b9090620c'
