@@ -101,21 +101,32 @@ var parseLDAPUserInfo=function (user) {
     if(isMemberOf){
 
         let role="";
+        let isAdmin=false
         //controllo se autorizzato
         _isMemberOf = !Array.isArray(isMemberOf) ? [isMemberOf] : isMemberOf;
         
 
         _isMemberOf.forEach(e=>{
             //console.log(e);
+            
+            if(e.indexOf("i:infn:roma1:servizio_calcolo_e_reti")>-1)
+            {
+                isAdmin=true;
+            }
+
             let match=e.match(/i:infn:roma1::([d|o|a|v])\:(\w+)/);
+            
             if(match)
             {
+                console.log(match)
                 role=match[2]
             }
         })
 
+
         cuser["isAuthorized"]=role!=""
         cuser["role"]=role;
+        cuser["isAdmin"]=isAdmin;
 
        
         
