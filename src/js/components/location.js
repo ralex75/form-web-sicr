@@ -8,17 +8,17 @@ const template=
             <label for="build">[BUILD]</label><br>
             <select id="build" name="build"></select>
         </div>
-        <div class="form_col">
+        <div class="form_col test">
             <label for="floor">[FLOOR]</label><br>
             <select id="floor" name="floor"></select>
         </div>
     </div> 
-    <div class="form_riga">
+    <div class="form_riga test">
         <div class="form_col">
             <label for="room">[ROOM]</label><br>
             <select id="room" name="room"></select>
         </div>
-        <div class="form_col">
+        <div class="form_col ppppp">
             <label for="port">[PORT]</label><br>
             <select id="port" class="ports" name="port" data-attr='formdata'></select>
             <small>Error Message</small>
@@ -81,7 +81,7 @@ export class Location{
            
                 el.addEventListener('change',ev=>{ 
                                 this.selectChanged(ev.target);
-                                this.$ports.parentElement.className="form_col"     
+                                //this.$ports.parentElement.className="form_col"     
                             });
                 
                 this.buildOptions(el)
@@ -99,8 +99,7 @@ export class Location{
     //aggiorna lista porte libere selezionabili
     updateFreePorts(args){
 
-       
-        this.configChangedArgs=args;
+        this.args=args;
            
         console.log("UpdateFreePorts")
         //Abilita o Disabilita le porte
@@ -110,7 +109,7 @@ export class Location{
 
 
     //Imposta il default con i parametri di Modifica di un nodo
-    async setDefault({build,floor,id,port})
+    async setDefault({build,floor,id,port,config,mac})
     {
         this.$builds.value=build;
         await this.getFloors();
@@ -119,6 +118,8 @@ export class Location{
         this.$rooms.value=id;
         await this.getPorts();
         this.$ports.value=port;
+      
+        this.config={"config":config,"mac":mac}
         //this.$ports.dispatchEvent(new Event('change'))
     }
 
@@ -138,6 +139,7 @@ export class Location{
     enableDisablePorts()
     {
        
+      
         if(!this.ports) return;
 
        
@@ -156,10 +158,10 @@ export class Location{
        }
 
        //lasciamo la porta selezionata settata solo se non è disabilitata
-       if(this.$ports.options[this.$ports.selectedIndex].disabled)
+       /*if(this.$ports.options[this.$ports.selectedIndex].disabled)
        {
-           this.$ports.value=""
-       }
+           //this.$ports.value=""
+       }*/
 
        var freePorts=(disabledCount!=(this.$ports.options.length-1));
       
@@ -174,15 +176,15 @@ export class Location{
         if(!o || !o.value) return;
 
         var port=this.ports.filter(p=>{return (p.port_code==o.value || p.port_alias==o.value)})
-     
+    
         port=port && port[0];
 
         var _unlinkedPort=port.vlanid==null;
 
         if(_unlinkedPort) return false;
         
-        if(!this.configChangedArgs) return;
-        var {config,mac}=this.configChangedArgs;
+        if(!this.args) return;
+        var {config,mac}=this.args;
         
         var _invalid=false;
         
@@ -300,7 +302,7 @@ export class Location{
 
     selectChanged(select){
           
-       console.log("Changed");
+      
         var callback=null;
         var {name}=select;
     

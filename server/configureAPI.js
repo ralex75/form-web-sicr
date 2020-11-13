@@ -29,8 +29,8 @@ module.exports = app => {
 
 
 
- app.use('/auth/:uid?',authToken,forceLDAPSync, async (req,res,next)=>{
-  
+ //app.use('/auth/:uid?',authToken,forceLDAPSync, async (req,res,next)=>{
+  app.use('/auth/:uid?',authToken, async (req,res,next)=>{
   let user=null;
   let {syncResultMessage}=res.locals || "";
   

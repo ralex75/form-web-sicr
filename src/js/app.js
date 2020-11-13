@@ -3,9 +3,10 @@ import services from './services.js'
 import {Profile} from './views/profile'
 import {Account} from './views/account'
 import {HostList} from './views/hostlist'
-import {IP} from './views/ip'
+//import {IP} from './views/ip'
 import {WIFI} from './views/wifi'
 import {Requests} from './views/requests'
+import {IP} from './views/ip-new'
 import {RequestDetails} from './views/reqdetails'
 import {Logout} from './views/logout'
 import {Result} from './views/result'
@@ -246,7 +247,8 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         
         window.Application.user=user;
         
-        navigateTo("profile");
+        //navigateTo("profile");
+        navigateTo("ip");
        
     }
     catch(exc)

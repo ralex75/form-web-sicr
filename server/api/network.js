@@ -34,7 +34,9 @@ var dnslookup=(name)=>{
             
             if(err)
             {
-                if(err.errno!='ENOTFOUND')
+                console.log(err)
+                let ecode=err.errno || err.code
+                if(ecode!='ENOTFOUND')
                 {
                     reject(err);
                 }
