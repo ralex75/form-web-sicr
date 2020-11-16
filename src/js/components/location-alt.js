@@ -63,13 +63,16 @@ const template=
     .nav img:hover{
         border-color:#444;
     }
+
+    .
     
     .active{
         display:block;
+       
     }
 
     .inactive{
-        display:none;
+         display:none;
     }
 
     </style>
