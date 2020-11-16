@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         
         window.Application.user=user;
         
-        navigateTo("ip");
+        navigateTo("profile");
         
        
     }
