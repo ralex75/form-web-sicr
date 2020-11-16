@@ -156,7 +156,7 @@ div.grid div.c2{
 `
 
 import Abstract from './abstract'
-import {Location} from '../components/location-alt-2.js'
+import {Location} from '../components/location.js'
 import {Dialog} from '../components/dialog.js'
 import services from '../services.js'
 import { Application } from '../app'
