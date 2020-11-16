@@ -877,6 +877,7 @@ export class IP extends Abstract{
 
         if(value=='DHCP')
         {
+            this.formdata['name'].value=""
             this.statusMessage.setPristine(this.formdata['name']);
         }
         else
