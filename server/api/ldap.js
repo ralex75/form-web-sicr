@@ -1,6 +1,5 @@
 const getUserLDAP=async function(query){
 
-    //console.log("query:",query);
     
     const ldap=require('ldapjs');
     const usr_list=[];
