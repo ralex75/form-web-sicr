@@ -40,7 +40,7 @@ var parseLDAPUserInfo=function (user) {
     var cuser=Object.assign({}, user);
 
     
-    var minTime="01/01/1900"
+    //var minTime="01/01/1900"
     var userStatus=user.schacUserStatus;
     
     //rimuove dall'alternateMailAddress se esiste mail principale per evitare duplicati
@@ -54,26 +54,33 @@ var parseLDAPUserInfo=function (user) {
                         .concat(ma.filter(e=>!e.match(/\w+\.\w+@/)).sort())
 
 
-    var isMemberOf=user.isMemberOf;
-    var policies="" //disciplinare
-    var itsec="" //corso sicurezza informatica
+    let isMemberOf=user.isMemberOf;
+    let policies=""         //disciplinare approvato
+    let itsec=""            //corso sicurezza informatica
+    let graceTime=false;    //grace time
+    let role="";            //ruolo
+    let isAdmin=false       //se appartiene al cc
+    let minTime="01/01/1900"
  
+    /*cuser["isAuthorized"]=false;
+    cuser["role"]=""*/
+
     //REGEXP
-    //var roleReg=/^i:infn:\w+\::(\w)/ //Role
-    var policiesReg=/disciplinareict:approvato\+on=(\S+)/  //Disciplinare
-    var itsecReg=/sicurezzainformatica-base:superato\+on=(\S+)/ //corso sicurezza informatica
-    var ttlReg=/\+ttl\=(\S+)/ //TTL
+    let regx={"policies":/disciplinareict:approvato\+on=(\S+)/,
+              "itsec":/sicurezzainformatica-base:superato\+on=(\S+)/,
+              "gracetime":/ict-gracetime:(true|false)/,
+              "ttl":/\+ttl\=(\S+)/}
    
-    cuser["isAuthorized"]=false;
-    cuser["role"]=""
+    
     //cuser["isAdmin"]=false; //è del centro calcolo
     
     if(userStatus && Array.isArray(userStatus)){
         for(let i=0;i<userStatus.length;i++){
 
-            let ttl=ttlReg.exec(userStatus[i]);
-            policies=policiesReg.exec(userStatus[i]) || policies
-            itsec=itsecReg.exec(userStatus[i]) || itsec
+            let ttl=regx.ttl.exec(userStatus[i]);
+            policies=regx.policies.exec(userStatus[i]) || policies
+            itsec=regx.itsec.exec(userStatus[i]) || itsec
+            graceTime=regx.gracetime.exec(userStatus[i]) || graceTime
 
             if(ttl && minTime!="nolimit"){
                 curTime=ttl[1];
@@ -94,14 +101,15 @@ var parseLDAPUserInfo=function (user) {
         
         cuser["policies"]=policies[1] || "";
         cuser["itsec"]=itsec[1] || "";
+        cuser["gracetime"]=graceTime;
         cuser["expiration"]=minTime;
+       
     }
 
     
     if(isMemberOf){
 
-        let role="";
-        let isAdmin=false
+       
         //controllo se autorizzato
         _isMemberOf = !Array.isArray(isMemberOf) ? [isMemberOf] : isMemberOf;
         
@@ -123,19 +131,14 @@ var parseLDAPUserInfo=function (user) {
             }
         })
 
-
-        cuser["isAuthorized"]=role!=""
-        cuser["role"]=role;
-        cuser["isAdmin"]=isAdmin;
-
-       
-        
-
     }
+
+    cuser["isAuthorized"]=role!=""
+    cuser["role"]=role;
+    cuser["isAdmin"]=isAdmin;
 
     delete cuser["isMemberOf"]
     delete cuser["schacUserStatus"];
-
 
     
     return cuser;

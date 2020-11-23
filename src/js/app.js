@@ -63,10 +63,14 @@ const User={
         if(_user)
         {
             _isValid = _user.isAuthorized && _user.policies;
+            //se non ha ancora fatto corso sicurezza
             if(_isValid && !_user.itsec)
             {
-                let days= moment().diff(moment(_user.firstReqDate),'days')
-                _isValid=days<ITSEC_GRACE_TIME;
+                //let days= moment().diff(moment(_user.firstReqDate),'days')
+                //_isValid=days<ITSEC_GRACE_TIME;
+
+                //è valido o invalido in base al gracetime
+                _isValid=_user.gracetime;
             }
         }
 
@@ -244,10 +248,11 @@ document.addEventListener('DOMContentLoaded',async ev=>{
             let email=this.mailAlternates.concat(this.email).filter(m=>m.match(/(\w+\.\w+)@roma1.infn.it/))
             return email[0] || ""
         }
+
         
         window.Application.user=user;
         
-        navigateTo("ip");
+        navigateTo("profile");
         
        
     }

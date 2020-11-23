@@ -60,6 +60,11 @@ export class Profile extends Abstract{
         return window.Application.user;
     }
 
+    getDays(){
+        let usr=this.currentUser();
+        return moment().diff(moment(usr.policies),'days')
+    }
+
     locale(){
 
        
@@ -84,36 +89,65 @@ export class Profile extends Abstract{
                         disponibile all’indirizzo ${href.itsec}, 
                         dopo aver effettuato la login con le sue credenziali AAI.<br>`
                         if(Application.user.isValid()){
-                            itsec_ita+=`<b style="color:red">La invitiamo pertanto a seguire e completare il corso prima dello scadere dei 15g da ora.</b><br>`
+                            itsec_ita+=`<b style="color:red">La invitiamo pertanto a seguire e completare il corso prima dello scadere del periodo di "grace-time"</b><br>`
                         }
-                        itsec_ita+=`Giorni rimasti: <b>${days}</b>.`
+                        
+                        if(user.gracetime)
+                        {
+                            itsec_ita+=`Giorni trascorsi: <b>${this.getDays()}</b>.`
+                        }
         
         var itsec_eng= `In order to use the INFN IT resources you need to follow the IT security course, 
                         available at ${href.itsec}, 
                         logging in with your AAI credentials.<br>`
 
                         if(Application.user.isValid()){
-                            itsec_eng+=`<b style="color:red">We therefore invite you to attend and complete the course within 15 days from now.</b><br>`
+                            itsec_eng+=`<b style="color:red">We therefore invite you to attend and complete the course before the "grace-time" expiration period.</b><br>`
+                        }
+                        if(user.gracetime)
+                        {
+                            itsec_eng+=`Days trascorsi: <b>${this.getDays()}</b>.`
                         }
 
-                        itsec_eng+=`Days left: <b>${days}</b>.`
 
-
-        var unauth_ita=`La sua identità risulta correttamente registrata nel sistema informativo centrale, 
-                        ma la sua utenza non è stata ancora associata alla sede di Roma.<br>
-                        Da un controllo preliminare lei risulta essere presente nel database del dipartimento di Fisica.<br>
-                        La preghiamo quindi di controllare che l'email registrata nel sistema informativo centrale corrisponda a quella registrata al dipartimento e, 
-                        in caso contrario, di aggiungerla come mail alternativa accedendo all'indirizzo: ${href.signup}
+        var unauth_ita=`Sebbene la sua identità risulti correttamente registrata nel Sistema 
+                        Informativo INFN la sua utenza non è stata ancora associata alla sede di 
+                        Roma.<br><br>
+                        Se lei è già presente, come “Attivo” e “Autorizzato”, nel database del 
+                        Dipartimento di Fisica la preghiamo di controllare che l’email 
+                        registrata nel Sistema Informativo INFN corrisponda a quella presente 
+                        nel database del Dipartimento.<br>
+                        In caso contrario dovrebbe richiedere di 
+                        aggiungere quest'ultimo indirizzo mail a quelli registrati a suo nome 
+                        inviando una mail all’indirizzo ${href.supp}.
                         <br><br>
-                        In caso di domande ulteriori contattare il supporto di Roma all'indirizzo: ${href.supp}`
+                        Se invece lei è un ospite della Sezione di Roma dell'INFN la preghiamo 
+                        di rivolgersi al suo referente per far completare la  registrazione 
+                        indicando il suo ruolo nel nostro Ente.
+                        <br><br>
+                        In caso di domande ulteriori contattare il supporto di Roma 
+                        all’indirizzo: ${href.supp}.
+                        `
         
-        var unauth_eng=`You identity is correctly registered in the INFN Central Information System,
-                        but your user has not been associated to the Roma site yet.<br>
-                        From a preliminary check you are present in the database of the Physics Department. <br>
-                        You are then kindly asked to check that the email registered in the INFN Central Information System is matching the one you have registered in the Physics Department and, 
-                        if not, to add it in the Central Information System as alternate email, using the link ${href.signup}
+        var unauth_eng=`Although your identity is properly registered in the INFN Information 
+                        System, your account has not yet been associated to the INFN Rome site.
                         <br><br>
-                        In case of further questions please contact the Roma support at this url: ${href.supp}`
+                        In case you already figure, as an “Active” and “Authorized” user, in the 
+                        Physics Department database, please check that the email registered in 
+                        the INFN Information System coincides with the email in the Department 
+                        database. 
+                        <br><br>
+                        Should this not be the case, please ask to add this last email 
+                        address to those registered under your name writing to the address 
+                        ${href.supp}.
+                        <br><br>
+                        If you are a host of the INFN Rome section, please address your contact 
+                        person to complete your registration, specifying your position in our 
+                        Institution.
+                        <br><br>
+                        Should you have any further question, contact the Rome support at the 
+                        address ${href.supp}.
+                        `
 
         return {
                 
