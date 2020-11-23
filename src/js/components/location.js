@@ -13,19 +13,21 @@ const template=
             <select id="floor" name="floor"></select>
         </div>
     </div> 
-    <div class="form_riga test">
+    <div class="form_riga">
         <div class="form_col">
             <label for="room">[ROOM]</label><br>
             <select id="room" name="room"></select>
         </div>
-        <div class="form_col ppppp">
+        <div class="form_col">
             <label for="port">[PORT]</label><br>
             <select id="port" class="ports" name="port" data-attr='formdata'></select>
             <small>Error Message</small>
         </div>
     </div> 
+   
 
-    <style scoped>
+    <style>
+
     select:-moz-focusring {
         color: transparent;
         text-shadow: 0 0 0 #000;
@@ -33,13 +35,15 @@ const template=
     select {
         background: transparent;
         outline:0;
+       
     }
 
     select.ports option:disabled {
         color: #DDD;
     }
+
+    
     </style>
-   
 `
 
 import services from '../services.js'
@@ -64,6 +68,7 @@ export class Location{
         this.$floors=document.querySelector("#floor")
         this.$rooms=document.querySelector("#room")
         this.$ports=document.querySelector("#port")
+       
         
         this.$location=document.querySelector("#location")
         
@@ -81,7 +86,6 @@ export class Location{
            
                 el.addEventListener('change',ev=>{ 
                                 this.selectChanged(ev.target);
-                                //this.$ports.parentElement.className="form_col"     
                             });
                 
                 this.buildOptions(el)
@@ -91,7 +95,6 @@ export class Location{
 
         this.buildOptions(this.$builds,[{'txt':'Marconi','value':'MARCONI'},{'txt':'Fermi','value':'FERMI'},{'txt':'Segre','value':'SEGRE'}])
 
-        
 
     }
     
@@ -298,17 +301,19 @@ export class Location{
         })
         return ports;
     }
-    
 
-    selectChanged(select){
+   
+
+    async selectChanged(select){
           
       
         var callback=null;
         var {name}=select;
-    
+
         switch(name){
 
             case "build":
+                
                 this.buildOptions(this.$floors)
                 this.buildOptions(this.$rooms)
                 this.buildOptions(this.$ports)
@@ -332,14 +337,14 @@ export class Location{
 
 
         if(callback){
-            callback.bind(this)();
+            await callback.bind(this)();
             if(callback!=this.selectedPort)
             {
                 this.selectedPort();
             }
         }
 
-
+     
 
     }
 
