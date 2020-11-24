@@ -722,6 +722,7 @@ export class IP extends Abstract{
     //libere nella configurazione selezionata (DHCP,Static o Static VM)
     handleLocationFreePorts(ports){
          
+       
         let loc=this.locale();
         let target=this.formdata['port']
 
@@ -905,9 +906,22 @@ export class IP extends Abstract{
         let select=this.formdata["port"];
         let loc=this.locale().errors;
         
+        /*if(this.eHost)
+        {
+           
+            let {config,port}=this.eHost;
+            //se non è cambiato nulla ritorna
+            if(config==this.formdata['config'].value && port==select.value)
+            {
+                this.statusMessage.setSuccess(this.formdata["port"])
+                return;
+            };
+        }*/
+
         //se la porta è disabilita allora NON è utilizzabile
         if(select.options[select.selectedIndex].disabled && select.value!="")
         {
+            
             this.statusMessage.setError(this.formdata["port"],loc['bad-port'])
         }
         else{
