@@ -39,11 +39,12 @@ const generateNavigationMenu=(lang)=>{
                     "Staff":"Staff"
                     }
             
-    let baseUrl=`http://www.roma1.infn.it/conference/wwwsicr/`
+    //let baseUrl=`http://www.roma1.infn.it/conference/wwwsicr/`
+    let baseUrl=`/sicr`
     let items=Object.values(loc);
     if(lang=="ENG")
     {
-        baseUrl+="en"
+        baseUrl+="/en"
         items=Object.keys(loc);
     }
     

@@ -45,7 +45,7 @@ export class Logout extends Abstract{
     mounted(){
         
         let fragment = Application.language.current=="ENG" ? "/en/":"/";
-        let returnUrl=`https://www.roma1.infn.it/Shibboleth.sso/Logout?return=http://www.roma1.infn.it/conference/wwwsicr${fragment}home.html`
+        let returnUrl=`https://www.roma1.infn.it/Shibboleth.sso/Logout?return=https://www.roma1.infn.it/sicr${fragment}`
        
         setTimeout(() => {
            window.location.replace(returnUrl);
