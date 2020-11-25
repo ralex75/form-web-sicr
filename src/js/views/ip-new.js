@@ -279,8 +279,6 @@ class FormValidator {
         this.fields.forEach(k=>{
           
             let el=document.querySelector(`[name="${k}"]`)
-           
-           
             scope.statusMessage.setPristine(el)
         })
     }
@@ -300,6 +298,8 @@ class FormValidator {
         return err;
 
     }
+
+    
 
     validateHostName(value){
        
@@ -328,6 +328,8 @@ class FormValidator {
             },1000)
         })
     }
+
+    
 
 
     checkDuplicateHostName(val){
@@ -381,7 +383,7 @@ class FormValidator {
         
         
         let scope=this;
-      
+       
         document.querySelectorAll(".pristine > input:not(:disabled),.pristine > select").forEach(el=>{
            
            
@@ -419,6 +421,31 @@ export class IP extends Abstract{
         this.curvalues={"mac":"","name":""}
     }
 
+    isMacAddressVM(value)
+    {
+        let isVM=false;
+        let vmRangeAddr=[
+                        {"from":"00:16:3E:00:00:00","to":"00:16:3E:FF:FF:FF"},
+                        {"from":"00:1D:D8:B7:1C:00","to":"00:1D:D8:F4:1F:FF"},
+                        {"from":"00:03:FF:00:00:00","to":"00:03:FF:FF:FF:FF"},
+                        {"from":"00:18:51:00:00:00","to":"00:18:51:FF:FF:FF"},
+                        {"from":"58:9C:FC:00:00:00","to":"58:9C:FC:FF:FF:FF"},
+                        {"from":"50:6B:8D:00:00:00","to":"50:6B:8D:FF:FF:FF"},
+                        {"from":"54:52:00:00:00:00","to":"54:52:FF:FF:FF:FF"},
+                        {"from":"96:00:00:00:00:00","to":"96:00:FF:FF:FF:FF"}
+                    ]
+        for(var k=0;k<vmRangeAddr.length;k++)
+        {
+            let {from,to}=vmRangeAddr[k];
+            if(value>=from && value<=to)
+            {
+                isVM=true;
+            }
+        }
+
+        return isVM;
+    }
+
     //restituisce il template
     getContent(){
         var tpl=template;
@@ -444,7 +471,9 @@ export class IP extends Abstract{
                                   "hname-duplicated":"Il nome inserito risulta già registrato.",
                                   "hmac-duplicated":"Il mac address inserito risulta già registrato.",
                                   "pending-mac":"Verifica che il mac address inserito non sia già in uso...",
-                                  "pending-name":"Verifica che il nome inserito non sia già in uso..."}},
+                                  "pending-name":"Verifica che il nome inserito non sia già in uso...",
+                                  "invalid-mac-config":"Il mac address inserito non è conforme con la configurazione selezionata."
+                                  }},
                 "ENG":{"form":{"mac":"Mac Address","config":"Configuration","name":"Name","domain":"Domain","send":"Send","notes":"Notes",
                                 "host-edit-info":"Edit request for node",
                                 "header-host":"NODE IDENTIFIER","header-notes":"Additional Information","goback":"Go Back",
@@ -456,7 +485,8 @@ export class IP extends Abstract{
                                     "hname-duplicated":"The typed host name is already registered.",
                                     "hmac-duplicated":"The typed mac adress is already registered.",
                                     "pending-mac":"Checking the typed mac address is not yet in use...",
-                                    "pending-name":"Checking the the typed host name is not yet in use..."}}
+                                    "pending-name":"Checking the the typed host name is not yet in use...",
+                                    "invalid-mac-config":"The typed mac address is not compliant with the selected configuration."}}
             }
 
         return loc[this.currentLanguage()];
@@ -468,7 +498,7 @@ export class IP extends Abstract{
     submit(ev){
        
         ev.preventDefault();
-
+        debugger;
         let formIsValid=this.validator.validateAll();
         
         if(!formIsValid) return;
@@ -741,15 +771,22 @@ export class IP extends Abstract{
     
     }
 
+    isMacNotCompliantWithSelectedConfig(){
+        let isVM=this.isMacAddressVM(this.formdata["mac"].value)
+        let configIsVM=this.formdata["config"].value=='STATICVM';
+
+        return (configIsVM && !isVM)||(!configIsVM && isVM)
+    }
+
 
     async validate(target)
     {
         
-             
+            
         var err=this.validator.validate(target);
         var loc=this.locale().errors;
 
-         
+       
         if(!err)
         {
             if(target.name=='name')
@@ -768,17 +805,33 @@ export class IP extends Abstract{
             {
                 let eValue=this.eHost ? `${this.eHost["mac"]}` : ""
                 let value=target.value;
+                
+               
                 if(eValue!=value)
                 {
+                    
                     if(this.usermaclist && this.usermaclist.indexOf(value)>-1)
                     {
                         err=loc["is-your-mac"]
                         console.log("Err:",err)
                     }
+                    else if(this.isMacNotCompliantWithSelectedConfig())
+                    {
+                        err=loc["invalid-mac-config"]
+                    }
                     else{
-                         err=await this.validateDuplicated(target,value,['mac'],this.validator.checkDuplicatedMacAddress)
+                        err=await this.validateDuplicated(target,value,['mac'],this.validator.checkDuplicatedMacAddress)
+                    }
+
+                }
+                else
+                {
+                    if(this.isMacNotCompliantWithSelectedConfig())
+                    {
+                        err=loc["invalid-mac-config"]
                     }
                 }
+                
               
             }
 
@@ -883,16 +936,20 @@ export class IP extends Abstract{
         }
         else
         {
+           
             if (this.eHost)
             {
                 
                 this.formdata['name'].value=this.eHost["name"]
                 this.formdata['domain'].value=this.eHost["domain"]
-                this.statusMessage.setSuccess(this.formdata['name'])
-              
+                //this.statusMessage.setPristine(this.formdata['name'])
+                this.validate(this.formdata['name'])
             }
         }
 
+        this.validate(this.formdata['mac'])
+        //this.statusMessage.setPristine(this.formdata['mac'])
+        
         //aggiorna la lista delle porte libere in base alla configurazione scelta
         this.location.updateFreePorts({"config":value,"mac":this.formdata["mac"].value})
        
@@ -909,7 +966,6 @@ export class IP extends Abstract{
         //se la porta è disabilita allora NON è utilizzabile
         if(select.options[select.selectedIndex].disabled && select.value!="")
         {
-            
             this.statusMessage.setError(this.formdata["port"],loc['bad-port'])
         }
         else{
