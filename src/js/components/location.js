@@ -175,7 +175,7 @@ export class Location{
 
     isDisabled(o){
 
-        
+       
         if(!o || !o.value) return;
 
         var port=this.ports.filter(p=>{return (p.port_code==o.value || p.port_alias==o.value)})
