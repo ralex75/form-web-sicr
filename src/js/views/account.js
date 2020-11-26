@@ -217,7 +217,7 @@ export class Account extends Abstract{
 
     submitForm(){
 
-        Application.SaveRequest(Application.requestTypes.ACCOUNT,{"email":this.$email.innerText});
+        this.SaveRequest(Application.requestTypes.ACCOUNT,{"email":this.$email.innerText});
     }
 
     disableSumbmit(disabled)
