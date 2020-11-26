@@ -325,7 +325,7 @@ class FormValidator {
                 }).catch(err=>{
                     resolve(true)
                 })
-            },1000)
+            },500)
         })
     }
 
@@ -340,7 +340,7 @@ class FormValidator {
                 }).catch(err=>{
                     resolve(false)
                 })
-            },3000)
+            },500)
         });
     }
 
@@ -376,6 +376,13 @@ class FormValidator {
 
         return err;
         
+    }
+
+    fieldIsValid(target)
+    {
+       
+        console.log("target:",target.parentElement.className)
+        return target.parentElement.className.indexOf("success")>=0;
     }
 
     validateAll()
@@ -920,6 +927,7 @@ export class IP extends Abstract{
         fields.forEach(e=>scope.formdata[e].disabled=disable)
     }
 
+    
 
     //gestione cambio configurazione del nodo DHCP-STATICO-STATICO VM
     configIsChanged()
@@ -937,16 +945,23 @@ export class IP extends Abstract{
         else
         {
            
-            if (this.eHost)
+            if(!this.validator.fieldIsValid(this.formdata['name']))
+                    this.validate(this.formdata['name'])
+
+            /*if (this.eHost && this.eHost.config==value)
             {
                 
                 this.formdata['name'].value=this.eHost["name"]
                 this.formdata['domain'].value=this.eHost["domain"]
-                //this.statusMessage.setPristine(this.formdata['name'])
-                this.validate(this.formdata['name'])
-            }
+                this.statusMessage.setSuccess(this.formdata['name'])
+               
+            }else{
+                 //this.statusMessage.setPristine(this.formdata['name'])
+                 if(!this.validator.fieldIsValid(this.formdata['name']))
+                    this.validate(this.formdata['name'])
+            }*/
         }
-
+       
         this.validate(this.formdata['mac'])
         //this.statusMessage.setPristine(this.formdata['mac'])
         
