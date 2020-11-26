@@ -1,11 +1,9 @@
-
 const nodeMailer = require('nodemailer');
 
-
-function sendMail(to,subj,body){
+function sendMail(from,to,subj,body){
     
     //solo per debug
-    //to="alessandro.ruggieri@roma1.infn.it"
+    to="alessandro.ruggieri@roma1.infn.it"
     
     let to_arr=to.split(";")
     //console.log("Mailer is sending to:",to_arr)
@@ -16,7 +14,7 @@ function sendMail(to,subj,body){
     });
 
     let mailOptions={
-        from:'supporto@roma1.infn.it',
+        from:from,
         to:to_arr,
         subject:subj,
         html:body

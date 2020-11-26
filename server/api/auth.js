@@ -4,7 +4,7 @@ async function forceLDAPSync(req,res,next)
 {
     var axios =require("axios");
 
-    const env="test"
+    const env="prod"
     const url=`http://ds.roma1.infn.it/cgi-bin/fix_roles.cgi?infnUUID=${req.userid}&env=${env}`
  
     console.log("Force SYNC");
@@ -36,6 +36,8 @@ function authToken(req,res,next){
   
     //mio
     var testUUID='50699576-15eb-49c6-a645-c07c0de9c402'
+
+    //testUUID='fd4feca3-6520-424f-adfd-f4e482971ead'
 
     //tirel
     //testUUID='7bbb4ccb-853d-4cdc-8849-a7072f2459bc'

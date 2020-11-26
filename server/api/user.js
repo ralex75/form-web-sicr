@@ -126,7 +126,7 @@ var parseLDAPUserInfo=function (user) {
             
             if(match)
             {
-                console.log(match)
+                //console.log(match)
                 role=match[2]
             }
         })
