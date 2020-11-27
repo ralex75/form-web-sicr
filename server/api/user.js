@@ -69,7 +69,7 @@ var parseLDAPUserInfo=function (user) {
     let regx={"policies":/disciplinareict:approvato\+on=(\S+)/,
               "itsec":/sicurezzainformatica-base:superato\+on=(\S+)/,
               "gracetime":/ict-gracetime:(true|false)/,
-              "ttl":/\+ttl\=(\S+)/}
+              "ttl":/attivo\+ttl\=(\S+)/}
    
     
     //cuser["isAdmin"]=false; //è del centro calcolo

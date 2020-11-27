@@ -378,12 +378,7 @@ class FormValidator {
         
     }
 
-    fieldIsValid(target)
-    {
-       
-        console.log("target:",target.parentElement.className)
-        return target.parentElement.className.indexOf("success")>=0;
-    }
+   
 
     validateAll()
     {
@@ -424,8 +419,8 @@ export class IP extends Abstract{
       
         super(target,args)
         this.statusMessage=new StatusMessage();
-        this.fieldIsValid={"mac":"","name":"","port":""}
-        this.curvalues={"mac":"","name":""}
+        this.needValidation={}
+       
     }
 
     isMacAddressVM(value)
@@ -505,7 +500,7 @@ export class IP extends Abstract{
     submit(ev){
        
         ev.preventDefault();
-        debugger;
+      
         let formIsValid=this.validator.validateAll();
         
         if(!formIsValid) return;
@@ -859,6 +854,7 @@ export class IP extends Abstract{
           
         }
 
+        this.needValidation[target.name]=err!="";
 
         if(err)
         {
@@ -944,25 +940,32 @@ export class IP extends Abstract{
         }
         else
         {
-           
-            if(!this.validator.fieldIsValid(this.formdata['name']))
-                    this.validate(this.formdata['name'])
-
-            /*if (this.eHost && this.eHost.config==value)
+          
+            if (this.eHost && this.eHost.config==value)
             {
                 
                 this.formdata['name'].value=this.eHost["name"]
                 this.formdata['domain'].value=this.eHost["domain"]
                 this.statusMessage.setSuccess(this.formdata['name'])
-               
-            }else{
-                 //this.statusMessage.setPristine(this.formdata['name'])
-                 if(!this.validator.fieldIsValid(this.formdata['name']))
-                    this.validate(this.formdata['name'])
-            }*/
+            }
         }
        
-        this.validate(this.formdata['mac'])
+
+
+        if(this.formdata['mac'].value && this.isMacNotCompliantWithSelectedConfig())
+        {
+            this.statusMessage.setError(this.formdata['mac'],this.locale().errors["invalid-mac-config"])
+        }
+        else{
+
+            var need=this.needValidation['mac'] 
+            if(need==null || need)
+                this.validate(this.formdata['mac'])
+            else this.statusMessage.setSuccess(this.formdata['mac'])
+
+        }
+       
+       
         //this.statusMessage.setPristine(this.formdata['mac'])
         
         //aggiorna la lista delle porte libere in base alla configurazione scelta
