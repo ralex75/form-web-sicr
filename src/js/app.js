@@ -65,8 +65,8 @@ const User={
             _isValid = _user.isAuthorized && _user.policies;
             if(_isValid && !_user.itsec)
             {
-                let days= moment().diff(moment(_user.firstReqDate),'days')
-                _isValid=days<ITSEC_GRACE_TIME;
+                //se non ha fatto il corso ed è nel periodo di grazia è valido altrimenti NO.
+                _isValid=_user.gracetime; 
             }
         }
 

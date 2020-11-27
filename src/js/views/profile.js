@@ -173,7 +173,7 @@ export class Profile extends Abstract{
 
         var loc=this.locale()[Application.language.current];
 
-       
+      
         if(!user.isAuthorized)
         {
             content=`${loc['unauthorized_feedback']}`
@@ -255,10 +255,25 @@ export class Profile extends Abstract{
     }
 
     parseDate(date){
-        if(!date) return
+       
+       
+
+        if(!date) return "---"
         if(date=="nolimit") return (Application.language.current=="ITA" ? "nessuna" :"never")
-        let date_format={'ITA':"DD/MM/YYYY",'ENG':"MM/DD/YYYY"}
-        return moment(date).format(date_format[Application.language.current])
+        
+        if(date.indexOf("-")>-1)
+        {
+            date=date.split("-").reverse().join("")
+        }
+        let date_format={'ITA':"DD-MM-YYYY",'ENG':"MM-DD-YYYY"}
+        try
+        {
+            return moment(date).format(date_format[Application.language.current])
+        }
+        catch{
+            return "---"
+        }
+      
     }
     
     getContent(){
