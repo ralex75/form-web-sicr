@@ -31,7 +31,7 @@ const getUserLDAP=async function(query){
 
                         filter:query,
                         scope: 'sub',
-                        attributes: ['infnUUID','uid','schacpersonaluniqueid', 'givenname', 'sn', 'mail', 'schacUserStatus','mailAlternateAddress','isMemberOf','telephoneNumber'],
+                        attributes: ['infnUUID','uid','schacpersonaluniqueid', 'givenname', 'sn', 'mail', 'schacUserStatus','eduPersonEntitlement','mailAlternateAddress','isMemberOf','telephoneNumber'],
                         paged:{pageSize:500},
                         timeLimit: 2000, // 10 minutes in seconds or limit of your choice
 
@@ -49,18 +49,20 @@ const getUserLDAP=async function(query){
                             try{
                                 
                                 var ejson=entry.object;
-                                
-                                //console.log(ejson)
-
+                               
                                 var usr={};
                                 var schac=ejson.schacpersonaluniqueid;
+                                var edu=ejson.eduPersonEntitlement;
                                 schac= Array.isArray(schac) ? schac[schac.length-1] : schac;
                                
                                 usr.uid=ejson.uid || '--------';
                                 usr.uuid=ejson.infnUUID;
                                 usr.cf=ejson.infnUUID;
                                 usr.isMemberOf=ejson.isMemberOf;
-
+                                usr.itsec     = edu.indexOf("urn:mace.infn.it:sicurezza-informatica-base") >= 0
+                                usr.policies  = edu.indexOf("urn:mace:infn.it:disciplinare-it") >= 0
+                                usr.gracetime = edu.indexOf("urn:mace:infn.it:ict-gracetime:true") >= 0
+                              
                                 if(schac)
                                 {
                                  schac = schac.split(":");

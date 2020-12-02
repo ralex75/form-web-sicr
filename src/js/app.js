@@ -38,11 +38,13 @@ const EmitEvent=(name,args=null,bubbles=true)=>{
 
 export const language={
     set current(lang){
+       
         if(window.Application.lang!=lang)
         {
             let url=location.href;
+                   
+            url=url.match("/en/") ? url.replace("sicr/en/","sicr/") : url.replace("sicr/","sicr/en/")
        
-            url=url.match("/en/") ? url.replace("wwwsicr/en/","wwwsicr/") : url.replace("wwwsicr/","wwwsicr/en/")
             history.pushState("","",url);
 
             window.Application.lang=lang;

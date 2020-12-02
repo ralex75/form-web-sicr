@@ -55,8 +55,8 @@ var parseLDAPUserInfo=function (user) {
 
 
     let isMemberOf=user.isMemberOf;
-    let policies=""         //disciplinare approvato
-    let itsec=""            //corso sicurezza informatica
+    let policies=false;         //disciplinare approvato
+    let itsec=false;            //corso sicurezza informatica
     let graceTime=false;    //grace time
     let role="";            //ruolo
     let isAdmin=false       //se appartiene al cc
@@ -66,8 +66,14 @@ var parseLDAPUserInfo=function (user) {
     cuser["role"]=""*/
 
     //REGEXP
-    let regx={"policies":/disciplinareict:approvato\+on=(\S+)/,
+    /*let regx={"policies":/disciplinareict:approvato\+on=(\S+)/,
               "itsec":/sicurezzainformatica-base:superato\+on=(\S+)/,
+              "gracetime":/ict-gracetime:(true|false)/,
+              "ttl":/attivo\+ttl\=(\S+)/}*/
+    
+    //ENNESIMO CAMBIAMENTO DI QUELLI DI AAI....
+    let regx={"policies":/disciplinare-it/,
+              "itsec":/sicurezza-informatica-base/,
               "gracetime":/ict-gracetime:(true|false)/,
               "ttl":/attivo\+ttl\=(\S+)/}
    
@@ -80,9 +86,9 @@ var parseLDAPUserInfo=function (user) {
             console.log("userStatus:",userStatus)
 
             let ttl=regx.ttl.exec(userStatus[i]);
-            policies=regx.policies.exec(userStatus[i]) || policies
-            itsec=regx.itsec.exec(userStatus[i]) || itsec
-            graceTime=regx.gracetime.exec(userStatus[i]) || graceTime
+            //policies=regx.policies.exec(userStatus[i]) || policies
+            //itsec=regx.itsec.exec(userStatus[i]) || itsec
+            //graceTime=regx.gracetime.exec(userStatus[i]) || graceTime
 
             if(ttl && minTime!="nolimit"){
                 curTime=ttl[1];
@@ -101,9 +107,9 @@ var parseLDAPUserInfo=function (user) {
         }
 
         
-        cuser["policies"]=policies[1] || "";
-        cuser["itsec"]=itsec[1] || "";
-        cuser["gracetime"]=graceTime;
+        /*cuser["policies"]=policies;
+        cuser["itsec"]=itsec;
+        cuser["gracetime"]=graceTime;*/
         cuser["expiration"]=minTime;
        
     }

@@ -32,20 +32,34 @@ const generateNavigationMenu=(lang)=>{
                     "printers":"stampanti",
                     "webmail":"webmail",
                     "Tier2":"Tier2",
+                    "Useful Info":"Info Utiliti",
                     "Support":"Supporto",
                     "PC Technician & Device":"Tecnico PC & Device",
                     "Account e Network":"Account e Rete",
                     "VPN":"VPN",
                     "Staff":"Staff"
                     }
+
+    let subLoc={"Software Licenses":"Licenze Software",
+                 "Printers Configuration":"Configurazione Stampanti",
+                 "Email Configuration":"Configurazione client Email",
+                 "Webmail Configuration (outside the Dep.)":"Configurazione Webmail(dall' esterno del Dip.)",
+                 "Antivirus":"Antivirus",
+                 "Certificates 509":"Certificati 509",
+                 "Certificates 509 Server":"Certificati 509 Server",
+                 "VPN Configuration":"Configurazione VPN",
+                 "Password change": "Cambio password"
+                }
             
     //let baseUrl=`http://www.roma1.infn.it/conference/wwwsicr/`
     let baseUrl=`/sicr`
     let items=Object.values(loc);
+    let suItems=Object.values(subLoc);
     if(lang=="ENG")
     {
         baseUrl+="/en"
         items=Object.keys(loc);
+        suItems=Object.keys(subLoc);
     }
     
 
@@ -54,15 +68,31 @@ const generateNavigationMenu=(lang)=>{
 			<li class="liprimo"><a href="${baseUrl}/${items[1].toLowerCase()}.html">${items[1]}</a></li>
 			<li class="liprimo"><a href="${baseUrl}/${items[2].toLowerCase()}.html">${items[2]}</a></li>
 			<li class="liprimo"><a href="${baseUrl}/${items[3].toLowerCase()}.html">${items[3]}</a></li>
-			<li class="liprimo"><a href="${baseUrl}/${items[4].toLowerCase()}.html">${items[4]}</a></li>
-			<li class="liprimo_sel"><a href="#">${items[5]} &nabla;</a>
+            <li class="liprimo"><a href="${baseUrl}/${items[4].toLowerCase()}.html">${items[4]}</a></li>
+            
+            <li class="liprimo"><a href="tier2.html">${items[5]} &nabla;</a>
 				<ul class="ulsecondo">
-					<li class="lisecondo" id="primavoce_sub" name="primavoce_sub"><a href="https://osticket.roma1.infn.it/support/index.php" target="_blank">${items[6]}</a></li>
-					<li class="lisecondo"><a href="#">${items[7]}</a></li>
+					<li class="lisecondo"><a href="https://web.infn.it/CCR/index.php/it/sito-utenti-del-calcolo/licenze" target="_blank">${suItems[0]}</a></li>
+					<li class="lisecondo"><a href="https://www.roma1.infn.it/sicr-old/stampanti-pubbliche/stampanti-pubbliche.htm" target="_blank">${suItems[1]}</a></li>
+					<li class="lisecondo"><a href="https://www.roma1.infn.it/sicr-old/come-si-fa-per/configurare-MUA.htm"  target="_blank">${suItems[2]}</a></li>
+					<li class="lisecondo"><a href="https://www.roma1.infn.it/sicr-old/come-si-fa-per/mail-da-esterno-dipartimento/mail-da-esterno-dipartimento.htm"  target="_blank">${suItems[3]}</a></li>
+					<li class="lisecondo"><a href="https://www.roma1.infn.it/sicr-old/area-download/common/trend-micro-antivirus/trend-micro-antivirus.htm"  target="_blank">${suItems[4]}</a></li>
+					<li class="lisecondo"><a href="https://www.roma1.infn.it/sicr-old/moduli-di-richiesta/certificato-x-509/certificato-x-509.htm"  target="_blank">${suItems[5]}</a></li>
+					<li class="lisecondo"><a href="https://www.roma1.infn.it/sicr-old/moduli-di-richiesta/certificato-x-509/server-x-509.htm"  target="_blank">${suItems[6]}</a></li>
+					<li class="lisecondo"><a href="${baseUrl}/${items[9].toLowerCase()}.html">${suItems[7]}</a></li>
+					<li class="lisecondo"><a href="https://www.roma1.infn.it/cgi-bin/sicr/cambio-password/cambio-password.cgi"  target="_blank">${suItems[8]}</a></li>
 				</ul>
 			</li>
-			<li class="liprimo"><a href="${baseUrl}/${items[8].toLowerCase()}.html">${items[8]}</a></li>
+
+
+			<li class="liprimo_sel"><a href="#">${items[6]} &nabla;</a>
+				<ul class="ulsecondo">
+					<li class="lisecondo" id="primavoce_sub" name="primavoce_sub"><a href="https://osticket.roma1.infn.it/support/index.php" target="_blank">${items[7]}</a></li>
+					<li class="lisecondo"><a href="#">${items[8]}</a></li>
+				</ul>
+			</li>
 			<li class="liprimo"><a href="${baseUrl}/${items[9].toLowerCase()}.html">${items[9]}</a></li>
+			<li class="liprimo"><a href="${baseUrl}/${items[10].toLowerCase()}.html">${items[10]}</a></li>
         </ul>`
     
         document.querySelector("#menu").innerHTML=html;

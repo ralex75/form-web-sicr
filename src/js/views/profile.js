@@ -169,6 +169,7 @@ export class Profile extends Abstract{
       
         var user=this.currentUser();
 
+        console.log(user);
         var content="";
 
         var loc=this.locale()[Application.language.current];
@@ -225,6 +226,17 @@ export class Profile extends Abstract{
         <p>${this.emptyOrDefault(user.phone)}</p>
         </div>
         <div class="prof_lab">
+        <p>${loc["exp"]}</p>
+        </div>
+        <div class="prof_val">
+        <p>${this.parseDate(user.expiration)}</p>
+        </div>`
+       
+       
+        return html;
+
+        /*
+        <div class="prof_lab">
         <p>${loc["disciplinare"]}</p>
         </div>
         <div class="prof_val">
@@ -235,16 +247,7 @@ export class Profile extends Abstract{
         </div>
         <div class="prof_val">
         <p>${this.emptyOrDefault(this.parseDate(user.itsec))}</p>
-        </div>
-        <div class="prof_lab">
-        <p>${loc["exp"]}</p>
-        </div>
-        <div class="prof_val">
-        <p>${this.parseDate(user.expiration)}</p>
-        </div>`
-       
-       
-        return html;
+        </div>*/
 
     }
 
