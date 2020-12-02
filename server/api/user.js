@@ -55,16 +55,10 @@ var parseLDAPUserInfo=function (user) {
 
 
     let isMemberOf=user.isMemberOf;
-    let policies=false;         //disciplinare approvato
-    let itsec=false;            //corso sicurezza informatica
-    let graceTime=false;    //grace time
     let role="";            //ruolo
     let isAdmin=false       //se appartiene al cc
     let minTime="01/01/1900"
  
-    /*cuser["isAuthorized"]=false;
-    cuser["role"]=""*/
-
     //REGEXP
     /*let regx={"policies":/disciplinareict:approvato\+on=(\S+)/,
               "itsec":/sicurezzainformatica-base:superato\+on=(\S+)/,
@@ -77,19 +71,14 @@ var parseLDAPUserInfo=function (user) {
               "gracetime":/ict-gracetime:(true|false)/,
               "ttl":/attivo\+ttl\=(\S+)/}
    
-    
-    //cuser["isAdmin"]=false; //è del centro calcolo
-    
+   
     if(userStatus && Array.isArray(userStatus)){
         for(let i=0;i<userStatus.length;i++){
 
             console.log("userStatus:",userStatus)
 
             let ttl=regx.ttl.exec(userStatus[i]);
-            //policies=regx.policies.exec(userStatus[i]) || policies
-            //itsec=regx.itsec.exec(userStatus[i]) || itsec
-            //graceTime=regx.gracetime.exec(userStatus[i]) || graceTime
-
+           
             if(ttl && minTime!="nolimit"){
                 curTime=ttl[1];
                 if(curTime=="nolimit")
@@ -107,9 +96,7 @@ var parseLDAPUserInfo=function (user) {
         }
 
         
-        /*cuser["policies"]=policies;
-        cuser["itsec"]=itsec;
-        cuser["gracetime"]=graceTime;*/
+       
         cuser["expiration"]=minTime;
        
     }
@@ -125,10 +112,10 @@ var parseLDAPUserInfo=function (user) {
         _isMemberOf.forEach(e=>{
             //console.log(e);
             
-            if(e.indexOf("i:infn:roma1:servizio_calcolo_e_reti")>-1)
+            /*if(e.indexOf("i:infn:roma1:servizio_calcolo_e_reti")>-1)
             {
                 isAdmin=true;
-            }
+            }*/
 
             let match=e.match(/i:infn:roma1::([d|o|a|v])\:(\w+)/);
             
