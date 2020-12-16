@@ -72,7 +72,7 @@ export class Support extends Abstract {
    mounted()
     {
       
-       let mailto=`<a href="mailto:support@roma1.infn.it?subject=${this.locale().subject}">${this.locale().body_supp}</a>`
+       let mailto=`<a href="mailto:supporto@roma1.infn.it?subject=${this.locale().subject}">${this.locale().body_supp}</a>`
        let url=`<a href="https://osticket.roma1.infn.it/support/index.php" target="_blank">${this.locale().body_pcsupp}</a>`
        let info=this.locale().body_pcsupp_info
      

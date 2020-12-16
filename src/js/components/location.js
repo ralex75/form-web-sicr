@@ -293,8 +293,8 @@ export class Location{
         var ports=[];
         data.forEach(d=>{
             var p={
-                   "value":d.port_alias,
-                   "txt": `${d.port_alias} ${d.vlanid=='113' ? ' - DHCP':''}`
+                   "value":d.port_code,
+                   "txt": `${d.port_code} ${d.vlanid=='113' ? ' - DHCP':''}`
                     }
          
             ports.push(p);
