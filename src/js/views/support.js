@@ -57,7 +57,7 @@ const template=`
 `
 
 
-//import {Application} from '../app.js'
+
 import Abstract from './abstract'
 import { Application } from '../app'
 
