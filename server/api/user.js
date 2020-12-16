@@ -75,7 +75,7 @@ var parseLDAPUserInfo=function (user) {
     if(userStatus && Array.isArray(userStatus)){
         for(let i=0;i<userStatus.length;i++){
 
-            console.log("userStatus:",userStatus)
+            //console.log("userStatus:",userStatus)
 
             let ttl=regx.ttl.exec(userStatus[i]);
            
@@ -135,7 +135,7 @@ var parseLDAPUserInfo=function (user) {
     delete cuser["isMemberOf"]
     delete cuser["schacUserStatus"];
 
-    console.log("cuser:",cuser)
+    //console.log("cuser:",cuser)
     
     return cuser;
 

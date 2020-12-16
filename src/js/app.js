@@ -5,6 +5,7 @@ import {Account} from './views/account'
 import {HostList} from './views/hostlist'
 //import {IP} from './views/ip'
 import {WIFI} from './views/wifi'
+import {Support} from './views/support'
 import {Requests} from './views/requests'
 import {IP} from './views/ip-new'
 import {RequestDetails} from './views/reqdetails'
@@ -116,6 +117,7 @@ const router=async ()=>{
         {"path":"#ip","name":'ip',view:IP},
         {"path":"#hosts/edit","name":'hosts',view:IP, 'hide':true,'requireArgs':true},
         {"path":"#wifi","name":'wifi',view:WIFI},
+        {"path":"#support","name":'other',view:Support},
         {"path":"#logout","name":'logout',view:Logout},
         {"path":"#result","name":'result',view:Result,'hide':true}
 

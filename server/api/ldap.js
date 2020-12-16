@@ -59,7 +59,7 @@ const getUserLDAP=async function(query){
                                 usr.uuid=ejson.infnUUID;
                                 usr.cf=ejson.infnUUID;
                                 usr.isMemberOf=ejson.isMemberOf;
-                                usr.itsec     = edu.indexOf("urn:mace.infn.it:sicurezza-informatica-base") >= 0
+                                usr.itsec     = edu.indexOf("urn:mace:infn.it:sicurezza-informatica-base") >= 0
                                 usr.policies  = edu.indexOf("urn:mace:infn.it:disciplinare-it") >= 0
                                 usr.gracetime = edu.indexOf("urn:mace:infn.it:ict-gracetime:true") >= 0
                               
