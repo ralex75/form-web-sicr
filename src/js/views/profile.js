@@ -72,7 +72,7 @@ export class Profile extends Abstract{
         var itSecCourseUrl= "https://elearning.infn.it"
         var signupUrl="https://signup.app.infn.it"
         var href={'disci':`<a class="prof-feedback" target="_blank" href="${disciplinareUrl}">${disciplinareUrl}</a>`,
-                  'supp':`<a class="prof-feedback" href="mailto:support@roma1.infn.it">support@roma1.infn.it</a>`,
+                  'supp':`<a class="prof-feedback" href="mailto:supporto@roma1.infn.it">supporto@roma1.infn.it</a>`,
                   'itsec':`<a class="prof-feedback" target="_blank" href="${itSecCourseUrl}">${itSecCourseUrl}</a>`,
                   'signup':`<a class="prof-feedback" target="_blank" href="${signupUrl}">${signupUrl}</a>`}
         
