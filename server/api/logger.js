@@ -29,7 +29,7 @@ router.post("/",(req,res)=>{
     let txt=`
     
         <pre>
-        Nominativo      : ${user.name} ${user.surname}:
+        Nominativo      : ${user.name} ${user.surname}
         uid             : ${user.uid}
         infnUUID        : ${user.uuid}
         -----------------------------------------------------------------
