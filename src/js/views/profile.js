@@ -111,7 +111,7 @@ export class Profile extends Abstract{
                         }*/
 
 
-        var unauth_ita=`La sua identità non risulta ancora verificata.
+        var unauth_ita=`La sua identità non è stata ancora verificata.
                         <br>
                         Se lei è già presente, come “Attivo” e “Autorizzato”, nel database del 
                         Dipartimento di Fisica la preghiamo di controllare che l’email 
