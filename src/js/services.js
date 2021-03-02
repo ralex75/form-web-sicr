@@ -35,6 +35,11 @@ const user={
         localStorage.setItem("uinfo",JSON.stringify(data))
     },
 
+    notifyStatus:function(user)
+    {
+        return axios.post(`/status`,{"user":user})
+    },
+
     current:async function(uid){
         
         //user.unset();

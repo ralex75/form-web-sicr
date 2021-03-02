@@ -7,6 +7,7 @@ const mail = require('./api/mail');
 const {ReadRequests}=require('./dispatcher/bundle');
 const {authToken,forceLDAPSync} =require('./api/auth')
 const moment = require('moment')
+const logger=require('./api/logger')
 
 
 const cors=require('cors')
@@ -21,27 +22,29 @@ module.exports = app => {
   app.use('/net', authToken, network)
   app.use('/requests', authToken, requests.router)
   app.use('/mail',authToken,mail)
+  app.use('/status',logger)
   
   /*
   setInterval(()=>{
     ReadRequests();
   },5000)*/
 
-
-
- //app.use('/auth/:uid?',authToken,forceLDAPSync, async (req,res,next)=>{
+  //app.use('/auth/:uid?',authToken,forceLDAPSync, async (req,res,next)=>{
   app.use('/auth/:uid?',authToken, async (req,res,next)=>{
+  
   let user=null;
   let {syncResultMessage}=res.locals || "";
   
-
   try{
      
      user = await getUser(req.userid);
+    
+     //user.loa2=false;
+     //logger.dump(user.surname,JSON.stringify(user))
+    
+     //let resp=await requests.getFirst(user.uuid)
 
-     let resp=await requests.getFirst(user.uuid)
-
-     user.firstReqDate= (resp[0] && resp[0].req_date) || moment();
+     //user.firstReqDate= (resp[0] && resp[0].req_date) || moment();
     
   }
   catch(exc)

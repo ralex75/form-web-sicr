@@ -62,10 +62,10 @@ const User={
 
         let _isValid=false;
         let _user=User.current();
-    
+        console.log(_user)
         if(_user)
         {
-            _isValid = _user.isAuthorized && _user.policies;
+            _isValid = _user.isAuthorized && _user.loa2 && _user.policies;
             if(_isValid && !_user.itsec)
             {
                 //se non ha fatto il corso ed è nel periodo di grazia è valido altrimenti NO.
@@ -145,7 +145,6 @@ const router=async ()=>{
     latestView.name=matchPath.path.substr(1);
     latestView.args=history.state;
 
-   
    
 
     if(!User.isValid())

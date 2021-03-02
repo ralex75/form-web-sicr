@@ -1,0 +1,8 @@
+==================================
+01/03/2021 12:03
+=====================================
+{"uid":"addesaf","uuid":"84a3f432-68a7-4bd3-a0a6-db4e1fb03367","cf":"DDSFNC83P52L872W","loa2":true,"itsec":false,"policies":false,"gracetime":false,"email":"Francesca.Addesa@roma1.infn.it","name":"Francesca Maria","surname":"Addesa","source":"LDAP","mailAlternates":["addesaf@roma1.infn.it"],"expiration":"31-12-2021","isAuthorized":true,"role":"altro"}
+==================================
+01/03/2021 12:03
+=====================================
+{"uid":"addesaf","uuid":"84a3f432-68a7-4bd3-a0a6-db4e1fb03367","cf":"DDSFNC83P52L872W","loa2":true,"itsec":false,"policies":false,"gracetime":false,"email":"Francesca.Addesa@roma1.infn.it","name":"Francesca Maria","surname":"Addesa","source":"LDAP","mailAlternates":["addesaf@roma1.infn.it"],"expiration":"31-12-2021","isAuthorized":true,"role":"altro"}

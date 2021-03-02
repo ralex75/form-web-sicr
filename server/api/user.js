@@ -16,8 +16,6 @@ const getUser=async function(uid)
             //LDAP
             var users_ldap=await getUserLDAP(queryLDAP);
 
-           
-            //console.log("users:",users_ldap);
             user=parseLDAPUserInfo(users_ldap[0])
            
             delete user['isMemberOf']
@@ -130,13 +128,11 @@ var parseLDAPUserInfo=function (user) {
 
     cuser["isAuthorized"]=role!=""
     cuser["role"]=role;
-    cuser["isAdmin"]=isAdmin;
+    //cuser["isAdmin"]=isAdmin;
 
     delete cuser["isMemberOf"]
     delete cuser["schacUserStatus"];
-
-    //console.log("cuser:",cuser)
-    
+        
     return cuser;
 
 }
