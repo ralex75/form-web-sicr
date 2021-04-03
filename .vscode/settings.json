@@ -1,4 +1,6 @@
 {
-    "editor.fontSize": 14,
-    "editor.fontLigatures": null
+    "editor.fontSize": 12,
+    "editor.fontLigatures": null,
+    "terminal.integrated.fontSize": 12,
+    "window.zoomLevel": 1
 }

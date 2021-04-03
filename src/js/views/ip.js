@@ -306,7 +306,7 @@ class FormValidator {
             
         var err="";
         
-        if(!value.match(/^([a-zA-Z0-9-]*)$/))
+        if(!value.match(/^[A-Za-z0-9][A-Za-z0-9-]*[[:alnum:]]$/))
         {
             err='invalid';
         }
