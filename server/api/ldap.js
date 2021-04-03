@@ -68,8 +68,8 @@ const getUserLDAP=async function(query){
                                 
                                 if(schac)
                                 {
-                                 schac = schac.split(":");
-                                 usr.cf=schac[schac.length-1];
+                                    schac = schac.split(":");
+                                    usr.cf=schac[schac.length-1];
                                 }
 
                                 usr.email=ejson.mail;
