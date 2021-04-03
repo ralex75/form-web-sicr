@@ -16,7 +16,7 @@ const template=`
             </div>
             <div class="form_sez acc-submit">
             <div class="form_pied cbutton">
-                <input type="submit" class="button_m" value="[SEND]" />
+                <input type="submit" id="submit" class="button_m" value="[SEND]" />
             </div>	
         </section>
     </div>		
@@ -163,6 +163,7 @@ export class Account extends Abstract{
         this.$email=this.target.querySelector(".account-email")
         this.$err=this.target.querySelector(".error");
         this.$form=this.target.querySelector("form");
+        this.$submit=this.target.querySelector("#submit")
         this.timeoutID=null;
 
         this.$form.querySelector(".acc-submit").classList.add("show");
@@ -171,12 +172,12 @@ export class Account extends Abstract{
             
             ev.preventDefault();
             
-            ev.submitter.disabled=true;
+            this.$submit.disabled=true;
             this.disableEnableSelect(true);
             let invalid= this.emailAddressIsInValid();
 
          
-            ev.submitter.disabled=false;
+            this.$submit.disabled=false;
             this.disableEnableSelect(false);
            
             if(invalid) return;
