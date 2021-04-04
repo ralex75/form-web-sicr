@@ -306,7 +306,7 @@ class FormValidator {
             
         var err="";
         
-        if(value.length<4)
+        if(value.length<2)
         {
             err='invalid'
         }
