@@ -311,7 +311,8 @@ class FormValidator {
             err='invalid'
         }
 
-        if(!err && !value.match(/^([a-zA-Z]+)([0-9]*)(-[a-zA-Z0-9]+)*$/))
+        //match A3A, A-3-A, 4B4
+        if(!err && !value.match(/^([a-zA-Z0-9]+)(-[a-zA-Z0-9]+)*$/))
         {
             err='invalid';
         }
