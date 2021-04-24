@@ -132,10 +132,12 @@ export class Location{
 
         return {"ITA":{"template":{"build":"Edificio","floor":"Piano","room":"Stanza","port":"Porta",
                                "header-port":"LOCAZIONE PRESA"},
-                               "options":{"build":"Seleziona Edificio","floor":"Seleziona Piano","room":"Seleziona Stanza","port":"Seleziona Porta"}},
+                               "options":{"build":"Seleziona Edificio","floor":"Seleziona Piano","room":"Seleziona Stanza",
+                                          "port":"Seleziona Porta","port-broken":"GUASTA"}},
                 "ENG":{"template":{"build":"Building","floor":"Floor","room":"Room","port":"Port",
                                 "header-port":"PORT LOCATION"},
-                                "options":{"build":"Select Building","floor":"Select Floor","room":"Select Room","port":"Select Port"}},
+                                "options":{"build":"Select Building","floor":"Select Floor","room":"Select Room","port":"Select Port",
+                                "port-broken":"BROKEN"}},
             }
     }
 
@@ -148,9 +150,9 @@ export class Location{
        
         var options=this.$ports.options;
         var disabledCount=0;
-
+        
        for(var i=0;i<options.length;i++){
-           
+       
            var disabled=this.isDisabled(options[i]);
            options[i].disabled=disabled;
            if(disabled)
@@ -176,6 +178,7 @@ export class Location{
     isDisabled(o){
 
        
+        
         if(!o || !o.value) return;
 
         var port=this.ports.filter(p=>{return (p.port_code==o.value || p.port_alias==o.value)})
@@ -183,43 +186,47 @@ export class Location{
         port=port && port[0];
 
         var _unlinkedPort=port.vlanid==null;
+     
+        //se porta guasta non può essere selezionata
+        if(port.broken) return true;
 
+        //se porta scollegata può essere selezionata
         if(_unlinkedPort) return false;
         
         if(!this.args) return;
-        var {config,mac}=this.args;
         
-        var _invalid=false;
+        let {config,mac}=this.args;
         
-            //nodo e porta devono essere DHCP altrimenti controlla se è occupata (port.busy)
-            if(!(port.vlanid==113 && config=='DHCP'))
-            {
-                
-                //non ci sono nodi sulla porta
-                _invalid=!(port.auth_hosts.length==0);
+        let _invalid=false;
+
+        //nodo e porta devono essere DHCP altrimenti controlla se è occupata (port.busy)
+        if(!(port.vlanid==113 && config=='DHCP'))
+        {
             
-                //se c'è 1 nodo deve essere quello corrente (quello di EDIT) altrimenti invalida
-                if(_invalid && mac)
+            //non ci sono nodi sulla porta
+            _invalid=!(port.auth_hosts.length==0);
+        
+            //se c'è 1 nodo deve essere quello corrente (quello di EDIT) altrimenti invalida
+            if(_invalid && mac)
+            {
+                _invalid=!(port.auth_hosts.length==1 && port.auth_hosts[0]==mac.toLowerCase());
+            }
+            
+            //check se config virtuale e porta non è DHCP
+            if(_invalid)
+            {
+                if(config== 'STATICVM')
                 {
-                    _invalid=!(port.auth_hosts.length==1 && port.auth_hosts[0]==mac.toLowerCase());
-                }
-                
-                //check se config virtuale e porta non è DHCP
-                if(_invalid)
-                {
-                    if(config== 'STATICVM')
+                    if(port.vlanid!=113)
                     {
-                        if(port.vlanid!=113)
-                        {
-                            _invalid=false;
-                        }
+                        _invalid=false;
                     }
                 }
-            
-
             }
-
         
+
+        }
+
     
         
 
@@ -291,11 +298,13 @@ export class Location{
 
     mapPortData(data){
         var ports=[];
+        var loc=this.locale()[Application.language.current]
+        var pbroken=loc.options["port-broken"]
         data.forEach(d=>{
             var p={
-                   "value":d.port_code,
-                   "txt": `${d.port_code} ${d.vlanid=='113' ? ' - DHCP':''}`
-                    }
+                    "value": d.port_code,
+                    "txt": `${d.port_code} ${d.vlanid=='113' ? ' - DHCP':''} ${d.broken ? pbroken : ''}`
+                   }
          
             ports.push(p);
         })

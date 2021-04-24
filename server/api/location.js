@@ -66,9 +66,9 @@ router.get("/rooms/:locid/ports",(req,res)=>{
     nqdb.any('select *, ARRAY(select host_mac from vw_network_status_ex_3 where pp_port_code=x.port_code and admin_is_authorized and host_is_vm is false) as "auth_hosts" \
             from ( \
             select loc_id,pp_port_code as \"port_code\", pp_port_alias \
-            as \"port_alias\", max(sw_port_vlanid) as \"vlanid\" \
+            as \"port_alias\",pp_port_broken as "broken", max(sw_port_vlanid) as \"vlanid\" \
             from vw_network_status_ex_3 where loc_id=$1 \
-            group by loc_id,pp_port_code,pp_port_alias \
+            group by loc_id,pp_port_code,pp_port_alias,pp_port_broken \
             )x order by port_code',[req.params.locid]) .then(function(data) {
                 // success;
                 res.status(200).json(data);
