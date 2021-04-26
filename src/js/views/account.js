@@ -97,9 +97,19 @@ const template=`
             color:#DDD;
            border:none;
         } 
-</style>
-
-`
+        #restore-desc div.info-box{
+            width: 400px;
+            height: 20px;
+            padding:20px 10px;
+            border: 1px solid #000;
+            display:flex;
+            align-items:center;
+            font-weight: normal;
+            border-radius: 10px;
+            background-color: #ddd;
+            border-color: #aaa; 
+        }
+</style>`
 
 
 
@@ -164,6 +174,7 @@ export class Account extends Abstract{
         this.$err=this.target.querySelector(".error");
         this.$form=this.target.querySelector("form");
         this.$submit=this.target.querySelector("#submit")
+        this.restoreOption="";
         this.timeoutID=null;
 
         this.$form.querySelector(".acc-submit").classList.add("show");
@@ -210,15 +221,34 @@ export class Account extends Abstract{
 
         $content.addEventListener("change",ev=>{
             
-            this.emailAddressIsInValid()
+         
+            if(ev.target.name=="restore"){
+                
+                let value=ev.target.value;
+                this.restoreOption=value;
+                let rloc=this.locale().restore_data_account;
+                let item=rloc.find(r=>r.value==value)
+                let html=(item && item.desc) ? `<div class='info-box'>${item.desc}</div>` : ""
+                document.querySelector("#restore-desc").innerHTML=html
+                
+            }
+            else
+                this.emailAddressIsInValid()
        
         });
+
+        let rloc=loc.restore_data_account;
+        
+        $content.innerHTML+=this.buildSimpleSelect("restore",rloc)
 
     }
 
     submitForm(){
+        
+        let data={"email":this.$email.innerText,
+                  "restore":this.restoreOption}
 
-        this.SaveRequest(Application.requestTypes.ACCOUNT,{"email":this.$email.innerText});
+        this.SaveRequest(Application.requestTypes.ACCOUNT,data);
     }
 
     disableSumbmit(disabled)
@@ -399,15 +429,17 @@ export class Account extends Abstract{
     locale(){
         const loc= {
 
-                "ITA":{"header":"Account di posta","user_has_account":"<p>Attenzione, hai già un account di posta 'roma1.infn.it'</p>",
+                "ITA":{
+                        "header":"Account di posta","user_has_account":"<p>Attenzione, hai già un account di posta 'roma1.infn.it'</p>",
                         "email_feedback":"Il tuo indirizzo di posta sarà:",
                         "email_exists_pending":"Controllo che l'account di mail scelto non sia già in uso...",
                         "email_exists":"L'indirizzo di posta risulta già registrato.",
                         "email_invalid":"Indirizzo di posta scelto non valido.<br>Selezionare le parti del nome e le parti del cognome che vorresti vedere nel tuo account di posta.",
                         "send":"Invia","send":"Invia","name":"Nome","surname":"Cognome",
                         "request_already_sent":"Attenzione, hai già inviato la richiesta di creazione account in data:",
-                       
-                        "legend":{"name":"Seleziona le parti del nome","surname":"Seleziona le parti del cognome"},
+                        "restore_data_account":[{"text":"nessuno","value":"","desc":""},{"text":"parziale","value":"partial","desc":"blabla"},{"text":"totale","value":"full","desc":"nnnn"}],
+                        "restore":"Seleziona il tipo di recupero",
+                        "legend":{"name":"Seleziona le parti del nome","surname":"Seleziona le parti del cognome","restore":"Recupero dei tuoi dati"},
                         "dialog":{
                                 "confirm":"Richiesta di conferma",
                                 "msg":"Si desidera procedere con l'invio della richiesta"
@@ -415,20 +447,22 @@ export class Account extends Abstract{
                      },
                       
                 "ENG":{"header":"Email Account","user_has_account":"Warning, you already have an Email account 'roma1.infn.it'",
-                "email_feedback":"Your email address will be:",
-                "email_exists_pending":"Checking the selected email address is not yet in use...",
-                "email_exists":"Email adress is already registered.",
-                "email_invalid":"Selected mail address is invalid.<br>Select the parts of your name and surname you want to show in your email account",
-                "to":"To","send":"Submit","name":"Name","surname":"Surname",
-                "request_already_sent":"Warning, you have already sent an account request creation on date:",
-                "legend":{"name":"Select the parts of your name","surname":"Select the parts of your surname"},
-                "dialog":{
-                        "confirm":"Confirm request",
-                        "msg":"Do you want submit the request"
-                    }
-                },
+                        "email_feedback":"Your email address will be:",
+                        "email_exists_pending":"Checking the selected email address is not yet in use...",
+                        "email_exists":"Email adress is already registered.",
+                        "email_invalid":"Selected mail address is invalid.<br>Select the parts of your name and surname you want to show in your email account",
+                        "to":"To","send":"Submit","name":"Name","surname":"Surname",
+                        "request_already_sent":"Warning, you have already sent an account request creation on date:",
+                        "restore_data_account":[{"text":"nessuno","value":"","desc":""},{"text":"partial","value":"partial","desc":"blabla"},{"text":"full","value":"full","desc":"nnnn"}],
+                        "legend":{"name":"Select the parts of your name","surname":"Select the parts of your surname","restore":"Restore your data"},
+                        "dialog":{
+                                "confirm":"Confirm request",
+                                "msg":"Do you want submit the request"
+                            }
+                        },
                
                }
+
         return loc[Application.language.current];
     }
 
@@ -440,7 +474,7 @@ export class Account extends Abstract{
         {
             html+=`<div>
                     <label>${loc[labelText]} ${i+1}</label><br>
-                    <select>
+                    <select name="${labelText}">
                     <option>----</option>
                     <option selected>${items[i]}</option>
                     </select>
@@ -450,6 +484,29 @@ export class Account extends Abstract{
 
         return `<fieldset class="account-fieldset"><legend>${loc.legend[labelText]}</legend>
                 <div class="inline">${html}</div></fieldset>`
+    }
+
+    buildSimpleSelect(labelText,items)
+    {
+       
+        const loc=this.locale();
+        let options=""
+        for(var k in items)
+        {
+                options+=`<option value="${items[k].value}">${items[k].text}</option>`
+        }
+
+        let html=`
+                <label>${loc[labelText]}</label><br>
+                <select name="${labelText}">${options}</select>
+               `
+
+        return `<fieldset class="account-fieldset">
+                <legend>${loc.legend[labelText]}</legend>
+                <div style="margin:3px 0">${html}</div>
+                <span id="restore-desc">
+                </span>
+                </fieldset>`
     }
 
 
@@ -462,14 +519,13 @@ export class Account extends Abstract{
 
         let email=user.roma1Email();
       
-        this.userHasAccount=email!="";
+        this.userHasAccount=false; //email!="";
         
         if(this.userHasAccount)
         {
             tpl=tpl.replace("[EMAIL_FEEDBACK]",loc['user_has_account'])
         }
         else{
-        
         
             this.names=user.name.split(" ");
             this.surnames=user.surname.split(" ");
