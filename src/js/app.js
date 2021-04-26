@@ -248,6 +248,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
             return email[0] || ""
         }
         
+
         window.Application.user=user;
         
         navigateTo("profile");
