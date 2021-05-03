@@ -62,7 +62,7 @@ const User={
 
         let _isValid=false;
         let _user=User.current();
-        console.log(_user)
+        
         if(_user)
         {
             _isValid = _user.isAuthorized && _user.loa2 && _user.policies;
@@ -184,6 +184,7 @@ const selectedLanguage=(lang)=>{
 
 const handleError=(err)=>{
     
+    debugger;
     User.remove()
 
     navigateTo('result',{'status':false})
@@ -194,14 +195,14 @@ const handleError=(err)=>{
 
 window.addEventListener('error', function(event) { 
     
-    handleError(event);
+    //handleError(event);
 })
 
 window.addEventListener('unhandledrejection', function(event) {
     
     //console.error('Unhandled rejection (promise: ', event.promise, ', reason: ', event.reason, ').');
     //document.querySelector("#col_sin_menu").innerHTML="";
-    handleError(event);
+    //handleError(event);
 });
 
 
@@ -231,7 +232,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
       
         //messaggio di attesa da mostrare utente mentre l'API sincronizza
         subscription=UI.showUserWaiting(lang)
-
+        
         //legge informazioni utente
         //potrebbe impiegare un pò se devi sincronizzare
         var {user,syncResultMessage}=await services.user.read();
@@ -243,11 +244,17 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         }
 
         user.roma1Email=function(){
-            
+            if(this.mailAlternates.length>0)
+            {
             let email=this.mailAlternates.concat(this.email).filter(m=>m.match(/(\w+\.\w+)@roma1.infn.it/))
             return email[0] || ""
+            }
+            return "";
         }
         
+        user.loa2=true;
+        user.itsec=true;
+        user.policies=true;
 
         window.Application.user=user;
         

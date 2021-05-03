@@ -37,9 +37,12 @@ var parseLDAPUserInfo=function (user) {
     
     var cuser=Object.assign({}, user);
 
+    console.log(cuser)
     
     //var minTime="01/01/1900"
     var userStatus=user.schacUserStatus;
+    
+    console.log("mail alternates:",cuser.mailAlternates)
     
     //rimuove dall'alternateMailAddress se esiste mail principale per evitare duplicati
     cuser.mailAlternates=cuser.mailAlternates.map(e=>e.toLowerCase())

@@ -221,25 +221,45 @@ export class Account extends Abstract{
 
         $content.addEventListener("change",ev=>{
             
-         
-            if(ev.target.name=="restore"){
-                
-                let value=ev.target.value;
-                this.restoreOption=value;
-                let rloc=this.locale().restore_data_account;
-                let item=rloc.find(r=>r.value==value)
-                let html=(item && item.desc) ? `<div class='info-box'>${item.desc}</div>` : ""
-                document.querySelector("#restore-desc").innerHTML=html
-                
+            ev.preventDefault();
+
+            if(ev.target.name=="restore") {
+                this.restoreOption=ev.target.value;
+                return;
             }
-            else
-                this.emailAddressIsInValid()
+           
+            this.emailAddressIsInValid()
        
         });
 
         let rloc=loc.restore_data_account;
+        resp=await services.user.restoreAccountOptions()
+      
+        let restOpts=(resp && resp.data && resp.data.options) || [];
         
-        $content.innerHTML+=this.buildSimpleSelect("restore",rloc)
+        let restoreOptions={}
+        
+       
+        //mail, afs
+        restOpts.forEach((k)=>{
+            //rimuove quelli non disponibili dalle options della select restore
+            //if(restOpts[k] && rloc[k])
+            //{
+              
+                restoreOptions[k]=rloc[k]
+                
+            //}
+        })
+
+        //se ci sono i 2 singoli backup (mail & afs) allora proponiamo anche il backup completo
+        if(Object.keys(restoreOptions)==2){
+            restoreOptions["mail-afs"]=rloc["mail-afs"];
+        }
+
+        //se rimane solo quella mail+afs non costruisce la select restore
+        if(Object.keys(restoreOptions)==0) return;
+
+        $content.innerHTML+=this.buildSimpleSelect("restore",restoreOptions)
 
     }
 
@@ -323,8 +343,7 @@ export class Account extends Abstract{
 
     replaceBadChars(words){
        
-        let text=words;
-
+      
         const sets = [
             {to: 'a', from: '[ÀÁÂÃÄÅÆĀĂĄẠẢẤẦẨẪẬẮẰẲẴẶἀ]'},
             {to: 'c', from: '[ÇĆĈČ]'},
@@ -437,7 +456,10 @@ export class Account extends Abstract{
                         "email_invalid":"Indirizzo di posta scelto non valido.<br>Selezionare le parti del nome e le parti del cognome che vorresti vedere nel tuo account di posta.",
                         "send":"Invia","send":"Invia","name":"Nome","surname":"Cognome",
                         "request_already_sent":"Attenzione, hai già inviato la richiesta di creazione account in data:",
-                        "restore_data_account":[{"text":"nessuno","value":"","desc":""},{"text":"parziale","value":"partial","desc":"blabla"},{"text":"totale","value":"full","desc":"nnnn"}],
+                        "restore_data_account":{"mail":"contenuto della casella di posta elettronica",
+                                                "afs":"files AFS",
+                                                "mail-afs":"contenuto della casella di posta elettronica e files AFS"},
+                        "restore_user_descr":"Se lo desideri, hai la possibilità di chiedere il recupero dei tuoi dati",
                         "restore":"Seleziona il tipo di recupero",
                         "legend":{"name":"Seleziona le parti del nome","surname":"Seleziona le parti del cognome","restore":"Recupero dei tuoi dati"},
                         "dialog":{
@@ -453,7 +475,11 @@ export class Account extends Abstract{
                         "email_invalid":"Selected mail address is invalid.<br>Select the parts of your name and surname you want to show in your email account",
                         "to":"To","send":"Submit","name":"Name","surname":"Surname",
                         "request_already_sent":"Warning, you have already sent an account request creation on date:",
-                        "restore_data_account":[{"text":"nessuno","value":"","desc":""},{"text":"partial","value":"partial","desc":"blabla"},{"text":"full","value":"full","desc":"nnnn"}],
+                        "restore_data_account":{"mail":"e-mailbox content",
+                                                "afs":"AFS files",
+                                                "mail-afs":"e-mailbox content and AFS files"},
+                        "restore_user_descr":"Hai la possibilità di chiedere il recupero dei tuoi dati",
+                        "restore":"Select restore type",
                         "legend":{"name":"Select the parts of your name","surname":"Select the parts of your surname","restore":"Restore your data"},
                         "dialog":{
                                 "confirm":"Confirm request",
@@ -483,17 +509,23 @@ export class Account extends Abstract{
         }
 
         return `<fieldset class="account-fieldset"><legend>${loc.legend[labelText]}</legend>
-                <div class="inline">${html}</div></fieldset>`
+              
+                <div class="inline">${html}</div>
+                </fieldset>`
     }
 
     buildSimpleSelect(labelText,items)
     {
        
+
+
         const loc=this.locale();
-        let options=""
+        let options=`<option value=""> ----- </option>`
+        
+       
         for(var k in items)
         {
-                options+=`<option value="${items[k].value}">${items[k].text}</option>`
+                options+=`<option value="${k}">${items[k]}</option>`
         }
 
         let html=`
@@ -502,10 +534,9 @@ export class Account extends Abstract{
                `
 
         return `<fieldset class="account-fieldset">
-                <legend>${loc.legend[labelText]}</legend>
+                
+                <legend>${loc.restore_user_descr}</legend>
                 <div style="margin:3px 0">${html}</div>
-                <span id="restore-desc">
-                </span>
                 </fieldset>`
     }
 
