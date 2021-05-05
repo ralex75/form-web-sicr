@@ -5,6 +5,7 @@ const generateLanguageSelection=(lang)=>
 {
     
     let cl=document.querySelector("#ling")
+    if(!cl) return;
     cl.style.display="block"
   
     if(lang=="ITA")
@@ -27,6 +28,9 @@ const generateLanguageSelection=(lang)=>
 
 const generateNavigationMenu=(lang)=>{
 
+    let menu=document.querySelector("#menu")
+    if(!menu) return
+    
     let loc={"home":"home",
                     "wifi":"wifi",
                     "printers":"stampanti",
@@ -95,7 +99,7 @@ const generateNavigationMenu=(lang)=>{
 			<li class="liprimo"><a href="${baseUrl}/${items[10].toLowerCase()}.html">${items[10]}</a></li>
         </ul>`
     
-        document.querySelector("#menu").innerHTML=html;
+    menu.innerHTML=html;
 
 }
 
