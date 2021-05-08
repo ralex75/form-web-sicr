@@ -29,11 +29,11 @@ const template=`
 						<div class="form_col">
 						  <label for="name">[NAME]</label><br>
                           <input type="text" name="name" data-attr="formdata" autocomplete="off" placeholder="[NAME]">
-                          <small>Error Message</small>
+                          <small></small>
 						</div>
 						<div class="form_col">
 						  <label for="domain">[DOMAIN]</label><br>
-						  <select name="domain" data-attr="formdata">
+						  <select id="domain" name="domain" data-attr="formdata">
 							<option selected  value="roma1.infn.it">roma1.infn.it</option>
 							<option value="phys.uniroma1.it">phys.uniroma1.it</option>
 						  </select>
@@ -86,13 +86,6 @@ const template=`
         transition: 0.5s ease-in-out;
     } 
     
-    
-    .form_col.success input,.form_col.success select{
-        border-color:#2ecc71
-    }
-    .form_col.error input,.form_col.error select{
-        border-color:#e74c3c
-    }
 
     .form_col input.success{
         border:1px solid green;
@@ -104,6 +97,18 @@ const template=`
         border-left:5px solid red
     }
 
+    .form_col select.success{
+        border:1px solid green;
+    }
+
+    .form_col select.error{
+        border:1px solid red;
+    }
+
+    small{
+        color:#EE0000;
+    }
+
 
     .form_col.pending small{
         visibility:visible;
@@ -111,16 +116,25 @@ const template=`
     }
 
     .form_col input,.form_col select{
-        border:2px solid #F0F0F0;
+        border:1px solid #F0F0F0;
         display:block;
         padding:10px;
         width:70%;
         border-radius:0;
+        outline:none;
     }
+    /*.form_col input[type="text"]:focus{
+        outline:1px solid #CCC
+    }
+    
 
-   #ipform input[type=text]{
-        outline: none;
-   }
+    .form_col input[type="text"].error:focus{
+        outline:none;
+    }
+   
+    .form_col input[type="text"].success:focus{
+        outline:1px solid green;
+    }*/
 
    form.opacity{
        opacity:0.2;
@@ -165,10 +179,10 @@ import { Application } from '../app'
 
 export class IP extends Abstract{
   
-    duplicMacTimeoutID=null;
+    timeOutID={"mac":null,"name":null}
+    currentMacValue=""
     validationSet=new Set()
     
-
     constructor(target,args){
         super(target,args)
     }
@@ -228,24 +242,44 @@ export class IP extends Abstract{
 
     validateField=async (input)=>{
    
-        let {name,value}=input;
-        
-        const checkDuplicate=(input)=>{
-            let {name,value}=input
-            
-            this.validationSet.add(name,value)
-            showWaiting(input)
-            return new Promise((res,rej)=>{
-                this.duplicMacTimeoutID=setTimeout(()=>{
-                    console.log("validating:",value)
-                    res(value=='11:22:33:44:55:66')
-                },500)
+      
+
+        //check mac address duplicato
+        const checkDuplicatedMacAddress=(input)=>{
+            let value=input.value
+            this.validationSet.add('mac')
+            this.showWaiting(input)
+            return new Promise(resolve=>{
+                this.timeOutID['mac']=setTimeout(()=>{
+                        services.net.exists(value).then(resp=>{
+                            console.log(resp.data)
+                            resolve(resp.data)
+                        }).catch(err=>{
+                            resolve(true)
+                        })
+                    },500)
             })
         }
     
-        const showWaiting =(input)=>{
-            input.nextElementSibling.innerText="Sto controllando..."
+        //check hostname duplicato
+        const checkDuplicateHostName=(input)=>{
+            let value=input.value
+            let hostName=`${value}.${this.hostDomain.value}`
+            this.validationSet.add('name')
+            this.showWaiting(input)
+            return new Promise(resolve=>{
+              
+                this.timeOutID['name']=setTimeout(()=>{
+                    services.net.lookup(hostName).then(resp=>{
+                        resolve(resp.data.length>0);
+                    }).catch(err=>{
+                        resolve(false)
+                    })
+                },500)
+            });
         }
+
+    
 
         const isMacAddressVM=(value)=>{
             
@@ -275,29 +309,44 @@ export class IP extends Abstract{
         const validationRules={
     
             "mac":async (value)=> {
-                clearTimeout(this.duplicMacTimeoutID)
+                clearTimeout(this.timeOutID["mac"])
                 if(!value) return {'message':"value cannot be empty"}
                 if(!value.match(/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/)) return {'message':'value is invalid'}
-                if(isMacAddressVM(value)) return {'message':'value is for VM'}
-                let isDuplicated=await checkDuplicate(input)
-                if (isDuplicated) return {'message':'value is duplicated'}
+                if(isMacAddressVM(value) && this.hostConfig.value!='STATICVM') return {'message':'value is for VM'}
+                if(!isMacAddressVM(value) && this.hostConfig.value=='STATICVM') return {'message':'value is not for VM'}
+                if(this.currentMacValue!=value)
+                {   
+                    this.currentMacValue=value;  
+                    this.isDuplicated=await checkDuplicatedMacAddress(input)
+                }
+                if (this.isDuplicated) return {'message':'value is duplicated'}
                 return null;
             },
             
-            "surname":async (value)=>{
+            "name":async (value)=>{
+                clearTimeout(this.timeOutID["name"])
                 if(!value) return {'message':"value cannot be empty"}
                 if(value.length<4) return {'message':'value is too short (minlength=4)'}
-                if(!value.match(/^[a-zA-Z]+$/)) return {'message':'value is invalid'}
+                if(!value.match(/^([a-zA-Z0-9]+)(-[a-zA-Z0-9]+)*$/)) return {'message':'value is invalid'}
+                this.isNameDuplicated=await checkDuplicateHostName(input)
+                if (this.isNameDuplicated) return {'message':'value is duplicated'}
                 return null;
             }
             
         }
+
+        let {name,value}=input;
        
         let res=await validationRules[name](value)
         
-        res==null ? this.validationSet.delete(name):this.validationSet.add(name,value);
+        res==null ? this.validationSet.delete(name):this.validationSet.add(name);
     
         return res
+    }
+
+
+    showWaiting =(input)=>{
+        input.nextElementSibling.innerText="Sto controllando..."
     }
     
     showResult=(input,res)=>{
@@ -306,13 +355,17 @@ export class IP extends Abstract{
         input.nextElementSibling.innerText=msg
     }
     
+    cleanResult=(input)=>{
+        input.className = "";
+        input.nextElementSibling.innerText=""
+    }
 
     async mounted(){
 
         const valueReplace=(input)=>{
-            
-            
+             
             const macReplace=(value)=>{
+
                 value=value.replace("-",":").toUpperCase()
                 if(value[value.length-1]==":" && value[value.length-2]==value[value.length-1])
                 {
@@ -328,53 +381,141 @@ export class IP extends Abstract{
             let {name,value}=input
 
             return replace[name] ? replace[name](value):value;
+
         }
 
+        const validateFormSelect=async function(ev){
+            
+            
+            let {tagName,name,value}=ev.target
+            
+            if(tagName!='SELECT') return;
+            
+            if(["build","floor","room"].some(e=>e.indexOf(name)>-1))
+            {
+                return this.cleanResult(this.hostPort)
+            }
+
+            const actions={
+                "config":async ()=>{
+                        this.hostName.disabled = value=='DHCP'
+                        this.hostDomain.disabled=this.hostName.disabled
+                        
+                        if(this.hostName.disabled)
+                        {
+                            this.hostName.value=''
+                            this.validationSet.delete('name')
+                            this.cleanResult(this.hostName)
+                        }
+                    
+                        if(this.hostMac.value!="")
+                        {
+                            let res=await this.validateField(this.hostMac)
+                            this.showResult(this.hostMac,res)
+                        }
+                },
+                "domain":async ()=>{
+                    if(!this.hostName.value) return;
+                    let res=await this.validateField(this.hostName)
+                    this.showResult(this.hostName,res)
+                },
+                "port":()=>{
+                    this.validationSet.delete('port')
+                    this.showResult(this.hostPort,null)
+                }
+
+            }
+
+            return await actions[name]()
+          
+        }
        
 
-        const validateFormField=async function(ev){
+        const validateFormInput=async function(ev){
             
             let target=ev.target
             let tag=ev.target.tagName
             
             if(tag=='INPUT')
             {
+
                 target.value=valueReplace(target)
                 let res=await this.validateField(target)
                 this.showResult(target,res)
             }
+           
         }
 
-        const validateFormField2=async function(ev){
+        const validateForm=async function(ev){
+           
+            ev.preventDefault()
             
-            let target=document.querySelector("input[name='mac']")
-            let tag=target.tagName
+            let elements=Array.from(document.querySelectorAll("input[type='text']"))
             
-            if(tag=='INPUT')
+            for(let e of elements)
             {
-                target.value=valueReplace(target)
-                let res=await this.validateField(target)
-                this.showResult(target,res)
+                if(!e.value && !e.disabled)
+                {
+                    this.validationSet.add(e.name)
+                    this.showResult(e,{'message':"value cannot be empty"})
+                }
+            }
+
+            if(!this.hostPort.value){
+                this.validationSet.add("port")
+                this.showResult(this.hostPort,{'message':"port is not selected"})
+            }
+
+            let formIsValid=this.validationSet.size==0
+            
+
+            console.log("Form is valid:",formIsValid)
+            
+            
+           
+        }
+
+        const locationFreePorts=function(ev){
+            console.log(ev)
+            let freePorts=ev.detail
+            this.hostPort.disabled=!freePorts
+            if(!freePorts)
+            {
+                this.validationSet.add("port")
+                this.showResult(this.hostPort,{"message":"No free ports"})
             }
         }
 
+       
+       
         this.form=document.querySelector("form")
-
-        this.form.addEventListener("keyup",validateFormField.bind(this))
-
-        document.querySelector("#config").addEventListener('change',validateFormField2.bind(this))
 
         //istanzia oggetto location
         this.location=new Location(this.form.querySelector("#location"),{"config":'DHCP',"mac":""});
 
-        let scope=this;
+        this.hostConfig=document.querySelector("#config");
+
+        this.hostMac=document.querySelector("input[name='mac']");
+        this.hostName=document.querySelector("input[name='name']");
+        this.hostDomain=document.querySelector("#domain");
+        this.hostPort=document.querySelector("#port");
+
+        this.hostName.disabled=this.hostConfig.value=='DHCP';
+        this.hostDomain.disabled=this.hostName.disabled;
+
         let loc=this.locale();
         
-        //this.form.addEventListener("submit",ev=>scope.submit(ev))
+
+        this.form.addEventListener("keyup",validateFormInput.bind(this))
+
+        this.form.addEventListener("change",validateFormSelect.bind(this))
+
+        this.form.addEventListener("submit",validateForm.bind(this))
 
         //questo messaggio viene inviato dal componente Location per informare del numero di porte
         //libere nella configurazione selezionata (DHCP,Static o Static VM)
-        this.form.addEventListener("freePorts",ev=>scope.handleLocationFreePorts(ev.detail))
+        this.form.addEventListener("freePorts",locationFreePorts.bind(this))
+       
 
        
     }

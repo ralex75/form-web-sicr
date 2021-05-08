@@ -21,7 +21,7 @@ const template=
         <div class="form_col">
             <label for="port">[PORT]</label><br>
             <select id="port" class="ports" name="port" data-attr='formdata'></select>
-            <small>Error Message</small>
+            <small></small>
         </div>
     </div> 
    
