@@ -109,6 +109,15 @@ const template=`
             background-color: #ddd;
             border-color: #aaa; 
         }
+
+        #alert-account {
+            background-color:#ffd700;
+            color:#000
+            text-align:center;
+            padding:10px;
+            margin:6px 0;
+            font-weight:bold;
+        }
 </style>`
 
 
@@ -199,12 +208,22 @@ export class Account extends Abstract{
             var msg=loc.dialog.msg;
             var accountMsg= Application.language.current=="ITA" ? "Account di posta richiesto" : "Requested email account"
            
-           
+            let restOpts=document.querySelector("#restoreOptions");
+            let restoreType= Application.language.current == 'ITA' ? "Nessuno" : "None";
+            
+            
+            if(restOpts)
+            {
+                restoreType=restOpts.selectedOptions[0].text
+            }
+
+            restoreType= `<br>${loc['restore']}: <br><b>${restoreType}</b>`
+
+
             //chiama il metodo per mostrare la Dialog
             this.showDialog(confirm,
-                            `${accountMsg}:<p><b>${this.$email.innerText}</b></p><br>${msg}?`
+                            `${accountMsg}:<br><b>${this.$email.innerText}</b><br>${restoreType}<br><br>${msg}?`
                             ,()=>{
-                                //console.log(this.$email.innerText)
                                 this.submitForm();
                             },()=>{});
 
@@ -224,6 +243,8 @@ export class Account extends Abstract{
             ev.preventDefault();
 
             if(ev.target.name=="restore") {
+             
+              
                 this.restoreOption=ev.target.value;
                 return;
             }
@@ -242,13 +263,9 @@ export class Account extends Abstract{
        
         //mail, afs
         restOpts.forEach((k)=>{
-            //rimuove quelli non disponibili dalle options della select restore
-            //if(restOpts[k] && rloc[k])
-            //{
-              
-                restoreOptions[k]=rloc[k]
-                
-            //}
+            
+            restoreOptions[k]=rloc[k]
+           
         })
 
         //se ci sono i 2 singoli backup (mail & afs) allora proponiamo anche il backup completo
@@ -264,7 +281,7 @@ export class Account extends Abstract{
     }
 
     submitForm(){
-        
+        debugger;
         let data={"email":this.$email.innerText,
                   "restore":this.restoreOption}
 
@@ -407,26 +424,12 @@ export class Account extends Abstract{
        
         var dlg=new Dialog(dlgplaceholder);
         
-        /*
-        if(yesCallback)
-           dlg.showYesButton(yesCallback)
-        
-        if(noCallback)
-           dlg.showNoButton(noCallback)
-           */
-
-        //dlg.setTitle("Verifica indirizz");
-        
-        //dlg.showHide();
-
-        //quando si apre la dialog inizia la ricerca per indirizzo duplicato
-        //var html=this.$email.innerText+"<p><small class=\"check\">verifica indirizzo email scelto in corso...</small></p>"
-        //dlg.setMessage(html)
         let butt=document.querySelector('input[type="submit"]')
         
         butt.disabled=true;
         this.emailAddressExists().then(exists=>{
           
+           
             if(!exists)
             {
                 dlg.setTitle(title);
@@ -459,8 +462,8 @@ export class Account extends Abstract{
                         "restore_data_account":{"mail":"contenuto della casella di posta elettronica",
                                                 "afs":"files AFS",
                                                 "mail-afs":"contenuto della casella di posta elettronica e files AFS"},
-                        "restore_user_descr":"Se lo desideri, hai la possibilità di chiedere il recupero dei tuoi dati",
-                        "restore":"Seleziona il tipo di recupero",
+                        "restore_user_descr":"Hai la possibilità di chiedere il recupero dei tuoi dati.",
+                        "restore":"Recupero richiesto",
                         "legend":{"name":"Seleziona le parti del nome","surname":"Seleziona le parti del cognome","restore":"Recupero dei tuoi dati"},
                         "dialog":{
                                 "confirm":"Richiesta di conferma",
@@ -478,8 +481,8 @@ export class Account extends Abstract{
                         "restore_data_account":{"mail":"e-mailbox content",
                                                 "afs":"AFS files",
                                                 "mail-afs":"e-mailbox content and AFS files"},
-                        "restore_user_descr":"Hai la possibilità di chiedere il recupero dei tuoi dati",
-                        "restore":"Select restore type",
+                        "restore_user_descr":"You can request your data to be recovered.",
+                        "restore":"Ask for recovery",
                         "legend":{"name":"Select the parts of your name","surname":"Select the parts of your surname","restore":"Restore your data"},
                         "dialog":{
                                 "confirm":"Confirm request",
@@ -509,7 +512,6 @@ export class Account extends Abstract{
         }
 
         return `<fieldset class="account-fieldset"><legend>${loc.legend[labelText]}</legend>
-              
                 <div class="inline">${html}</div>
                 </fieldset>`
     }
@@ -520,8 +522,8 @@ export class Account extends Abstract{
 
 
         const loc=this.locale();
-        let options=`<option value=""> ----- </option>`
-        
+        let descr = Application.language.current=="ITA" ? "Nessuno" : "None"
+        let options=`<option value=""> ${descr} </option>`
        
         for(var k in items)
         {
@@ -530,14 +532,15 @@ export class Account extends Abstract{
 
         let html=`
                 <label>${loc[labelText]}</label><br>
-                <select name="${labelText}">${options}</select>
+                <select id="restoreOptions" name="${labelText}">${options}</select>
                `
 
-        return `<fieldset class="account-fieldset">
+        //return `<fieldset class="account-fieldset">
+        return `<hr>
                 
-                <legend>${loc.restore_user_descr}</legend>
-                <div style="margin:3px 0">${html}</div>
-                </fieldset>`
+                <div id="alert-account">${loc.restore_user_descr}</div>
+                <div style="margin:3px 0">${html}</div>`
+                //</fieldset>`
     }
 
 
