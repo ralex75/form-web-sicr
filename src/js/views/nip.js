@@ -92,6 +92,12 @@ const template=`
         border-left:5px solid green
     }
 
+    .form_col input.pendings{
+        border:1px solid orange;
+        border-left:5px solid orange;
+    }
+    
+
     .form_col input.error{
         border:1px solid red;
         border-left:5px solid red
@@ -99,10 +105,12 @@ const template=`
 
     .form_col select.success{
         border:1px solid green;
+        border-left:5px solid green;
     }
 
     .form_col select.error{
         border:1px solid red;
+        border-left:5px solid red;
     }
 
     small{
@@ -110,31 +118,16 @@ const template=`
     }
 
 
-    .form_col.pending small{
-        visibility:visible;
-        color:#AAAA00;
-    }
 
     .form_col input,.form_col select{
-        border:1px solid #F0F0F0;
+        border:1px solid #DDD;
         display:block;
         padding:10px;
         width:70%;
         border-radius:0;
         outline:none;
     }
-    /*.form_col input[type="text"]:focus{
-        outline:1px solid #CCC
-    }
     
-
-    .form_col input[type="text"].error:focus{
-        outline:none;
-    }
-   
-    .form_col input[type="text"].success:focus{
-        outline:1px solid green;
-    }*/
 
    form.opacity{
        opacity:0.2;
@@ -182,6 +175,7 @@ export class IP extends Abstract{
     timeOutID={"mac":null,"name":null}
     currentValue={}
     validationSet=new Set()
+    
     
     constructor(target,args){
         super(target,args)
@@ -239,6 +233,8 @@ export class IP extends Abstract{
     {
         return Application.language.current
     }
+
+    
 
     validateField=async (input)=>{
    
@@ -311,29 +307,30 @@ export class IP extends Abstract{
     
             "mac":async (value)=> {
                 clearTimeout(this.timeOutID["mac"])
-                if(!value) return {'message':"value cannot be empty"}
-                if(!value.match(/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/)) return {'message':'value is invalid'}
-                if(isMacAddressVM(value) && this.hostConfig.value!='STATICVM') return {'message':'value is for VM'}
-                if(!isMacAddressVM(value) && this.hostConfig.value=='STATICVM') return {'message':'value is not for VM'}
+                if(!value) return "value cannot be empty"
+                if(!value.match(/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/)) return 'value is invalid'
+                if(isMacAddressVM(value) && this.hostConfig.value!='STATICVM') return 'value is for VM'
+                if(!isMacAddressVM(value) && this.hostConfig.value=='STATICVM') return 'value is not for VM'
                 if(this.currentValue['mac']==value) return null;
                 let isDuplicated=await checkDuplicatedMacAddress(input)
+                
                 if (!isDuplicated) {
-                    this.currentValue['mac']=value;  
+                    this.currentValue['mac']==value
                     return null 
                 }
                 if(this.eHost && this.eHost.mac.toLowerCase()==value.toLowerCase()) return null;
-                return {'message':'value is duplicated'}
+                return 'value is duplicated'
             },
             
             "name":async (value)=>{
                 
                 clearTimeout(this.timeOutID["name"])
-                if(!value) return {'message':"value cannot be empty"}
-                if(value.length<4) return {'message':'value is too short (minlength=4)'}
-                if(!value.match(/^([a-zA-Z0-9]+)(-[a-zA-Z0-9]+)*$/)) return {'message':'value is invalid'}
+                if(!value) return "value cannot be empty"
+                if(value.length<4) return 'value is too short (minlength=4)'
+                if(!value.match(/^([a-zA-Z0-9]+)(-[a-zA-Z0-9]+)*$/)) return 'value is invalid'
                 let name=value;
                 let domain=this.hostDomain.value;
-                if(this.currentValue['name']==name && this.currentValue['domain']==domain) return null
+                if(this.currentValue['name']==name && this.currentValue['domain']==domain) return null;
                
                 let hostName=`${name}.${domain}`
                 let isDuplicated=await checkDuplicateHostName(input,hostName)
@@ -345,11 +342,11 @@ export class IP extends Abstract{
                 }
 
                 if(this.eHost) {
-                    let curHostName=`${this.eHost.name}.${this.eHost.domain}`
+                    let curHostName=this.eHost.fqdn()
                     if(curHostName.toLowerCase()==hostName.toLowerCase()) return null
                 }
                 
-                return {'message':'value is duplicated'}
+                return 'value is duplicated'
                 
             }
             
@@ -358,26 +355,35 @@ export class IP extends Abstract{
         let {name,value}=input;
        
         let res=await validationRules[name](value)
-        
-        res==null ? this.validationSet.delete(name):this.validationSet.add(name);
-    
+       
         return res
     }
 
 
     showWaiting =(input)=>{
+       
+        input.className="pendings"
         input.nextElementSibling.innerText="Sto controllando..."
     }
     
-    showResult=(input,res)=>{
-        let msg = res?.message || ''
+    showResult=(input,msg)=>{
+        let name=input.name;
+        msg ? this.validationSet.add(name) : this.validationSet.delete(name);
         input.className = msg ? 'error' : 'success';
         input.nextElementSibling.innerText=msg
+        
     }
     
     cleanResult=(input)=>{
+        this.validationSet.delete(input.name)
         input.className = "";
         input.nextElementSibling.innerText=""
+        
+    }
+
+    selectedHostName=()=>{
+    
+        return this.hostName.value+"."+this.hostDomain.value
     }
 
     async mounted(){
@@ -404,6 +410,8 @@ export class IP extends Abstract{
 
         }
 
+        
+
         const validateFormSelect=async function(ev){
             
             
@@ -421,31 +429,26 @@ export class IP extends Abstract{
                         this.hostName.disabled = value=='DHCP'
                         this.hostDomain.disabled=this.hostName.disabled
                         
-                        if(this.hostName.disabled)
-                        {
-                            //this.hostName.value=this.eHost?.name || ''
-                            this.validationSet.delete('name')
-                            this.cleanResult(this.hostName)
+                        let mac=this.eHost ? this.eHost.mac : this.hostMac.value
+                        this.location.updateFreePorts({"config":value,"mac":mac})
+                        
+                        for(let e of ['mac','name']){
+                            let el=this.form[e];
+                            this.cleanResult(el)
+                            if(el.disabled) continue;
+                            this.validateField(el).then(res=>{
+                                this.showResult(el,res)
+                            })
                         }
-                        else
-                        {
-                            let res=await this.validateField(this.hostName)
-                            this.showResult(this.hostName,res)
-                        }
-                    
-                        if(this.hostMac.value!="")
-                        {
-                            let res=await this.validateField(this.hostMac)
-                            this.showResult(this.hostMac,res)
-                        }
+
                 },
                 "domain":async ()=>{
-                    if(!this.hostName.value) return;
+                    this.cleanResult(this.hostName)
                     let res=await this.validateField(this.hostName)
                     this.showResult(this.hostName,res)
                 },
                 "port":()=>{
-                    this.validationSet.delete('port')
+                    this.cleanResult(this.hostPort)
                     this.showResult(this.hostPort,null)
                 }
 
@@ -463,7 +466,6 @@ export class IP extends Abstract{
             
             if(tag=='INPUT')
             {
-
                 target.value=valueReplace(target)
                 let res=await this.validateField(target)
                 this.showResult(target,res)
@@ -473,6 +475,7 @@ export class IP extends Abstract{
 
         const validateForm=async function(ev){
            
+            if(ev)
             ev.preventDefault()
             
             let elements=Array.from(document.querySelectorAll("input[type='text']"))
@@ -482,95 +485,90 @@ export class IP extends Abstract{
                 if(!e.value && !e.disabled)
                 {
                     this.validationSet.add(e.name)
-                    this.showResult(e,{'message':"value cannot be empty"})
+                    this.showResult(e,"value cannot be empty")
                 }
             }
-
+           
             if(!this.hostPort.value){
                 this.validationSet.add("port")
-                this.showResult(this.hostPort,{'message':"port is not selected"})
+                this.showResult(this.hostPort,"port is not selected")
             }
 
             let formIsValid=this.validationSet.size==0
             
 
             console.log("Form is valid:",formIsValid)
-            
-            
-           
         }
 
         const locationFreePorts=function(ev){
-            console.log(ev)
+           
             let freePorts=ev.detail
             this.hostPort.disabled=!freePorts
             if(!freePorts)
             {
                 this.validationSet.add("port")
-                this.showResult(this.hostPort,{"message":"No free ports"})
+                this.showResult(this.hostPort,"No free ports")
             }
         }
 
         let loc=this.locale();
 
          //il nodo di edit
-        this.eHost=this.args ? this.args.eHost : null;
-
+        this.eHost=this.args ? Object.assign({},this.args.eHost) : null;
+        
         //form
         this.form=document.querySelector("form")
 
         //istanzia oggetto location
         this.location=new Location(this.form.querySelector("#location"),{"config":'DHCP',"mac":""});
 
-        //se si tratta di modifica di un nodo setta i valori di default
-        if(this.eHost)
-        {
-            
-            
-            let ctrl=document.querySelector("#isUpdate")
-            let name= (this.eHost.name ? `${this.eHost.name}.${this.eHost.domain}` : 'DHCP') + `- ${this.eHost.mac}`;
-          
-            ctrl.innerHTML=`<div class="divisione_title">${loc['form']["host-edit-info"]}:<br><span style="padding:5px">-- ${name} --</span></div>`
-            
-            //imposta i dati del nodo nel form
-            for(let e of Array.from(this.form.elements))
-            {
-                if(!e.name || ['build','floor','room','port'].some(k=>k==e.id)) continue
-                this.form[e.name].value=(this.eHost[e.name] || "")
-                this.currentValue[e.name]=this.form[e.name].value
-            }
-
-            //imposta edificio piano stanza porta
-            let merge=Object.assign({},this.eHost.location,{"config":this.eHost.config,"mac":this.eHost.mac})
-            await this.location.setDefault(merge);
-            
-        }
- 
 
         this.hostConfig=document.querySelector("#config");
-
         this.hostMac=document.querySelector("input[name='mac']");
         this.hostName=document.querySelector("input[name='name']");
         this.hostDomain=document.querySelector("#domain");
         this.hostPort=document.querySelector("#port");
+        this.hostName.disabled = this.hostConfig.value=='DHCP'
+        this.hostDomain.disabled=this.hostName.disabled
 
-        this.hostName.disabled=this.hostConfig.value=='DHCP';
-        this.hostDomain.disabled=this.hostName.disabled;
-
-        
-        
+        //eventi del form
         this.form.addEventListener("keyup",validateFormInput.bind(this))
-
         this.form.addEventListener("change",validateFormSelect.bind(this))
-
         this.form.addEventListener("submit",validateForm.bind(this))
-
         //questo messaggio viene inviato dal componente Location per informare del numero di porte
         //libere nella configurazione selezionata (DHCP,Static o Static VM)
         this.form.addEventListener("freePorts",locationFreePorts.bind(this))
        
+        //se si tratta di modifica di un nodo setta i valori di default
+        if(!this.eHost) return;
+        
+        //metodo ritorno hostname
+        this.eHost.fqdn=function(){ return  this.name ? `${this.name}.${this.domain}` : 'DHCP' }
+    
+        let ctrl=document.querySelector("#isUpdate")
+        let name= `${this.eHost.fqdn()} - ${this.eHost.mac}`;
+        
+        ctrl.innerHTML=`<div class="divisione_title">${loc['form']["host-edit-info"]}:<br><span style="padding:5px">-- ${name} --</span></div>`
+        
+        //imposta i dati del nodo nel form
+        for(let e of Array.from(this.form.elements))
+        {
+            if(!e.name || ['build','floor','room','port'].some(k=>k==e.id)) continue
+            this.form[e.name].value=(this.eHost[e.name] || "")
+            this.currentValue[e.name]=this.form[e.name].value
+        }
 
-       
+        this.hostName.disabled=this.hostConfig.value=='DHCP';
+        this.hostDomain.disabled=this.hostName.disabled;
+
+        //imposta edificio piano stanza porta
+        
+        let merge=Object.assign({},this.eHost.location,{"config":this.eHost.config,"mac":this.eHost.mac})
+        
+        await this.location.setDefault(merge);
+        
+        
+        
     }
 
 
