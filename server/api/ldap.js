@@ -52,8 +52,8 @@ const getUserLDAP=async function(query){
                                
                                 var usr={};
                                 var schac=ejson.schacpersonaluniqueid;
-                                var edu=ejson.eduPersonEntitlement;
-                                let assurance=ejson.eduPersonAssurance;
+                                var edu=ejson.eduPersonEntitlement || false;
+                                let assurance=ejson.eduPersonAssurance || false;
                                 schac= Array.isArray(schac) ? schac[schac.length-1] : schac;
                                
                                 usr.uid=ejson.uid || '--------';
@@ -65,6 +65,7 @@ const getUserLDAP=async function(query){
                                 usr.policies  = edu && edu.indexOf("urn:mace:infn.it:disciplinare-it") >= 0
                                 usr.gracetime = edu && edu.indexOf("urn:mace:infn.it:ict-gracetime:true") >= 0
                               
+                                //console.log(usr)
                                 
                                 if(schac)
                                 {
@@ -78,7 +79,7 @@ const getUserLDAP=async function(query){
                                 usr.source="LDAP";
                                 usr.phone=ejson.telephoneNumber;
                                 usr.schacUserStatus=ejson.schacUserStatus;
-                                usr.mailAlternates=Array.isArray(ejson.mailAlternateAddress) ? ejson.mailAlternateAddress : [ejson.mailAlternateAddress];
+                                usr.mailAlternates=ejson.mailAlternateAddress ? Array.isArray(ejson.mailAlternateAddress) ? ejson.mailAlternateAddress : [ejson.mailAlternateAddress]:[];
                                
                                 usr_list.push(usr);
                             }

@@ -8,6 +8,7 @@ const {ReadRequests}=require('./dispatcher/bundle');
 const {authToken,forceLDAPSync} =require('./api/auth')
 const moment = require('moment')
 const logger=require('./api/logger')
+const restore=require('./api/restore')
 
 
 const cors=require('cors')
@@ -23,6 +24,7 @@ module.exports = app => {
   app.use('/requests', authToken, requests.router)
   app.use('/mail',authToken,mail)
   app.use('/status',logger)
+  app.use('/restore', authToken, restore)
   
   /*
   setInterval(()=>{

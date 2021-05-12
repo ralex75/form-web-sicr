@@ -44,9 +44,15 @@ router.post("/",(req,res)=>{
         
     `
         
-    sendMail('supporto@roma1.infn.it','supporto@roma1.infn.it',	`form-web - user: ${user.name} ${user.surname} - bad status`,txt)
+    sendMail('supporto@roma1.infn.it','supporto@roma1.infn.it',	`form-web - user: ${user.name} ${user.surname} - bad status`,txt).then(res=>{
+        console.log(`${user.name} ${user.surname} missing login requirements`)
+    }).catch(err=>{
+        console.log(err);
+    }).finally(_=>{
+        res.json({"txt":`Notification sent`})
+    })
 
-    res.json({"txt":txt})
+  
 
 })
 

@@ -11,6 +11,7 @@ const user={
        var path="/auth";
 
        return new Promise((resolve,reject)=>{
+           
             axios.get(path).then(res=>resolve(res.data))
                            .catch(err=>reject(err));
        });
@@ -19,6 +20,10 @@ const user={
 
     list:function(search,onlyauth,token){
         return axios.post("/user/list",{"search":search,"onlyauth":onlyauth},{cancelToken:token});
+    },
+
+    restoreAccountOptions:function(){
+        return axios.get("/restore/options");
     },
 
     unset:function(){
@@ -113,7 +118,6 @@ const net={
 
     getHost: function(value) {
         return  axios.get(`/net/hosts/${value}`)
-    
     },
 
     getHostList:function(){
