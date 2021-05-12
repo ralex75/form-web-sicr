@@ -38,8 +38,6 @@ router.get("/options",async (req,res)=>{
 
             if(!userDirDate) throw Error("No backup user dir found.")
 
-            console.log(userDirDate)
-
             let canRestoreData = moment().diff(moment(userDirDate.trim()),'days')< GRACE_TIME
 
             if(!canRestoreData) throw Error("Restore data period exceed.")
@@ -60,7 +58,7 @@ router.get("/options",async (req,res)=>{
             })
 
             //per ora non diamo opzione di restore AFS
-            delete restore["afs"];
+            delete restoreOpts["afs"];
    
     }
     catch(exc)

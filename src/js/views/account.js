@@ -267,12 +267,12 @@ export class Account extends Abstract{
             restoreOptions[k]=rloc[k]
            
         })
-
+       
         //se ci sono i 2 singoli backup (mail & afs) allora proponiamo anche il backup completo
         if(Object.keys(restoreOptions)==2){
             restoreOptions["mail-afs"]=rloc["mail-afs"];
         }
-
+        
         //se rimane solo quella mail+afs non costruisce la select restore
         if(Object.keys(restoreOptions)==0) return;
 
@@ -325,7 +325,6 @@ export class Account extends Abstract{
         if(names.length==0 || surnames.length==0)
         {
             isInvalid=true;
-            console.log("devi selezionare nome e cognome")
             this.$err.innerHTML=loc["email_invalid"];
         }
         return isInvalid;
@@ -553,7 +552,7 @@ export class Account extends Abstract{
 
         let email=user.roma1Email();
       
-        this.userHasAccount=false; //email!="";
+        this.userHasAccount=email!="";
         
         if(this.userHasAccount)
         {

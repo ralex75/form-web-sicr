@@ -37,12 +37,11 @@ var parseLDAPUserInfo=function (user) {
     
     var cuser=Object.assign({}, user);
 
-    console.log(cuser)
+    
     
     //var minTime="01/01/1900"
     var userStatus=user.schacUserStatus;
     
-    console.log("mail alternates:",cuser.mailAlternates)
     
     //rimuove dall'alternateMailAddress se esiste mail principale per evitare duplicati
     cuser.mailAlternates=cuser.mailAlternates.map(e=>e.toLowerCase())
@@ -76,7 +75,7 @@ var parseLDAPUserInfo=function (user) {
     if(userStatus && Array.isArray(userStatus)){
         for(let i=0;i<userStatus.length;i++){
 
-            //console.log("userStatus:",userStatus)
+            
 
             let ttl=regx.ttl.exec(userStatus[i]);
            
@@ -105,13 +104,12 @@ var parseLDAPUserInfo=function (user) {
     
     if(isMemberOf){
 
-       
         //controllo se autorizzato
         _isMemberOf = !Array.isArray(isMemberOf) ? [isMemberOf] : isMemberOf;
         
-
+        //let match=_isMemberOf.filter(e=>e.match(/^i:infn:roma1::([d|o|a|v])\:(\w+)/))
+        
         _isMemberOf.forEach(e=>{
-            //console.log(e);
             
             /*if(e.indexOf("i:infn:roma1:servizio_calcolo_e_reti")>-1)
             {
@@ -120,11 +118,8 @@ var parseLDAPUserInfo=function (user) {
 
             let match=e.match(/i:infn:roma1::([d|o|a|v])\:(\w+)/);
             
-            if(match)
-            {
-                //console.log(match)
-                role=match[2]
-            }
+            if(match){ role=match[2] }
+
         })
 
     }
