@@ -21,7 +21,7 @@ const template=
         <div class="form_col">
             <label for="port">[PORT]</label><br>
             <select id="port" class="ports" name="port" data-attr='formdata'></select>
-            <small>Error Message</small>
+            <small></small>
         </div>
     </div> 
    
@@ -102,6 +102,7 @@ export class Location{
     //aggiorna lista porte libere selezionabili
     updateFreePorts(args){
 
+        
         this.args=args;
            
         console.log("UpdateFreePorts")
@@ -114,6 +115,8 @@ export class Location{
     //Imposta il default con i parametri di Modifica di un nodo
     async setDefault({build,floor,id,port,config,mac})
     {
+        this.args={"config":config,"mac":mac}
+
         this.$builds.value=build;
         await this.getFloors();
         this.$floors.value=floor;
@@ -122,8 +125,6 @@ export class Location{
         await this.getPorts();
         this.$ports.value=port;
       
-        this.config={"config":config,"mac":mac}
-        //this.$ports.dispatchEvent(new Event('change'))
     }
 
    
@@ -144,7 +145,7 @@ export class Location{
     enableDisablePorts()
     {
        
-      
+       
         if(!this.ports) return;
 
        
@@ -194,6 +195,7 @@ export class Location{
         if(_unlinkedPort) return false;
         
         if(!this.args) return;
+        
         
         let {config,mac}=this.args;
         

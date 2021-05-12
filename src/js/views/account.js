@@ -97,9 +97,28 @@ const template=`
             color:#DDD;
            border:none;
         } 
-</style>
+        #restore-desc div.info-box{
+            width: 400px;
+            height: 20px;
+            padding:20px 10px;
+            border: 1px solid #000;
+            display:flex;
+            align-items:center;
+            font-weight: normal;
+            border-radius: 10px;
+            background-color: #ddd;
+            border-color: #aaa; 
+        }
 
-`
+        #alert-account {
+            background-color:#ffd700;
+            color:#000
+            text-align:center;
+            padding:10px;
+            margin:6px 0;
+            font-weight:bold;
+        }
+</style>`
 
 
 
@@ -164,6 +183,7 @@ export class Account extends Abstract{
         this.$err=this.target.querySelector(".error");
         this.$form=this.target.querySelector("form");
         this.$submit=this.target.querySelector("#submit")
+        this.restoreOption="";
         this.timeoutID=null;
 
         this.$form.querySelector(".acc-submit").classList.add("show");
@@ -188,12 +208,22 @@ export class Account extends Abstract{
             var msg=loc.dialog.msg;
             var accountMsg= Application.language.current=="ITA" ? "Account di posta richiesto" : "Requested email account"
            
-           
+            let restOpts=document.querySelector("#restoreOptions");
+            let restoreType= Application.language.current == 'ITA' ? "Nessuno" : "None";
+            
+            
+            if(restOpts)
+            {
+                restoreType=restOpts.selectedOptions[0].text
+            }
+
+            restoreType= `<br>${loc['restore']}: <br><b>${restoreType}</b>`
+
+
             //chiama il metodo per mostrare la Dialog
             this.showDialog(confirm,
-                            `${accountMsg}:<p><b>${this.$email.innerText}</b></p><br>${msg}?`
+                            `${accountMsg}:<br><b>${this.$email.innerText}</b><br>${restoreType}<br><br>${msg}?`
                             ,()=>{
-                                //console.log(this.$email.innerText)
                                 this.submitForm();
                             },()=>{});
 
@@ -210,15 +240,52 @@ export class Account extends Abstract{
 
         $content.addEventListener("change",ev=>{
             
+            ev.preventDefault();
+
+            if(ev.target.name=="restore") {
+             
+              
+                this.restoreOption=ev.target.value;
+                return;
+            }
+           
             this.emailAddressIsInValid()
        
         });
 
+        let rloc=loc.restore_data_account;
+        resp=await services.user.restoreAccountOptions()
+      
+        let restOpts=(resp && resp.data && resp.data.options) || [];
+        
+        let restoreOptions={}
+        
+       
+        //mail, afs
+        restOpts.forEach((k)=>{
+            
+            restoreOptions[k]=rloc[k]
+           
+        })
+       
+        //se ci sono i 2 singoli backup (mail & afs) allora proponiamo anche il backup completo
+        if(Object.keys(restoreOptions)==2){
+            restoreOptions["mail-afs"]=rloc["mail-afs"];
+        }
+        
+        //se rimane solo quella mail+afs non costruisce la select restore
+        if(Object.keys(restoreOptions)==0) return;
+
+        $content.innerHTML+=this.buildSimpleSelect("restore",restoreOptions)
+
     }
 
     submitForm(){
+        debugger;
+        let data={"email":this.$email.innerText,
+                  "restore":this.restoreOption}
 
-        this.SaveRequest(Application.requestTypes.ACCOUNT,{"email":this.$email.innerText});
+        this.SaveRequest(Application.requestTypes.ACCOUNT,data);
     }
 
     disableSumbmit(disabled)
@@ -258,7 +325,6 @@ export class Account extends Abstract{
         if(names.length==0 || surnames.length==0)
         {
             isInvalid=true;
-            console.log("devi selezionare nome e cognome")
             this.$err.innerHTML=loc["email_invalid"];
         }
         return isInvalid;
@@ -293,8 +359,7 @@ export class Account extends Abstract{
 
     replaceBadChars(words){
        
-        let text=words;
-
+      
         const sets = [
             {to: 'a', from: '[ÀÁÂÃÄÅÆĀĂĄẠẢẤẦẨẪẬẮẰẲẴẶἀ]'},
             {to: 'c', from: '[ÇĆĈČ]'},
@@ -358,26 +423,12 @@ export class Account extends Abstract{
        
         var dlg=new Dialog(dlgplaceholder);
         
-        /*
-        if(yesCallback)
-           dlg.showYesButton(yesCallback)
-        
-        if(noCallback)
-           dlg.showNoButton(noCallback)
-           */
-
-        //dlg.setTitle("Verifica indirizz");
-        
-        //dlg.showHide();
-
-        //quando si apre la dialog inizia la ricerca per indirizzo duplicato
-        //var html=this.$email.innerText+"<p><small class=\"check\">verifica indirizzo email scelto in corso...</small></p>"
-        //dlg.setMessage(html)
         let butt=document.querySelector('input[type="submit"]')
         
         butt.disabled=true;
         this.emailAddressExists().then(exists=>{
           
+           
             if(!exists)
             {
                 dlg.setTitle(title);
@@ -399,15 +450,20 @@ export class Account extends Abstract{
     locale(){
         const loc= {
 
-                "ITA":{"header":"Account di posta","user_has_account":"<p>Attenzione, hai già un account di posta 'roma1.infn.it'</p>",
+                "ITA":{
+                        "header":"Account di posta","user_has_account":"<p>Attenzione, hai già un account di posta 'roma1.infn.it'</p>",
                         "email_feedback":"Il tuo indirizzo di posta sarà:",
                         "email_exists_pending":"Controllo che l'account di mail scelto non sia già in uso...",
                         "email_exists":"L'indirizzo di posta risulta già registrato.",
                         "email_invalid":"Indirizzo di posta scelto non valido.<br>Selezionare le parti del nome e le parti del cognome che vorresti vedere nel tuo account di posta.",
                         "send":"Invia","send":"Invia","name":"Nome","surname":"Cognome",
                         "request_already_sent":"Attenzione, hai già inviato la richiesta di creazione account in data:",
-                       
-                        "legend":{"name":"Seleziona le parti del nome","surname":"Seleziona le parti del cognome"},
+                        "restore_data_account":{"mail":"contenuto della casella di posta elettronica",
+                                                "afs":"files AFS",
+                                                "mail-afs":"contenuto della casella di posta elettronica e files AFS"},
+                        "restore_user_descr":"Hai la possibilità di chiedere il recupero dei tuoi dati.",
+                        "restore":"Recupero richiesto",
+                        "legend":{"name":"Seleziona le parti del nome","surname":"Seleziona le parti del cognome","restore":"Recupero dei tuoi dati"},
                         "dialog":{
                                 "confirm":"Richiesta di conferma",
                                 "msg":"Si desidera procedere con l'invio della richiesta"
@@ -415,20 +471,26 @@ export class Account extends Abstract{
                      },
                       
                 "ENG":{"header":"Email Account","user_has_account":"Warning, you already have an Email account 'roma1.infn.it'",
-                "email_feedback":"Your email address will be:",
-                "email_exists_pending":"Checking the selected email address is not yet in use...",
-                "email_exists":"Email adress is already registered.",
-                "email_invalid":"Selected mail address is invalid.<br>Select the parts of your name and surname you want to show in your email account",
-                "to":"To","send":"Submit","name":"Name","surname":"Surname",
-                "request_already_sent":"Warning, you have already sent an account request creation on date:",
-                "legend":{"name":"Select the parts of your name","surname":"Select the parts of your surname"},
-                "dialog":{
-                        "confirm":"Confirm request",
-                        "msg":"Do you want submit the request"
-                    }
-                },
+                        "email_feedback":"Your email address will be:",
+                        "email_exists_pending":"Checking the selected email address is not yet in use...",
+                        "email_exists":"Email adress is already registered.",
+                        "email_invalid":"Selected mail address is invalid.<br>Select the parts of your name and surname you want to show in your email account",
+                        "to":"To","send":"Submit","name":"Name","surname":"Surname",
+                        "request_already_sent":"Warning, you have already sent an account request creation on date:",
+                        "restore_data_account":{"mail":"e-mailbox content",
+                                                "afs":"AFS files",
+                                                "mail-afs":"e-mailbox content and AFS files"},
+                        "restore_user_descr":"You can request your data to be recovered.",
+                        "restore":"Ask for recovery",
+                        "legend":{"name":"Select the parts of your name","surname":"Select the parts of your surname","restore":"Restore your data"},
+                        "dialog":{
+                                "confirm":"Confirm request",
+                                "msg":"Do you want submit the request"
+                            }
+                        },
                
                }
+
         return loc[Application.language.current];
     }
 
@@ -440,7 +502,7 @@ export class Account extends Abstract{
         {
             html+=`<div>
                     <label>${loc[labelText]} ${i+1}</label><br>
-                    <select>
+                    <select name="${labelText}">
                     <option>----</option>
                     <option selected>${items[i]}</option>
                     </select>
@@ -449,7 +511,35 @@ export class Account extends Abstract{
         }
 
         return `<fieldset class="account-fieldset"><legend>${loc.legend[labelText]}</legend>
-                <div class="inline">${html}</div></fieldset>`
+                <div class="inline">${html}</div>
+                </fieldset>`
+    }
+
+    buildSimpleSelect(labelText,items)
+    {
+       
+
+
+        const loc=this.locale();
+        let descr = Application.language.current=="ITA" ? "Nessuno" : "None"
+        let options=`<option value=""> ${descr} </option>`
+       
+        for(var k in items)
+        {
+                options+=`<option value="${k}">${items[k]}</option>`
+        }
+
+        let html=`
+                <label>${loc[labelText]}</label><br>
+                <select id="restoreOptions" name="${labelText}">${options}</select>
+               `
+
+        //return `<fieldset class="account-fieldset">
+        return `<hr>
+                
+                <div id="alert-account">${loc.restore_user_descr}</div>
+                <div style="margin:3px 0">${html}</div>`
+                //</fieldset>`
     }
 
 
@@ -469,7 +559,6 @@ export class Account extends Abstract{
             tpl=tpl.replace("[EMAIL_FEEDBACK]",loc['user_has_account'])
         }
         else{
-        
         
             this.names=user.name.split(" ");
             this.surnames=user.surname.split(" ");

@@ -1,0 +1,16 @@
+
+Tipo di richiesta: <b>Creazione Account</b>
+
+=============================================
+Cognome          = [SURNAME]
+Nome             = [NAME]
+Indirizzi email  = [EMAIL_ALT]
+Telefono         = [PHONE]
+INFN UUID        = [INFNUUID]
+Ruolo            = [ROLE]
+Scadenza         = [EXPIRATION]
+
+=============================================
+Indirizzo email richiesto = [EMAIL]
+
+

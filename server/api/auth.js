@@ -36,12 +36,12 @@ function authToken(req,res,next){
   
     //mio
     var testUUID='50699576-15eb-49c6-a645-c07c0de9c402'
-  //testUUID='eaca4e87-9899-4ad6-a098-e2db68d5ccec'
-    //testUUID='9918aadc-3c40-47f7-9be3-bf39a5153deb'
+  
+    testUUID='16fee398-65f6-46a4-8dcd-a36e573e8ad5'
     //testUUID='6613182e-e87b-4041-8555-e8c1375e66e1'
     
     //testUUID='b9abec6d-4ab1-4011-b344-682433ccead1'
-
+  //testUUID="9228ab75-d9b0-4573-93af-cfd1a6f44848"
     
     
     var uid=req.headers["x-uuid"] || testUUID;

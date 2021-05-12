@@ -481,7 +481,7 @@ export class IP extends Abstract{
                                   "pending-name":"Verifica che il nome inserito non sia già in uso...",
                                   "invalid-mac-config":"Il mac address inserito non è conforme con la configurazione selezionata."
                                   }},
-                "ENG":{"form":{"mac":"Mac Address","config":"Configuration","name":"Name","domain":"Domain","send":"Send","notes":"Notes",
+                    "ENG":{"form":{"mac":"Mac Address","config":"Configuration","name":"Name","domain":"Domain","send":"Send","notes":"Notes",
                                 "host-edit-info":"Edit request for node",
                                 "header-host":"NODE IDENTIFIER","header-notes":"Additional Information","goback":"Go Back",
                                 "config-option-static":"STATIC","config-option-staticvm":"STATIC - Virtual","config-option-dhcp":"DHCP"},
