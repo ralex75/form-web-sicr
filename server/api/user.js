@@ -75,8 +75,6 @@ var parseLDAPUserInfo=function (user) {
     if(userStatus && Array.isArray(userStatus)){
         for(let i=0;i<userStatus.length;i++){
 
-            
-
             let ttl=regx.ttl.exec(userStatus[i]);
            
             if(ttl && minTime!="nolimit"){
