@@ -17,7 +17,7 @@ router.get("/options",async (req,res)=>{
     let userid=req.userid; //infnUUID
     let username=""
     let restoreOpts=[]
-    const MIN_SIZE=1200000 //bytes
+    const MIN_SIZE=120000 //bytes
     const GRACE_TIME=365; //days
     
     try
