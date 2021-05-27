@@ -251,7 +251,7 @@ export class Profile extends Abstract{
         <p>Username</p>
         </div>
         <div class="prof_val">
-        <p class="username">${user.uid}</p>
+        <p class="username">${this.emptyOrDefault(user.uid)}</p>
         </div>
         <div class="prof_lab">
         <p>${loc["email"]}</p>
