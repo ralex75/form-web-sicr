@@ -429,7 +429,6 @@ export class Account extends Abstract{
         butt.disabled=true;
         this.emailAddressExists().then(exists=>{
           
-            exists=false;
             if(!exists)
             {
                 dlg.setTitle(title);
@@ -553,7 +552,7 @@ export class Account extends Abstract{
 
         let email=user.roma1Email();
       
-        this.userHasAccount=false;//email!="";
+        this.userHasAccount=email!="";
         
         if(this.userHasAccount)
         {
