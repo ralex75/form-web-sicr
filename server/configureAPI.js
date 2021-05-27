@@ -12,6 +12,7 @@ const restore=require('./api/restore')
 
 
 const cors=require('cors')
+const INTERVAL=1000 * 60; //ogni minuto
 
 module.exports = app => {
   
@@ -26,24 +27,23 @@ module.exports = app => {
   app.use('/status',logger)
   app.use('/restore', authToken, restore)
   
-  /*
+  
   setInterval(()=>{
     ReadRequests();
-  },5000)*/
+  },INTERVAL)
 
-  //app.use('/auth/:uid?',authToken,forceLDAPSync, async (req,res,next)=>{
-  app.use('/auth/:uid?',authToken, async (req,res,next)=>{
+
+
+ app.use('/auth/:uid?',authToken,forceLDAPSync, async (req,res,next)=>{
   
   let user=null;
   let {syncResultMessage}=res.locals || "";
   
+
   try{
      
      user = await getUser(req.userid);
-    
-     //user.loa2=false;
-     //logger.dump(user.surname,JSON.stringify(user))
-    
+
      //let resp=await requests.getFirst(user.uuid)
 
      //user.firstReqDate= (resp[0] && resp[0].req_date) || moment();
