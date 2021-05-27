@@ -56,7 +56,8 @@ const getUserLDAP=async function(query){
                                 let assurance=ejson.eduPersonAssurance || false;
                                 schac= Array.isArray(schac) ? schac[schac.length-1] : schac;
                                
-                                usr.uid=ejson.uid || '--------';
+                                //usr.uid=ejson.uid || '--------';
+                                usr.uid=ejson.uid;
                                 usr.uuid=ejson.infnUUID;
                                 usr.cf=ejson.infnUUID;
                                 usr.isMemberOf=ejson.isMemberOf;
