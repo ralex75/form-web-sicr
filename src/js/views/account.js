@@ -209,15 +209,16 @@ export class Account extends Abstract{
             var accountMsg= Application.language.current=="ITA" ? "Account di posta richiesto" : "Requested email account"
            
             let restOpts=document.querySelector("#restoreOptions");
-            let restoreType= Application.language.current == 'ITA' ? "Nessuno" : "None";
+            let restoreType= ""
             
             
             if(restOpts)
             {
                 restoreType=restOpts.selectedOptions[0].text
+                restoreType= `<br>${loc['restore']}: <br><b>${restoreType}</b>`
             }
 
-            restoreType= `<br>${loc['restore']}: <br><b>${restoreType}</b>`
+            
 
 
             //chiama il metodo per mostrare la Dialog
@@ -428,7 +429,7 @@ export class Account extends Abstract{
         butt.disabled=true;
         this.emailAddressExists().then(exists=>{
           
-           
+            exists=false;
             if(!exists)
             {
                 dlg.setTitle(title);
@@ -552,7 +553,7 @@ export class Account extends Abstract{
 
         let email=user.roma1Email();
       
-        this.userHasAccount=email!="";
+        this.userHasAccount=false;//email!="";
         
         if(this.userHasAccount)
         {

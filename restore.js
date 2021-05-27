@@ -6,23 +6,22 @@ const moment = require('moment')
 
 
 const sshConf={
-    host: 'freezer.roma1.infn.it',
-    username: 'root',
-    identity: '/root/.ssh/id_rsa',
-    baseDir: '/data/vm+servizi/bckuser'
-};
+		host: 'freezer.roma1.infn.it',
+		username: 'root',
+		identity: '/root/.ssh/id_rsa',
+		baseDir: '/data/vm+servizi/bckuser'
+	};
 
 
 router.get("/options",async (req,res)=>{
-    let userid=req.userid; //infnUUID
-    let username=""
-    let restoreOpts=[]
-    let MIN_SIZE=1200000 //bytes
+    let username='9228ab75-d9b0-4573-93af-cfd1a6f44848' //req.userid; //infnUUID
+    let restoreOpt={"mail":false,"afs":false,"mail-afs":false}
+    const MIN_SIZE=1200000 //bytes
     const GRACE_TIME=365; //days
     
     try
     {
-            user=await getUserLDAP(`(infnUUID=${userid})`);
+            user=await getUserLDAP(`(infnUUID=${username})`);
             
             user=user[0]
 
@@ -32,11 +31,17 @@ router.get("/options",async (req,res)=>{
 
             if(!username) throw Error("No username")
 
+            restoreOpt.uid=username;
+
+            username='lucentini'
+
             let ssh = new SSH2Promise(sshConf);
 		
             let userDirDate=await ssh.exec(`ls -lart --time-style="+%Y%m%d" ${sshConf.baseDir} | grep ${username} | awk '{print $6}'`)
 
             if(!userDirDate) throw Error("No backup user dir found.")
+
+            console.log(userDirDate)
 
             let canRestoreData = moment().diff(moment(userDirDate.trim()),'days')< GRACE_TIME
 
@@ -47,30 +52,27 @@ router.get("/options",async (req,res)=>{
             //array: file size - file name
             data=data.split("\n")
 
-            console.log(data)
-
             data.forEach(i=>{
                 let file=i.split(" ")
                 //size
                 if(parseInt(file[0])>=MIN_SIZE)
                 {
                     let key=file[1].indexOf("mailbox")>0 ? "mail" : "afs";
-                    restoreOpts.push(key)
+                    restoreOpt[key]=true;
                 }
             })
 
-            //per ora non diamo opzione di restore AFS
-            delete restoreOpts["afs"];
+            restoreOpt["mail-afs"]=restoreOpt.mail && restoreOpt.afs;
    
     }
     catch(exc)
     {
-        let msg=`"checking restore options for user ${username} failed: ${exc}`
-        //restoreOpts=msg;
+        let msg=`${exc}`
         console.log(msg)
+	restoreOpt.exc=msg
     }
     finally{
-        return res.json({"options":restoreOpts})
+        return res.json({"options":restoreOpt})
     }
 
 })
