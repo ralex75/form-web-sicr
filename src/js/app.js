@@ -253,9 +253,9 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         }
         
         //DEBUG!!!!
-        user.loa2=true;
+        /*user.loa2=true;
         user.itsec=true;
-        user.policies=true;
+        user.policies=true;*/
 
         window.Application.user=user;
         
