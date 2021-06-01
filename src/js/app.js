@@ -60,10 +60,11 @@ export const language={
 const User={
     isValid(){
 
-        let _isValid=false;
+       
         let _user=User.current();
+        let _isValid = _user ? _user.isAuthorized : false;
         
-        if(_user)
+        /*if(_user)
         {
             _isValid = _user.isAuthorized && _user.loa2 && _user.policies;
             if(_isValid && !_user.itsec)
@@ -71,7 +72,8 @@ const User={
                 //se non ha fatto il corso ed è nel periodo di grazia è valido altrimenti NO.
                 _isValid=_user.gracetime; 
             }
-        }
+           
+        }*/
 
         return _isValid;
     },
