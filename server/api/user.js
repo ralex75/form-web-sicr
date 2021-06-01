@@ -18,6 +18,8 @@ const getUser=async function(uid)
 
             user=parseLDAPUserInfo(users_ldap[0])
            
+            console.log(user)
+
             delete user['isMemberOf']
             delete user["schacUserStatus"];
 
@@ -37,7 +39,7 @@ var parseLDAPUserInfo=function (user) {
     
     var cuser=Object.assign({}, user);
 
-    
+   
     
     //var minTime="01/01/1900"
     var userStatus=user.schacUserStatus;

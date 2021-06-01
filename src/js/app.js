@@ -145,7 +145,7 @@ const router=async ()=>{
     latestView.name=matchPath.path.substr(1);
     latestView.args=history.state;
 
-   
+    
 
     if(!User.isValid())
     {
@@ -252,6 +252,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
             return "";
         }
         
+        //DEBUG!!!!
         user.loa2=true;
         user.itsec=true;
         user.policies=true;
