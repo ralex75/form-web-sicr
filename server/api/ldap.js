@@ -66,7 +66,7 @@ const getUserLDAP=async function(query){
                                 usr.policies  = edu && edu.indexOf("urn:mace:infn.it:disciplinare-it") >= 0
                                 usr.gracetime = edu && edu.indexOf("urn:mace:infn.it:ict-gracetime:true") >= 0
                               
-                                //console.log(usr)
+                                console.log(usr)
                                 
                                 if(schac)
                                 {

@@ -552,7 +552,7 @@ export class Account extends Abstract{
 
         let email=user.roma1Email();
       
-        this.userHasAccount=email!="";
+        this.userHasAccount=false;//email!="";
         
         if(this.userHasAccount)
         {
