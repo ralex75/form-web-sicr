@@ -1,16 +1,11 @@
 <pre>
-=== English version follows ===
-
-Gentile [USER_FULL_NAME],
-questa mail automatica è stata generata a seguito della sua richiesta presso il Servizio di Calcolo di Roma. 
-Di seguito viene riportato un sommario della richiesta effettuata:
-
 Tipo di richiesta: <b>Creazione Account</b>
 
 =============================================
-Nome             = [NAME]
 Cognome          = [SURNAME]
 Telefono         = [PHONE]
+UID              = [UID]
+INFN UUID        = [INFNUUID]
 Ruolo            = [ROLE]
 Scadenza         = [EXPIRATION]
 
@@ -47,5 +42,4 @@ In case of questions of requests you may contact the IT service by sending an em
 
 Kind regards,
 
-    SICR
-</pre>
+[RESTORE_MAIL_PROCEDURE]

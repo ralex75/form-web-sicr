@@ -145,7 +145,7 @@ const router=async ()=>{
     latestView.name=matchPath.path.substr(1);
     latestView.args=history.state;
 
-   
+    
 
     if(!User.isValid())
     {
