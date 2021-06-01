@@ -16,10 +16,10 @@ const getUser=async function(uid)
             //LDAP
             var users_ldap=await getUserLDAP(queryLDAP);
 
+           
+            //console.log("users:",users_ldap);
             user=parseLDAPUserInfo(users_ldap[0])
-
-            console.log(user)
-
+           
             delete user['isMemberOf']
             delete user["schacUserStatus"];
 
@@ -39,12 +39,9 @@ var parseLDAPUserInfo=function (user) {
     
     var cuser=Object.assign({}, user);
 
-    console.log(cuser)
     
     //var minTime="01/01/1900"
     var userStatus=user.schacUserStatus;
-    
-    console.log("mail alternates:",cuser.mailAlternates)
     
     //rimuove dall'alternateMailAddress se esiste mail principale per evitare duplicati
     cuser.mailAlternates=cuser.mailAlternates.map(e=>e.toLowerCase())
@@ -62,7 +59,7 @@ var parseLDAPUserInfo=function (user) {
     let isAdmin=false       //se appartiene al cc
     let minTime="01/01/1900"
  
-    //REG VALIDATIONS
+    //REGEXP
     let regx={"policies":/disciplinare-it/,
               "itsec":/sicurezza-informatica-base/,
               "gracetime":/ict-gracetime:(true|false)/,
@@ -71,6 +68,8 @@ var parseLDAPUserInfo=function (user) {
    
     if(userStatus && Array.isArray(userStatus)){
         for(let i=0;i<userStatus.length;i++){
+
+            //console.log("userStatus:",userStatus)
 
             let ttl=regx.ttl.exec(userStatus[i]);
            
@@ -90,25 +89,34 @@ var parseLDAPUserInfo=function (user) {
          
         }
 
+        
+       
         cuser["expiration"]=minTime;
        
     }
 
-    //recupera ruolo
+    //ricerca ruolo
     if(isMemberOf){
 
-       _isMemberOf = !Array.isArray(isMemberOf) ? [isMemberOf] : isMemberOf;
+       
         
-        /*if(e.indexOf("i:infn:roma1:servizio_calcolo_e_reti")>-1)
-        {
-            isAdmin=true;
-        }*/
+        _isMemberOf = !Array.isArray(isMemberOf) ? [isMemberOf] : isMemberOf;
+        
 
         _isMemberOf.forEach(e=>{
-            let match=e.match(/i:infn:roma1::([d|o|a|v])\:(\w+)/);
-            if(match) {role = match[2]}
-        })
+            //console.log(e);
+            
+            /*if(e.indexOf("i:infn:roma1:servizio_calcolo_e_reti")>-1)
+            {
+                isAdmin=true;
+            }*/
 
+            _isMemberOf.forEach(e=>{
+                let match=e.match(/i:infn:roma1::([d|o|a|v])\:(\w+)/);
+                if(match) {role = match[2]}
+            })
+    
+        })
 
     }
 
@@ -122,13 +130,13 @@ var parseLDAPUserInfo=function (user) {
         isAuthorized=gracetime;
     }
     
-
     cuser["isAuthorized"]=isAuthorized
     cuser["role"]=role;
-    //cuser["isAdmin"]=isAdmin;
+    cuser["isAdmin"]=isAdmin;
 
     delete cuser["isMemberOf"]
     delete cuser["schacUserStatus"];
+
     
     return cuser;
 
