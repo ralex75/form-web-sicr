@@ -251,10 +251,7 @@ document.addEventListener('DOMContentLoaded',async ev=>{
             }
             return "";
         }
-        
-        user.loa2=true;
-        user.itsec=true;
-        user.policies=true;
+       
 
         window.Application.user=user;
         
