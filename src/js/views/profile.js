@@ -216,7 +216,7 @@ export class Profile extends Abstract{
         {
             content=`${loc['loa2_feedback']}`
         }
-        else if(!user.isAuthorized)
+        else if(!user.role)
         {
             content=`${loc['unauthorized_feedback']}`
         }
