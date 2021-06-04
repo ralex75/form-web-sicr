@@ -19,23 +19,18 @@ const dump=(fileName,data)=>{
 
 router.post("/",(req,res)=>{
     let user=req.body.user;
-    let attr={"isAuthorized":"ruolo roma1",
-              "loa2":"LOA2",
-              "itsec":"Corso sicurezza",
-              "policies":"Disciplinare",
-            }
-    
+        
 
     let txt=`
     
         <pre>
         Nominativo      : ${user.name} ${user.surname}
-        uid             : ${user.uid}
+        uid             : ${user.uid || '---'}
         infnUUID        : ${user.uuid}
         -----------------------------------------------------------------
-        Attributi:
+        Autorizzato     : ${user.isAuthorized ? 'SI': 'NO'}    
         -----------------------------------------------------------------
-        Ruolo roma1     : ${user.isAuthorized ? 'SI' : 'NO'}
+        Ruolo roma1     : ${user.role ? 'SI' : 'NO'}
         LOA2            : ${user.loa2 ? 'SI' : 'NO'}
         Disciplinare    : ${user.policies ? 'SI' : 'NO'}
         Corso sicurezza : ${user.itsec ? 'SI' : 'NO'}
