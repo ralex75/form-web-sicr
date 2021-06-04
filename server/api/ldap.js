@@ -50,6 +50,8 @@ const getUserLDAP=async function(query){
                                 
                                 var ejson=entry.object;
                                
+                                console.log(ejson)
+
                                 var usr={};
                                 var schac=ejson.schacpersonaluniqueid;
                                 var edu=ejson.eduPersonEntitlement || false;

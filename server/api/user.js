@@ -37,6 +37,8 @@ const getUser=async function(uid)
 
 var parseLDAPUserInfo=function (user) {
     
+    console.log("user:",user)
+
     var cuser=Object.assign({}, user);
 
     console.log(cuser)
@@ -94,6 +96,7 @@ var parseLDAPUserInfo=function (user) {
        
     }
 
+    console.log(isMemberOf)
     //recupera ruolo
     if(isMemberOf){
 
