@@ -235,7 +235,7 @@ export class Profile extends Abstract{
             content=messages.join("<br><br>")
         }
 
-        if(content!="")
+        if(!user.isAuthorized)
         {
             services.user.notifyStatus(user).then(res=>{
                 console.log(res)
