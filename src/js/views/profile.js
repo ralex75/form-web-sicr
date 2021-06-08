@@ -294,12 +294,14 @@ export class Profile extends Abstract{
        
 
         if(!date) return "---"
-        if(date=="nolimit") return (Application.language.current=="ITA" ? "nessuna" :"never")
-        
-        if(date.indexOf("-")>-1)
+        //if(date=="nolimit") return (Application.language.current=="ITA" ? "nessuna" :"never")
+        if(date.indexOf("-")<0) return (Application.language.current=="ITA" ? "nessuna" :"never")
+        /*if(date.indexOf("-")>-1)
         {
             date=date.split("-").reverse().join("")
-        }
+        } */
+        date=date.split("-").reverse().join("")
+
         let date_format={'ITA':"DD-MM-YYYY",'ENG':"MM-DD-YYYY"}
         try
         {
