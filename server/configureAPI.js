@@ -1,5 +1,5 @@
 const bodyParser = require('body-parser')
-const {getUser} = require('./api/user')
+const {getUser,getUsers} = require('./api/user')
 const location = require('./api/location')
 const network = require('./api/network')
 const requests = require('./api/requests')
@@ -68,13 +68,12 @@ module.exports = app => {
   var keywords=req.body.search;
   var onlyauth=req.body.onlyauth;
 
-  try{
+  console.log(keywords)
 
-    if(keywords)
-    {
-      users = await getUserInfoByAny(keywords,onlyauth);
-    }
+  try{
     
+      users = await getUsers(keywords);
+        
   }
   catch(exc)
   {

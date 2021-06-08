@@ -179,9 +179,60 @@ const showUserWaiting=(lang)=>{
 }
 
 
+const showUserWaiting2=(lang,contID,show=true)=>{
+
+    
+
+    //Loader
+    var cont= document.querySelector(`#${contID}`);
+
+    if(!show){
+        cont.innerHTML=""
+        return;   
+    }
+
+    let html=`<div class=\"inline\">${loader()}\
+                <p class=\"info\" style=\"opacity:0;transition:opacity 1s linear;\">`
+                if(lang=="ITA")
+                { 
+                    html+="<b>Attendere prego, controllo identità in corso...</b>\
+                            <br>L'operazione potrebbe richiedere qualche secondo...<span class=\"timer\"></span>"
+                }
+                else{
+                    html+="<b>Please wait, identity checking...</b>\
+                        <br>The operation may take some seconds...<span  class=\"timer\"></span>"
+                }
+                html+="</p></div>";
+
+    //cont.innerHTML="<style>"+cssLoaderClass+"</style>"+html;
+    cont.innerHTML=html;
+    var countElem= document.querySelectorAll(".timer")
+
+   
+    let subscription=interval(1000).subscribe(
+        next=>
+        {
+           
+            if(next>2)
+            {
+                let info=cont.querySelector(".info")
+                if (info)
+                    info.style.opacity="1";
+            }
+            countElem.forEach(e=>e.innerText=`${next}s`)
+        }
+    )
+
+    return subscription;
+
+}
+
+
+
 export const UI={
     generateLanguageSelection,
     generateNavigationMenu,
     showUserWaiting,
+    showUserWaiting2,
     loader
 }
