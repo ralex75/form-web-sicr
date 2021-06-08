@@ -37,8 +37,6 @@ const getUser=async function(uid)
 
 var parseLDAPUserInfo=function (user) {
     
-    console.log("user:",user)
-
     var cuser=Object.assign({}, user);
 
     console.log(cuser)
@@ -92,11 +90,10 @@ var parseLDAPUserInfo=function (user) {
          
         }
 
-        cuser["expiration"]=minTime;
-       
+        cuser["expiration"]= (minTime=='nolimit' ? 'nessuna' : minTime);
+        
     }
 
-    console.log(isMemberOf)
     //recupera ruolo
     if(isMemberOf){
 
@@ -106,10 +103,13 @@ var parseLDAPUserInfo=function (user) {
         {
             isAdmin=true;
         }*/
+        let roles={"d":"dipendente","o":"ospite","a":"associato","v":"visitatore"}
 
         _isMemberOf.forEach(e=>{
-            let match=e.match(/i:infn:roma1::([d|o|a|v])\:(\w+)/);
-            if(match) {role = match[2]}
+            let match=e.match(/i:infn:roma1::([d|o|a|v])/);
+            if(match) {
+                role = roles[match[1]] || null
+            }
         })
 
 
