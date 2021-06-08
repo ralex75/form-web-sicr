@@ -3,6 +3,7 @@ const moment = require('moment')
 const express = require('express');
 const router = express.Router();
 const {sendMail} =require("./mailer")
+const {getUser} = require('./user.js') 
 
 
 const dump=(fileName,data)=>{
@@ -19,7 +20,12 @@ const dump=(fileName,data)=>{
 
 router.post("/",(req,res)=>{
     let user=req.body.user;
-        
+    
+    user=getUser(user.uuid)
+
+    if(!user) return  res.status(500).json({"err":`No user found`})
+
+    if(user.isAuthorized) return res.json({"txt":`user is ok`})
 
     let txt=`
     
