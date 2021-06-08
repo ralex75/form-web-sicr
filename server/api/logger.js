@@ -3,7 +3,7 @@ const moment = require('moment')
 const express = require('express');
 const router = express.Router();
 const {sendMail} =require("./mailer")
-const {getUser} = require('./user.js') 
+const {getUser} = require('./user') 
 
 
 const dump=(fileName,data)=>{
@@ -27,12 +27,12 @@ router.post("/",(req,res)=>{
 
     if(user.isAuthorized) return res.json({"txt":`user is ok`})
 
+    const {templates}=require("./templates")
+
     let txt=`
     
         <pre>
-        Nominativo      : ${user.name} ${user.surname}
-        uid             : ${user.uid || '---'}
-        infnUUID        : ${user.uuid}
+        ${templates.userInfo(user)}
         -----------------------------------------------------------------
         Autorizzato     : ${user.isAuthorized ? 'SI': 'NO'}    
         -----------------------------------------------------------------
