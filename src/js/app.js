@@ -7,19 +7,20 @@ import {IP} from './views/ip'
 import {WIFI} from './views/wifi'
 import {Support} from './views/support'
 import {Requests} from './views/requests'
+import {UserSearch} from './views/usersearch'
 //import {IP} from './views/nip'
 import {RequestDetails} from './views/reqdetails'
 import {Logout} from './views/logout'
 import {Result} from './views/result'
 import {UI} from './views/ui'
 import menu from './views/menu'
-import moment from 'moment'
 
 
 let timeoutID=null;
 const ITSEC_GRACE_TIME=15;
 
 const navigateTo=(view,args)=>{
+    
     
     history.pushState(args,"",`#${view}`)
     router();
@@ -58,6 +59,10 @@ export const language={
 }
 
 const User={
+    isAdmin(){
+        let _user=User.current();
+        return _user && _user.isAdmin
+    },
     isValid(){
 
        
@@ -121,6 +126,7 @@ const router=async ()=>{
         {"path":"#wifi","name":'wifi',view:WIFI},
         {"path":"#support","name":'other',view:Support},
         {"path":"#logout","name":'logout',view:Logout},
+        {"path":"#search","name":'search',view:UserSearch},
         {"path":"#result","name":'result',view:Result,'hide':true}
 
     ]
@@ -147,13 +153,20 @@ const router=async ()=>{
     latestView.name=matchPath.path.substr(1);
     latestView.args=history.state;
 
-    
+   
+    let user=User.current();
 
-    if(!User.isValid())
+    if(!user.isAuthorized)
     {
         let user=User.current();
         routes=routes.filter(r=>(user && r.name=="profile") || r.name=="logout")
     }
+
+    
+    if(!user.isAdmin){
+        routes=routes.filter(r=>r.name!="search")
+    }
+    
     
     document.querySelector("#col_sin_menu").innerHTML= new menu(routes).getContent();
 
@@ -232,8 +245,17 @@ document.addEventListener('DOMContentLoaded',async ev=>{
     
     try{
       
+        let msg=`<b>Attendere prego, controllo identità in corso...</b>
+                 <br>L'operazione potrebbe richiedere qualche secondo...`
+        
+        if(lang!="ITA")
+        { 
+            msg=`<b>Please wait, identity checking...</b>\
+                 <br>The operation may take some seconds...`
+        }
+       
         //messaggio di attesa da mostrare utente mentre l'API sincronizza
-        subscription=UI.showUserWaiting(lang)
+        subscription=UI.showUserWaiting(msg,'colonne_content',true)
         
         //legge informazioni utente
         //potrebbe impiegare un pò se devi sincronizzare
@@ -267,10 +289,10 @@ document.addEventListener('DOMContentLoaded',async ev=>{
     }
     finally
     {
-         
-        if(subscription)
-            subscription.unsubscribe();
-
+        if(subscription){
+            //subscription.unsubscribe();
+            subscription()
+        }
     }
 
     selectedLanguage(Application.language.current)

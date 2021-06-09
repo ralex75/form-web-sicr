@@ -49,9 +49,7 @@ const getUserLDAP=async function(query){
                             try{
                                 
                                 var ejson=entry.object;
-                               
-                                console.log(ejson)
-
+                            
                                 var usr={};
                                 var schac=ejson.schacpersonaluniqueid;
                                 var edu=ejson.eduPersonEntitlement || false;
@@ -68,7 +66,7 @@ const getUserLDAP=async function(query){
                                 usr.policies  = edu && edu.indexOf("urn:mace:infn.it:disciplinare-it") >= 0
                                 usr.gracetime = edu && edu.indexOf("urn:mace:infn.it:ict-gracetime:true") >= 0
                               
-                                console.log(usr)
+                               
                                 
                                 if(schac)
                                 {
@@ -90,7 +88,7 @@ const getUserLDAP=async function(query){
                             {
                                 console.log("exc:",exc)
                             }
-                            //console.log('Email entry: ' + JSON.stringify(entry.object));
+                            
 
                         });
                         
