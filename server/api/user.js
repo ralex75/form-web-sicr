@@ -148,7 +148,7 @@ var parseLDAPUserInfo=function (user) {
             if(match) {
                 role = roles[match[1]] || null
             }
-            if(e.match(/i:infn:roma1:servizio_calcolo_e_reti::n:member/)){
+            if(e.match(/i:infn:roma1:servizio_calcolo_e_reti/)){
                 isAdmin=true;
             }
         })
