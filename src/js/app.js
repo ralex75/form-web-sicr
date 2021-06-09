@@ -59,6 +59,10 @@ export const language={
 }
 
 const User={
+    isAdmin(){
+        let _user=User.current();
+        return _user && _user.isAdmin
+    },
     isValid(){
 
        
@@ -241,8 +245,17 @@ document.addEventListener('DOMContentLoaded',async ev=>{
     
     try{
       
+        let msg=`<b>Attendere prego, controllo identità in corso...</b>
+                 <br>L'operazione potrebbe richiedere qualche secondo...`
+        
+        if(lang!="ITA")
+        { 
+            msg=`<b>Please wait, identity checking...</b>\
+                 <br>The operation may take some seconds...`
+        }
+       
         //messaggio di attesa da mostrare utente mentre l'API sincronizza
-        subscription=UI.showUserWaiting(lang)
+        subscription=UI.showUserWaiting(msg,'colonne_content',true)
         
         //legge informazioni utente
         //potrebbe impiegare un pò se devi sincronizzare
@@ -276,10 +289,10 @@ document.addEventListener('DOMContentLoaded',async ev=>{
     }
     finally
     {
-         
-        if(subscription)
-            subscription.unsubscribe();
-
+        if(subscription){
+            //subscription.unsubscribe();
+            subscription()
+        }
     }
 
     selectedLanguage(Application.language.current)

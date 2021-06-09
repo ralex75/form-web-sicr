@@ -138,73 +138,33 @@ const loader=()=>{
     return `<style>${cssLoaderClass}</style><div class=\"inline\"><div class=\"loader\"></div>`
 }
 
-const showUserWaiting=(lang)=>{
 
-    //Loader
-    var cont= document.querySelector("#colonne_content");
-    let html=`<div class=\"inline\">${loader()}\
-                <p class=\"info\" style=\"opacity:0;transition:opacity 1s linear;\">`
-                if(lang=="ITA")
-                { 
-                    html+="<b>Attendere prego, controllo identità in corso...</b>\
-                            <br>L'operazione potrebbe richiedere qualche secondo...<span class=\"timer\"></span>"
-                }
-                else{
-                    html+="<b>Please wait, identity checking...</b>\
-                        <br>The operation may take some seconds...<span  class=\"timer\"></span>"
-                }
-                html+="</p></div>";
-
-    //cont.innerHTML="<style>"+cssLoaderClass+"</style>"+html;
-    cont.innerHTML=html;
-    var countElem= document.querySelectorAll(".timer")
-
-   
-    let subscription=interval(1000).subscribe(
-        next=>
-        {
-           
-            if(next>2)
-            {
-                let info=cont.querySelector(".info")
-                if (info)
-                    info.style.opacity="1";
-            }
-            countElem.forEach(e=>e.innerText=`${next}s`)
-        }
-    )
-
-    return subscription;
-
-}
-
-
-const showUserWaiting2=(lang,contID,show=true)=>{
+const showUserWaiting=(msg,ctrlID=null,show=true)=>{
 
     
 
-    //Loader
-    var cont= document.querySelector(`#${contID}`);
+    if(!ctrlID) return;
+
+    let cont= document.querySelector(`#${ctrlID}`);
+
+    if(!cont) return;
 
     if(!show){
         cont.innerHTML=""
         return;   
     }
 
-    let html=`<div class=\"inline\">${loader()}\
-                <p class=\"info\" style=\"opacity:0;transition:opacity 1s linear;\">`
-                if(lang=="ITA")
-                { 
-                    html+="<b>Attendere prego, controllo identità in corso...</b>\
-                            <br>L'operazione potrebbe richiedere qualche secondo...<span class=\"timer\"></span>"
-                }
-                else{
-                    html+="<b>Please wait, identity checking...</b>\
-                        <br>The operation may take some seconds...<span  class=\"timer\"></span>"
-                }
-                html+="</p></div>";
+    if(!msg){
+        msg="Attendere prego..."
+    }
 
-    //cont.innerHTML="<style>"+cssLoaderClass+"</style>"+html;
+    let html=`<div class=\"inline\">${loader()}\
+                <p class=\"info\" style=\"opacity:0;transition:opacity 1s linear;\">
+                    ${msg}<span class=\"timer\"></span>"
+                </p>
+             </div>`;
+
+    
     cont.innerHTML=html;
     var countElem= document.querySelectorAll(".timer")
 
@@ -223,7 +183,14 @@ const showUserWaiting2=(lang,contID,show=true)=>{
         }
     )
 
-    return subscription;
+    return ()=>{
+            subscription.unsubscribe();
+            if(cont)
+            {
+                console.log("clean")
+                cont.innerHTML=""
+            }
+    }
 
 }
 
@@ -233,6 +200,5 @@ export const UI={
     generateLanguageSelection,
     generateNavigationMenu,
     showUserWaiting,
-    showUserWaiting2,
     loader
 }

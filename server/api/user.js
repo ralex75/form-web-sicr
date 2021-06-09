@@ -18,7 +18,7 @@ const getUser=async function(uid)
 
             user=parseLDAPUserInfo(users_ldap[0])
 
-            console.log(user)
+            //console.log(user)
 
             delete user['isMemberOf']
             delete user["schacUserStatus"];
@@ -44,11 +44,7 @@ const getUsers=async function(keywords)
     if(!keywords) return users;
 
     let k=keywords
-    
-    /*keywords.split(" ").forEach(k=>{
-        ldapFilter+=`(|(cn=*${k}*)(mail=${k})(schacPersonalUniqueID=*:CF:${k})(infnUUID=${k})(mailAlternateAddress=${k}))`
-    })*/
-
+   
     ldapFilter+=`(|(cn=*${k}*)(mail=${k})(schacPersonalUniqueID=*:CF:${k})(infnUUID=${k})(mailAlternateAddress=${k}))`
     
 
@@ -64,7 +60,7 @@ const getUsers=async function(keywords)
                 delete _user['isMemberOf']
                 delete _user["schacUserStatus"];
 
-                console.log(_user)
+                //console.log(_user)
                 users.push(_user)
             })
             
@@ -81,14 +77,15 @@ const getUsers=async function(keywords)
 
 var parseLDAPUserInfo=function (user) {
     
-    var cuser=Object.assign({}, user);
 
-    console.log(cuser)
+    let cuser=Object.assign({}, user);
+
+    //console.log(cuser)
     
     //var minTime="01/01/1900"
-    var userStatus=user.schacUserStatus;
+    let userStatus=user.schacUserStatus;
     
-    console.log("mail alternates:",cuser.mailAlternates)
+    //console.log("mail alternates:",cuser.mailAlternates)
     
     //rimuove dall'alternateMailAddress se esiste mail principale per evitare duplicati
     cuser.mailAlternates=cuser.mailAlternates.map(e=>e.toLowerCase())
@@ -104,7 +101,8 @@ var parseLDAPUserInfo=function (user) {
     let isMemberOf=user.isMemberOf;
     let role="";            //ruolo
     let isAdmin=false       //se appartiene al cc
-    let minTime="01/01/1900"
+    let defaultMinTime="01/01/1900"
+    let minTime=defaultMinTime
  
     //REG VALIDATIONS
     let regx={"policies":/disciplinare-it/,
@@ -134,7 +132,7 @@ var parseLDAPUserInfo=function (user) {
          
         }
 
-        cuser["expiration"]= (minTime=='nolimit' ? 'nessuna' : minTime);
+        cuser["expiration"]= (minTime=='nolimit' ? 'nessuna' : minTime==defaultMinTime ? "" : minTime);
         
     }
 

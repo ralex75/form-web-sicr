@@ -16,8 +16,8 @@ input.search{
     width:80%;
 }
 li{
-    border-bottom:1px solid #DDD;
-    margin:6px 0;
+   
+    padding:6px 0;
 }
 div.scroll{
     overflow-x:auto;
@@ -43,6 +43,11 @@ export class UserSearch extends Abstract{
 
     async mounted(){
         
+        if(!Application.user.isAdmin())
+        {
+            return Application.navigateTo("#profile")
+        }
+
         this.$search=this.target.querySelector("#search")
         this.$resultText=this.target.querySelector("#resultText")
         this.$list=this.target.querySelector("#userlist")
@@ -67,6 +72,7 @@ export class UserSearch extends Abstract{
     }
 
     displayUsers(users){
+
         let items=""
        
         users.forEach(u => {
@@ -74,32 +80,32 @@ export class UserSearch extends Abstract{
         });
 
        
-
+      
         this.$resultText.innerText=`Risultati trovati:${users.length}`
         this.$list.innerHTML=items;
     }
 
 
     searchUsers(ev){
+
         clearTimeout(this.searchTimeOutID)
         let scope=this;
-         //messaggio di attesa da mostrare utente mentre l'API sincronizza
-       
+        
         let value=ev.target.value;
 
-        if(!value) {
-            return scope.displayUsers([])
-        }
+        this.$resultText.innerText=""
+        this.$list.innerHTML=""
 
+        if(!value || value.length<5) return;
+        
         this.searchTimeOutID=setTimeout(async ()=>{
-            let subscription=UI.showUserWaiting2('ITA','waiting')
+            let close=UI.showUserWaiting("",'waiting')
             try{
                 let resp=await services.user.list(ev.target.value,false)
                 scope.displayUsers(resp.data)
             }
             finally{
-                UI.showUserWaiting2('ITA','waiting',false)
-                subscription.unsubscribe();
+                close();
             }
            
         },1000)
@@ -107,9 +113,8 @@ export class UserSearch extends Abstract{
 
     locale(){
         
-        const loc={"ITA":{"search":"ricerca...","port":"Porta","mac":"Indirizzo MAC","add":"Aggiungi","search":"ricerca"},
-                "ENG":{"search":"search...","port":"Port","mac":"MAC Address","add":"Add","search":"search"},
-            }
+        const loc={"ITA":{"search":"ricerca..."},
+                "ENG":{"search":"search..."}}
 
         return loc[Application.language.current];
         
