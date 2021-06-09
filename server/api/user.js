@@ -45,7 +45,7 @@ const getUsers=async function(keywords)
 
     let k=keywords
    
-    ldapFilter+=`(|(cn=*${k}*)(mail=${k})(schacPersonalUniqueID=*:CF:${k})(infnUUID=${k})(mailAlternateAddress=${k}))`
+    ldapFilter+=`(|(cn=*${k}*)(uid=${k})(mail=${k})(schacPersonalUniqueID=*:CF:${k})(infnUUID=${k})(mailAlternateAddress=${k}))`
     
 
     try{

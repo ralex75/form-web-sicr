@@ -67,9 +67,7 @@ module.exports = app => {
   var users=[]
   var keywords=req.body.search;
   var onlyauth=req.body.onlyauth;
-
-  console.log(keywords)
-
+  
   try{
     
       users = await getUsers(keywords);
