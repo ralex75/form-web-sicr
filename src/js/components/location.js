@@ -1,30 +1,42 @@
 const template=
 `   
-    <div class="form_intest">
+    <div class="form_intest" >
     [HEADER-PORT]
     </div>
     <div class="form_riga">
         <div class="form_col">
-            <label for="build">[BUILD]</label><br>
-            <select id="build" name="build"></select>
+            <label for="build">[BUILD]</label>
         </div>
         <div class="form_col test">
-            <label for="floor">[FLOOR]</label><br>
+            <select id="build" name="build"></select>
+        </div>
+    </div> 
+    <div class="form_riga">
+        <div class="form_col">
+            <label for="floor">[FLOOR]</label>
+        </div>
+        <div class="form_col test">
             <select id="floor" name="floor"></select>
         </div>
     </div> 
     <div class="form_riga">
         <div class="form_col">
-            <label for="room">[ROOM]</label><br>
-            <select id="room" name="room"></select>
+            <label for="room">[ROOM]</label>
         </div>
         <div class="form_col">
-            <label for="port">[PORT]</label><br>
+            <select id="room" name="room"></select>
+        </div>
+    </div> 
+    <div class="form_riga">
+        <div class="form_col">
+            <label for="port">[PORT]</label>
+        </div>
+        <div class="form_col">
             <select id="port" class="ports" name="port" data-attr='formdata'></select>
             <small></small>
         </div>
     </div> 
-   
+  
 
     <style>
 
@@ -42,6 +54,7 @@ const template=
         color: #DDD;
     }
 
+    
     
     </style>
 `
