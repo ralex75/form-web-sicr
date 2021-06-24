@@ -53,7 +53,8 @@ const template=`
 				 	<div class="form_riga">
 						<div class="form_col_long">
 						  <label for="notes">[NOTES]</label><br>
-						  <textarea name="notes" data-attr="formdata" rows="5" value=""></textarea>		
+						  <textarea name="notes" id="notes" data-attr="formdata" rows="5" value=""></textarea>
+                          <small></small>		
 						</div>
 					</div>	
 				</div>	
@@ -166,9 +167,74 @@ div.grid div.c2{
 
 import Abstract from './abstract'
 import {Location} from '../components/location.js'
-import {Dialog} from '../components/dialog.js'
+import {Dialog, DialogWrapper} from '../components/dialog.js'
 import services from '../services.js'
 import { Application } from '../app'
+
+
+class Report {
+
+    constructor(type,lang,data)
+    {
+        this.lang=lang;
+        this.type=type;
+        this.data=data;
+    }
+
+    getReport()
+    {
+        switch(this.type)
+        {
+            case "IP":
+                return this.getReportIP();
+            default:
+                throw Error("No report found")
+        }
+    }
+
+    getReportIP()
+    {
+        let lang=this.lang;
+        let data=this.data;
+
+        
+        var config={"STATIC":"Indirizzo IP fisso",
+                    "STATICVM":"Indirizzo IP per macchina virtuale",
+                    "DHCP":"Indirizzo IP dinamico (DHCP)"}
+        
+        if(lang!="ITA")
+        {
+            config["STATIC"]="Static IP address"
+            config["STATICVM"]="Static IP address for virtual machine"
+            config["DHCP"]="Dynamic IP address (DHCP)"
+        }
+
+        var html=`  <div class="grid">
+                    <div>${lang!='ITA' ? 'Configuration':'Configurazione'}:</div><div class="c2">${config[data.config]}</div>
+                    <div>${lang!='ITA' ? 'MAC Address' :'Indirizzo MAC'}:</div><div class="c2">${data.mac}</div>`
+        
+                   
+        if(data.config!='DHCP')
+          html+=`<div>${lang!='ITA' ? 'Name' : 'Nome'}:</div><div class="c2">${data.name}.${data.domain}</div>`
+                    
+        
+        //var portAlias= this.formdata.port.selectedOptions[0].text           
+                   
+        html+=`<div>${lang!='ITA' ? 'Port' : 'Porta'}:</div><div class="c2">${data.port}</div>`
+        
+        if(data.notes)
+        {
+            html+=`<div>${lang!='ITA' ? 'Notes' : 'Note'}:</div><div class="c2">${data.notes.slice(0,100)+"..."}</div>`
+        }
+
+        html+="</div>"
+        
+        html+=`<h4>${lang!='ITA' ? "Do you want submit the request?" : "Si vuole procedere con l'invio della richiesta?"}</h4>`
+
+        return html
+    }
+}
+
 
 export class IP extends Abstract{
   
@@ -348,6 +414,11 @@ export class IP extends Abstract{
                 
                 return 'value is duplicated'
                 
+            },
+
+            "notes":(value)=>{
+                if(value && !value.match(/^[a-zA-Z0-9À-ÿ-.:;! ]+$/)) return 'value is invalid'
+                return null
             }
             
         }
@@ -388,6 +459,7 @@ export class IP extends Abstract{
 
     async mounted(){
 
+        
         const valueReplace=(input)=>{
              
             const macReplace=(value)=>{
@@ -432,7 +504,8 @@ export class IP extends Abstract{
                         let mac=this.eHost ? this.eHost.mac : this.hostMac.value
                         this.location.updateFreePorts({"config":value,"mac":mac})
                         
-                        for(let e of ['mac','name']){
+                                                
+                        for(let e of ["mac","name"]){
                             let el=this.form[e];
                             this.cleanResult(el)
                             if(el.disabled) continue;
@@ -464,7 +537,7 @@ export class IP extends Abstract{
             let target=ev.target
             let tag=ev.target.tagName
             
-            if(tag=='INPUT')
+            if(tag=='INPUT' || tag=='TEXTAREA')
             {
                 target.value=valueReplace(target)
                 let res=await this.validateField(target)
@@ -475,8 +548,7 @@ export class IP extends Abstract{
 
         const validateForm=async function(ev){
            
-            if(ev)
-            ev.preventDefault()
+            if(ev) { ev.preventDefault() }
             
             let elements=Array.from(document.querySelectorAll("input[type='text']"))
             
@@ -498,6 +570,79 @@ export class IP extends Abstract{
             
 
             console.log("Form is valid:",formIsValid)
+
+            if(!formIsValid) return;
+            
+            submitForm()
+          
+        }
+
+
+        const submitForm=()=>{
+       
+            let curr={}
+               
+            curr['mac']=this.hostMac.value
+            curr['config']=this.hostConfig.value
+            curr['port']=this.hostPort.value
+            curr['notes']=this.hostNotes.value
+
+            if(this.hostConfig!='DHCP')
+            {
+                curr['name']=this.hostName.value
+                curr['domain']=this.hostDomain.value
+            }
+                     
+            let from=null;
+            let action='create';
+    
+            if(this.eHost)
+            {
+                let dataIsChanged=false;
+                for(let k in curr){
+                    
+                    if(k=='notes') continue;
+                    
+                    if(curr[k].toLowerCase()!=this.eHost[k].toLowerCase())
+                    {
+                        dataIsChanged=true;
+                    }
+                }
+
+                
+                if(!dataIsChanged){
+                    let lang=this.currentLanguage();
+                    let headerText  = lang=="ITA" ? "Richiesta di Conferma" : "Confirmation Request"
+                    let contentText = lang=="ITA" ? "Attenzione: non ci sono state modifiche ai dati. <br> <b>La sua richiesta non verrà inserita.</b><br><br>Si vuole procedere?":
+                                               "Warning: no changes in data. <br> <b>Your request will not be submitted.</b><br><br>Do you want to proceed?"
+                                               
+               
+                    return this.dlg.showDialog(headerText,contentText,()=>{ Application.navigateTo("hosts")}, ()=>{});
+                }
+
+                from=Object.assign({},this.eHost);
+                action='update';
+                delete from['location'];
+                delete from['port_alias'];
+            }
+    
+           
+            let data={
+                    from:from,
+                    to:curr,
+                    action:action
+                }
+    
+           
+    
+            let lang=this.currentLanguage();
+    
+            let html=new Report("IP",lang,data.to).getReport()
+    
+            this.dlg.showDialog(`${lang!='ITA' ? 'Confirmation Request' : 'Richiesta di Conferma'}`,html,()=>{
+                this.SaveRequest(Application.requestTypes.IP,data);
+            },()=>{this.useMacBusy=false});
+          
         }
 
         const locationFreePorts=function(ev){
@@ -510,6 +655,8 @@ export class IP extends Abstract{
                 this.showResult(this.hostPort,"No free ports")
             }
         }
+
+        this.dlg = new DialogWrapper(this.target.querySelector("#dialogPlaceHolder"))
 
         let loc=this.locale();
 
@@ -528,6 +675,7 @@ export class IP extends Abstract{
         this.hostName=document.querySelector("input[name='name']");
         this.hostDomain=document.querySelector("#domain");
         this.hostPort=document.querySelector("#port");
+        this.hostNotes=document.querySelector("#notes");
         this.hostName.disabled = this.hostConfig.value=='DHCP'
         this.hostDomain.disabled=this.hostName.disabled
 
@@ -568,8 +716,7 @@ export class IP extends Abstract{
         await this.location.setDefault(merge);
         
         
-        
     }
 
-
+   
 }
