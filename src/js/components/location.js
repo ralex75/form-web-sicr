@@ -9,6 +9,7 @@ const template=
         </div>
         <div class="form_col test">
             <select id="build" name="build"></select>
+            <small></small>
         </div>
     </div> 
     <div class="form_riga">
@@ -17,6 +18,7 @@ const template=
         </div>
         <div class="form_col test">
             <select id="floor" name="floor"></select>
+            <small></small>
         </div>
     </div> 
     <div class="form_riga">
@@ -25,6 +27,7 @@ const template=
         </div>
         <div class="form_col">
             <select id="room" name="room"></select>
+            <small></small>
         </div>
     </div> 
     <div class="form_riga">
@@ -50,11 +53,16 @@ const template=
        
     }
 
-    select.ports option:disabled {
-        color: #DDD;
-    }
+    /*select.ports option:disabled {
+        color: #A00;
+    }*/
 
-    
+
+    select option:disabled  {
+        color: #EEE;
+     }
+     
+     
     
     </style>
 `
@@ -255,6 +263,8 @@ export class Location{
     {   
         
         select.innerHTML=this.defaultOption[select.name];
+        select.className=""
+        select.nextElementSibling.innerText=""
 
         var options="";
        

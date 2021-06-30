@@ -116,10 +116,10 @@ const template=`
         border-left:5px solid orange;
     }
     
-
     .form_col input.error{
         border:1px solid red;
         border-left:5px solid red
+        color:#000;
     }
 
     .form_col select.success{
@@ -130,6 +130,7 @@ const template=`
     .form_col select.error{
         border:1px solid red;
         border-left:5px solid red;
+        color:#000;
     }
 
     small{
@@ -285,28 +286,30 @@ export class IP extends Abstract{
                                "header-host":"IDENTIFICATIVO NODO","header-notes":"ULTERIORI INFORMAZIONI","goback":"Torna Indietro",
                                "host-edit-info":"Richiesta di modifica dei dati del nodo",
                                "config-option-static":"STATICO","config-option-staticvm":"STATICO - Virtuale","config-option-dhcp":"DHCP"},
-                        "errors":{"invalid":"Il campo non è valido","is-your-mac":"L'indirizzo MAC inserito appartiene ad un altro tuo nodo",
+                        "errors":{"empty":"Il campo è richiesto",
+                                  "invalid":"Il campo non è valido","is-your-mac":"L'indirizzo MAC inserito appartiene ad un altro tuo nodo",
                                   "port-no-set":"La porta non è stata selezionata.","port-busy":"La porta selezionata risulta occupata.",
                                   "no-free-ports":"Non ci sono porte libere selezionabili nella configurazione scelta",
                                   "bad-port":"La porta selezionata non è utilizzabile nella configurazione scelta.",
                                   "hname-duplicated":"Il nome inserito risulta già registrato.",
                                   "hmac-duplicated":"Il mac address inserito risulta già registrato.",
-                                  "pending-mac":"Verifica che il mac address inserito non sia già in uso...",
-                                  "pending-name":"Verifica che il nome inserito non sia già in uso...",
+                                  "hmac-pending":"Verifica che il mac address inserito non sia già in uso...",
+                                  "hname-pending":"Verifica che il nome inserito non sia già in uso...",
                                   "invalid-mac-config":"Il mac address inserito non è conforme con la configurazione selezionata."
                                   }},
                 "ENG":{"form":{"mac":"Mac Address","config":"Configuration","name":"Name","domain":"Domain","send":"Send","notes":"Notes",
                                 "host-edit-info":"Edit request for node",
                                 "header-host":"NODE IDENTIFIER","header-notes":"Additional Information","goback":"Go Back",
                                 "config-option-static":"STATIC","config-option-staticvm":"STATIC - Virtual","config-option-dhcp":"DHCP"},
-                        "errors":{"invalid":"Field is invalid","is-your-mac":"The MAC address you typed belongs to another node of yours.",
+                        "errors":{  "empty":"Field cannot be empty",
+                                    "invalid":"Field is invalid","is-your-mac":"The MAC address you typed belongs to another node of yours.",
                                     "port-no-set":"The port has not been selected.","port-busy":"Selected port is busy.",
                                     "no-free-ports":"No free ports are available for the selected configuration.",
                                     "bad-port":"The selected port is not available for the selected configuration.",
                                     "hname-duplicated":"The typed host name is already registered.",
                                     "hmac-duplicated":"The typed mac adress is already registered.",
-                                    "pending-mac":"Checking the typed mac address is not yet in use...",
-                                    "pending-name":"Checking the the typed host name is not yet in use...",
+                                    "hmac-pending":"Checking the typed mac address is not yet in use...",
+                                    "hname-pending":"Checking the the typed host name is not yet in use...",
                                     "invalid-mac-config":"The typed mac address is not compliant with the selected configuration."}}
             }
 
@@ -328,11 +331,11 @@ export class IP extends Abstract{
         const checkDuplicatedMacAddress=(input)=>{
             let value=input.value
             this.validationSet.add('mac')
-            this.showWaiting(input)
+            let loc=this.locale();
+            this.showWaiting(input,loc.errors["hmac-pending"])
             return new Promise(resolve=>{
                 this.timeOutID['mac']=setTimeout(()=>{
                         services.net.exists(value).then(resp=>{
-                            console.log(resp.data)
                             resolve(resp.data)
                         }).catch(err=>{
                             resolve(true)
@@ -345,7 +348,8 @@ export class IP extends Abstract{
         const checkDuplicateHostName=(input,value)=>{
            
             this.validationSet.add('name')
-            this.showWaiting(input)
+            let loc=this.locale();
+            this.showWaiting(input,loc.errors["hname-pending"])
             return new Promise(resolve=>{
               
                 this.timeOutID['name']=setTimeout(()=>{
@@ -391,10 +395,10 @@ export class IP extends Abstract{
     
             "mac":async (value)=> {
                 clearTimeout(this.timeOutID["mac"])
-                if(!value) return "value cannot be empty"
-                if(!value.match(/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/)) return 'value is invalid'
-                if(isMacAddressVM(value) && this.hostConfig.value!='STATICVM') return 'value is for VM'
-                if(!isMacAddressVM(value) && this.hostConfig.value=='STATICVM') return 'value is not for VM'
+                if(!value) return "empty"
+                if(!value.match(/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/)) return "invalid"
+                if(isMacAddressVM(value) && this.hostConfig.value!='STATICVM') return 'invalid-mac-config'
+                if(!isMacAddressVM(value) && this.hostConfig.value=='STATICVM') return 'invalid-mac-config'
                 if(this.currentValue['mac']==value) return null;
                 let isDuplicated=await checkDuplicatedMacAddress(input)
                 
@@ -403,15 +407,15 @@ export class IP extends Abstract{
                     return null 
                 }
                 if(this.eHost && this.eHost.mac.toLowerCase()==value.toLowerCase()) return null;
-                return 'value is duplicated'
+                return 'hmac-duplicated'
             },
             
             "name":async (value)=>{
                 
                 clearTimeout(this.timeOutID["name"])
-                if(!value) return "value cannot be empty"
-                if(value.length<4) return 'value is too short (minlength=4)'
-                if(!value.match(/^([a-zA-Z0-9]+)(-[a-zA-Z0-9]+)*$/)) return 'value is invalid'
+                if(!value) return "empty"
+                if(value.length<4) return 'invalid'
+                if(!value.match(/^([a-zA-Z0-9]+)(-[a-zA-Z0-9]+)*$/)) return 'invalid'
                 let name=value;
                 let domain=this.hostDomain.value;
                 if(this.currentValue['name']==name && this.currentValue['domain']==domain) return null;
@@ -430,32 +434,34 @@ export class IP extends Abstract{
                     if(curHostName.toLowerCase()==hostName.toLowerCase()) return null
                 }
                 
-                return 'value is duplicated'
+                return 'hname-duplicated'
                 
             },
 
             "notes":(value)=>{
-                if(value && !value.match(/^[a-zA-Z0-9À-ÿ-.:;! ]+$/)) return 'value is invalid'
+                if(value && !value.match(/^[a-zA-Z0-9À-ÿ-.:;! ]+$/)) return 'invalid'
                 return null
             }
             
         }
 
         let {name,value}=input;
-       
+        let loc=this.locale();
         let res=await validationRules[name](value)
        
-        return res
+        return loc.errors[res] || null
     }
 
 
-    showWaiting =(input)=>{
+    showWaiting =(input,message)=>{
        
         input.className="pendings"
-        input.nextElementSibling.innerText="Sto controllando..."
+        let loc=this.locale();
+        input.nextElementSibling.innerText=message
     }
     
     showResult=(input,msg)=>{
+       
         let name=input.name;
         msg ? this.validationSet.add(name) : this.validationSet.delete(name);
         input.className = msg ? 'error' : 'success';
@@ -509,9 +515,12 @@ export class IP extends Abstract{
             
             if(tagName!='SELECT') return;
             
-            if(["build","floor","room"].some(e=>e.indexOf(name)>-1))
+            
+            if(["build","floor","room","port"].some(e=>e.indexOf(name)>-1))
             {
-                return this.cleanResult(this.hostPort)
+               this.cleanResult(this.hostLoc[name])
+               this.showResult(this.hostLoc[name],null)
+               return;
             }
 
             const actions={
@@ -538,10 +547,11 @@ export class IP extends Abstract{
                     let res=await this.validateField(this.hostName)
                     this.showResult(this.hostName,res)
                 },
-                "port":()=>{
+             
+                /*"port":()=>{
                     this.cleanResult(this.hostPort)
                     this.showResult(this.hostPort,null)
-                }
+                }*/
 
             }
 
@@ -569,19 +579,32 @@ export class IP extends Abstract{
             if(ev) { ev.preventDefault() }
             
             let elements=Array.from(document.querySelectorAll("input[type='text']"))
-            
+            let loc=this.locale()
             for(let e of elements)
             {
                 if(!e.value && !e.disabled)
                 {
                     this.validationSet.add(e.name)
-                    this.showResult(e,"value cannot be empty")
+                    this.showResult(e,loc.errors["empty"])
                 }
+            }
+
+            /*if(!this.hostLocBuild.value){
+                this.validationSet.add("build")
+                this.showResult(this.hostLocBuild,"Edificio non selezionato")
             }
            
             if(!this.hostPort.value){
                 this.validationSet.add("port")
-                this.showResult(this.hostPort,"port is not selected")
+                this.showResult(this.hostPort,loc.errors["port-no-set"])
+            }*/
+
+            for(var k in this.hostLoc){
+               
+                if(this.hostLoc[k].disabled || this.hostLoc[k].value) continue;
+               
+                this.validationSet.add(k)
+                this.showResult(this.hostLoc[k],"missing value")
             }
 
             let formIsValid=this.validationSet.size==0
@@ -666,11 +689,11 @@ export class IP extends Abstract{
         const locationFreePorts=function(ev){
            
             let freePorts=ev.detail
-            this.hostPort.disabled=!freePorts
+            this.hostLoc["port"].disabled=!freePorts
             if(!freePorts)
             {
                 this.validationSet.add("port")
-                this.showResult(this.hostPort,"No free ports")
+                this.showResult(this.hostLoc["port"],this.locale().errors["no-free-ports"])
             }
         }
 
@@ -692,7 +715,16 @@ export class IP extends Abstract{
         this.hostMac=document.querySelector("input[name='mac']");
         this.hostName=document.querySelector("input[name='name']");
         this.hostDomain=document.querySelector("#domain");
-        this.hostPort=document.querySelector("#port");
+        //this.hostLocBuild=document.querySelector("#build");
+        //this.hostPort=document.querySelector("#port");
+
+        this.hostLoc={
+            "build":document.querySelector("#build"),
+            "floor":document.querySelector("#floor"),
+            "room":document.querySelector("#room"),
+            "port":document.querySelector("#port")
+        }
+
         this.hostNotes=document.querySelector("#notes");
         this.hostName.disabled = this.hostConfig.value=='DHCP'
         this.hostDomain.disabled=this.hostName.disabled
@@ -728,7 +760,6 @@ export class IP extends Abstract{
         this.hostDomain.disabled=this.hostName.disabled;
 
         //imposta edificio piano stanza porta
-        
         let merge=Object.assign({},this.eHost.location,{"config":this.eHost.config,"mac":this.eHost.mac})
         
         await this.location.setDefault(merge);
