@@ -625,7 +625,7 @@ export class IP extends Abstract{
                
             curr['mac']=this.hostMac.value
             curr['config']=this.hostConfig.value
-            curr['port']=this.hostPort.value
+            curr['port']=this.hostLoc.port.value
             curr['notes']=this.hostNotes.value
 
             if(this.hostConfig!='DHCP')
