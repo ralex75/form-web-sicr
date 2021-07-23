@@ -672,8 +672,10 @@ export class IP extends Abstract{
         this.form.addEventListener("freePorts",ev=>scope.handleLocationFreePorts(ev.detail))
 
         //lista di nodi gestiti dall'utente per controllo su nodo di cui è proprietario
+       
         this.usermaclist=await this.getHosts();
        
+        debugger;
         //il nodo di edit
         this.eHost=this.args ? this.args.eHost : null;
 
@@ -810,10 +812,10 @@ export class IP extends Abstract{
 
             if(target.name=='mac')
             {
+                
                 let eValue=this.eHost ? `${this.eHost["mac"]}` : ""
                 let value=target.value;
                 
-               
                 if(eValue!=value)
                 {
                     
