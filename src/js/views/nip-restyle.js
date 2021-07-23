@@ -118,7 +118,7 @@ const template=`
     
     .form_col input.error{
         border:1px solid red;
-        border-left:5px solid red
+        border-left:5px solid red;
         color:#000;
     }
 
@@ -548,10 +548,6 @@ export class IP extends Abstract{
                     this.showResult(this.hostName,res)
                 },
              
-                /*"port":()=>{
-                    this.cleanResult(this.hostPort)
-                    this.showResult(this.hostPort,null)
-                }*/
 
             }
 
@@ -604,7 +600,7 @@ export class IP extends Abstract{
                 if(this.hostLoc[k].disabled || this.hostLoc[k].value) continue;
                
                 this.validationSet.add(k)
-                this.showResult(this.hostLoc[k],"missing value")
+                this.showResult(this.hostLoc[k],"value is required")
             }
 
             let formIsValid=this.validationSet.size==0
@@ -688,13 +684,28 @@ export class IP extends Abstract{
 
         const locationFreePorts=function(ev){
            
+            debugger;
             let freePorts=ev.detail
-            this.hostLoc["port"].disabled=!freePorts
-            if(!freePorts)
+            let selPort=this.hostLoc["port"];
+            this.cleanResult(selPort)
+            selPort.disabled=!freePorts
+            if(selPort.disabled)
             {
                 this.validationSet.add("port")
                 this.showResult(this.hostLoc["port"],this.locale().errors["no-free-ports"])
             }
+            else{
+                if(selPort.options[selPort.selectedIndex].disabled)
+                {
+                    this.validationSet.add("port")
+                    this.showResult(this.hostLoc["port"],this.locale().errors["bad-port"])
+                }
+            }
+
+            if(!this.validationSet.has('port') && selPort.value!=""){
+                this.showResult(selPort,"")
+            }
+            
         }
 
         this.dlg = new DialogWrapper(this.target.querySelector("#dialogPlaceHolder"))

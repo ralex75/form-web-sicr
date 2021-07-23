@@ -53,13 +53,9 @@ const template=
        
     }
 
-    /*select.ports option:disabled {
-        color: #A00;
-    }*/
-
-
+   
     select option:disabled  {
-        color: #EEE;
+        color: #CCC;
      }
      
      
@@ -125,10 +121,10 @@ export class Location{
 
         
         this.args=args;
-           
         console.log("UpdateFreePorts")
         //Abilita o Disabilita le porte
         this.enableDisablePorts();
+
     }
     
 
@@ -166,8 +162,8 @@ export class Location{
     enableDisablePorts()
     {
        
-       
-        if(!this.ports) return;
+      
+        if(!this.ports || this.ports.length==0) return;
 
        
         var options=this.$ports.options;
@@ -189,11 +185,11 @@ export class Location{
        {
            //this.$ports.value=""
        }*/
-
+       
        var freePorts=(disabledCount!=(this.$ports.options.length-1));
       
 
-       this.target.dispatchEvent(new CustomEvent('freePorts', { detail: freePorts,bubbles:true }));
+       this.target.dispatchEvent(new CustomEvent('freePorts', { detail: freePorts, bubbles:true }));
         
     }
 
@@ -275,7 +271,7 @@ export class Location{
 
         select.innerHTML+=options;
         select.disabled = select.options.length<2;
-       
+     
         if(select.name=='port' && !select.disabled)
         {
             this.enableDisablePorts();
@@ -287,6 +283,7 @@ export class Location{
 
     getFloors(){
        
+        this.ports=[]
         var b=this.$builds.value;
 
         return services.locations.getFloors(b).then(res=>{
@@ -297,7 +294,7 @@ export class Location{
 
     getRooms(){
        
-       
+        this.ports=[]
         var b=this.$builds.value;
         var f=this.$floors.value;
 
@@ -309,6 +306,7 @@ export class Location{
 
     getPorts(){
        
+        this.ports=[]
         var loc=this.$rooms.value;
        
         return services.locations.getPorts(loc).then(res=>{
@@ -347,7 +345,7 @@ export class Location{
         switch(name){
 
             case "build":
-                
+              
                 this.buildOptions(this.$floors)
                 this.buildOptions(this.$rooms)
                 this.buildOptions(this.$ports)
