@@ -6,7 +6,7 @@ const valueOrDefault=(value)=>{
 function userInfo(user){
    
 
-    let userEmails=user.mailAlternates.filter(m=>m.indexOf("@roma1.infn.it")<0).join(";")
+    let userEmails=user.mailAlternates.filter(m=>m.indexOf(user.mail)<0).join(";")
     
     let txt=`
         
