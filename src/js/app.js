@@ -21,7 +21,7 @@ const ITSEC_GRACE_TIME=15;
 
 const navigateTo=(view,args)=>{
     
-    
+    debugger;
     history.pushState(args,"",`#${view}`)
     router();
 }
