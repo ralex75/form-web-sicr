@@ -286,7 +286,7 @@ export class IP extends Abstract{
                                "header-host":"IDENTIFICATIVO NODO","header-notes":"ULTERIORI INFORMAZIONI","goback":"Torna Indietro",
                                "host-edit-info":"Richiesta di modifica dei dati del nodo",
                                "config-option-static":"STATICO","config-option-staticvm":"STATICO - Virtuale","config-option-dhcp":"DHCP"},
-                        "errors":{"empty":"Il campo è richiesto",
+                        "errors":{"empty":"Il campo è richiesto","selection-required":"la selezione è richiesta",
                                   "invalid":"Il campo non è valido","is-your-mac":"L'indirizzo MAC inserito appartiene ad un altro tuo nodo",
                                   "port-no-set":"La porta non è stata selezionata.","port-busy":"La porta selezionata risulta occupata.",
                                   "no-free-ports":"Non ci sono porte libere selezionabili nella configurazione scelta",
@@ -301,7 +301,7 @@ export class IP extends Abstract{
                                 "host-edit-info":"Edit request for node",
                                 "header-host":"NODE IDENTIFIER","header-notes":"Additional Information","goback":"Go Back",
                                 "config-option-static":"STATIC","config-option-staticvm":"STATIC - Virtual","config-option-dhcp":"DHCP"},
-                        "errors":{  "empty":"Field cannot be empty",
+                        "errors":{  "empty":"Field cannot be empty","selection-required":"selection is required",
                                     "invalid":"Field is invalid","is-your-mac":"The MAC address you typed belongs to another node of yours.",
                                     "port-no-set":"The port has not been selected.","port-busy":"Selected port is busy.",
                                     "no-free-ports":"No free ports are available for the selected configuration.",
@@ -531,11 +531,12 @@ export class IP extends Abstract{
                         let mac=this.eHost ? this.eHost.mac : this.hostMac.value
                         this.location.updateFreePorts({"config":value,"mac":mac})
                         
-                                                
+                                           
                         for(let e of ["mac","name"]){
                             let el=this.form[e];
                             this.cleanResult(el)
-                            if(el.disabled) continue;
+                            if(el.disabled || !el.value) {continue;}
+                            
                             this.validateField(el).then(res=>{
                                 this.showResult(el,res)
                             })
@@ -600,7 +601,7 @@ export class IP extends Abstract{
                 if(this.hostLoc[k].disabled || this.hostLoc[k].value) continue;
                
                 this.validationSet.add(k)
-                this.showResult(this.hostLoc[k],"value is required")
+                this.showResult(this.hostLoc[k],loc.errors["selection-required"])
             }
 
             let formIsValid=this.validationSet.size==0

@@ -97,6 +97,7 @@ var parseLDAPUserInfo=function (user) {
     cuser.mailAlternates=ma.filter(e=>e.match(/\w+\.\w+@/)).sort()
                         .concat(ma.filter(e=>!e.match(/\w+\.\w+@/)).sort())
 
+    console.log("ma:",cuser.mailAlternates)                        
 
     let isMemberOf=user.isMemberOf;
     let role="";            //ruolo
