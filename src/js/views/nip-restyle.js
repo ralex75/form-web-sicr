@@ -660,6 +660,7 @@ export class IP extends Abstract{
 
                 from=Object.assign({},this.eHost);
                 action='update';
+                delete from['fqdn'];
                 delete from['location'];
                 delete from['port_alias'];
             }
@@ -678,6 +679,7 @@ export class IP extends Abstract{
             let html=new Report("IP",lang,data.to).getReport()
     
             this.dlg.showDialog(`${lang!='ITA' ? 'Confirmation Request' : 'Richiesta di Conferma'}`,html,()=>{
+               
                 this.SaveRequest(Application.requestTypes.IP,data);
             },()=>{this.useMacBusy=false});
           
@@ -685,7 +687,7 @@ export class IP extends Abstract{
 
         const locationFreePorts=function(ev){
            
-            debugger;
+         
             let freePorts=ev.detail
             let selPort=this.hostLoc["port"];
             this.cleanResult(selPort)
@@ -779,5 +781,11 @@ export class IP extends Abstract{
         
     }
 
+    
+
    
+}
+
+const toFQDN=({name,domain})=>{
+    return  name ? `${name}.${domain}` : 'DHCP'
 }
