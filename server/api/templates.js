@@ -7,7 +7,7 @@ function userInfo(user){
    
 
     let userEmails=user.mailAlternates.filter(m=>m.indexOf(user.mail)<0).join(";")
-    console.log("uemails:",userEmails)
+    
     let txt=`
         
         Nome               : ${user.name} 
