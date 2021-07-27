@@ -248,3 +248,25 @@ export class Dialog{
         
     }
 }
+
+export class DialogWrapper{
+
+      constructor(dialogPlaceHolder){
+          this.dlg=new Dialog(dialogPlaceHolder);
+      }
+      //DIALOG PROMPT
+      showDialog(title,message,okCallback=null,noCallback=null)
+      {
+  
+          //var dlgplace=this.target.querySelector("#dialogPlaceHolder")
+          //let dlg=new Dialog(this.dlg);
+          
+          //callback anonymous function non serve il .bind(this)
+          this.dlg.showYesButton(okCallback)
+              .showNoButton(noCallback)
+              .setTitle(title)
+              .setMessage(message)
+              .showHide();
+  
+      }
+}
