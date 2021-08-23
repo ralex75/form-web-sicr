@@ -258,7 +258,7 @@ class Report {
 export class IP extends Abstract{
   
     timeOutID={"mac":null,"name":null}
-    currentValue={}
+    lastValidValue={}
     validationSet=new Set()
     
     
@@ -399,13 +399,8 @@ export class IP extends Abstract{
                 if(!value.match(/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/)) return "invalid"
                 if(isMacAddressVM(value) && this.hostConfig.value!='STATICVM') return 'invalid-mac-config'
                 if(!isMacAddressVM(value) && this.hostConfig.value=='STATICVM') return 'invalid-mac-config'
-                if(this.currentValue['mac']==value) return null;
                 let isDuplicated=await checkDuplicatedMacAddress(input)
-                
-                if (!isDuplicated) {
-                    this.currentValue['mac']==value
-                    return null 
-                }
+                if (!isDuplicated) {return null}
                 if(this.eHost && this.eHost.mac.toLowerCase()==value.toLowerCase()) return null;
                 return 'hmac-duplicated'
             },
@@ -418,14 +413,14 @@ export class IP extends Abstract{
                 if(!value.match(/^([a-zA-Z0-9]+)(-[a-zA-Z0-9]+)*$/)) return 'invalid'
                 let name=value;
                 let domain=this.hostDomain.value;
-                if(this.currentValue['name']==name && this.currentValue['domain']==domain) return null;
+                //if(this.lastValidValue['name']==name && this.lastValidValue['domain']==domain) return null;
                
                 let hostName=`${name}.${domain}`
                 let isDuplicated=await checkDuplicateHostName(input,hostName)
                 
                 if (!isDuplicated) {
-                    this.currentValue['name']=name
-                    this.currentValue['domain']=domain
+                   // this.lastValidValue['name']=name
+                    //this.lastValidValue['domain']=domain
                     return null
                 }
 
@@ -448,7 +443,8 @@ export class IP extends Abstract{
         let {name,value}=input;
         let loc=this.locale();
         let res=await validationRules[name](value)
-       
+        res ? this.validationSet.add(name) : this.validationSet.delete(name);
+        
         return loc.errors[res] || null
     }
 
@@ -456,16 +452,13 @@ export class IP extends Abstract{
     showWaiting =(input,message)=>{
        
         input.className="pendings"
-        let loc=this.locale();
         input.nextElementSibling.innerText=message
     }
     
-    showResult=(input,msg)=>{
+    showResult=(input,message)=>{
        
-        let name=input.name;
-        msg ? this.validationSet.add(name) : this.validationSet.delete(name);
-        input.className = msg ? 'error' : 'success';
-        input.nextElementSibling.innerText=msg
+        input.className = message ? 'error' : 'success';
+        input.nextElementSibling.innerText=message
         
     }
     
@@ -530,16 +523,21 @@ export class IP extends Abstract{
                         
                         let mac=this.eHost ? this.eHost.mac : this.hostMac.value
                         this.location.updateFreePorts({"config":value,"mac":mac})
+                         
                         
-                                           
                         for(let e of ["mac","name"]){
                             let el=this.form[e];
-                            this.cleanResult(el)
-                            if(el.disabled || !el.value) {continue;}
                             
+                            if(el.disabled) {
+                                
+                                this.cleanResult(el) 
+                                continue;
+                            }
+                                                                                  
                             this.validateField(el).then(res=>{
                                 this.showResult(el,res)
                             })
+                                                  
                         }
 
                 },
@@ -766,8 +764,9 @@ export class IP extends Abstract{
         for(let e of Array.from(this.form.elements))
         {
             if(!e.name || ['build','floor','room','port'].some(k=>k==e.id)) continue
+           
             this.form[e.name].value=(this.eHost[e.name] || "")
-            this.currentValue[e.name]=this.form[e.name].value
+            //this.currentValue[e.name]=this.form[e.name].value
         }
 
         this.hostName.disabled=this.hostConfig.value=='DHCP';
