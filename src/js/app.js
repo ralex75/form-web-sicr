@@ -20,9 +20,8 @@ let timeoutID=null;
 const ITSEC_GRACE_TIME=15;
 
 const navigateTo=(view,args)=>{
-    
-    
-    history.pushState(args,"",`#${view}`)
+  
+    history.pushState(args,null,`#${view}`)
     router();
 }
 
@@ -199,7 +198,7 @@ const selectedLanguage=(lang)=>{
 
 const handleError=(err)=>{
     
-    debugger;
+    
     User.remove()
 
     navigateTo('result',{'status':false})
