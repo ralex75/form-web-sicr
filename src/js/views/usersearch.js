@@ -3,7 +3,7 @@ const template=`
     <input type="text" id="search" class="search" placeholder="[SEARCH]" />
 </div>
 <div id="waiting"></div>
-<h4 id="resultText"></h4>
+<h4 id="resultText" ></h4>
 <div class="scroll">
 
     <ul id="userlist"></ul>
@@ -14,6 +14,7 @@ input.search{
     padding:10px;
     margin:10px 0;
     width:80%;
+   
 }
 li{
    

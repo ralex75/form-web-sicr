@@ -44,7 +44,7 @@ import Abstract from './abstract.js'
 import {Dialog} from '../components/dialog.js'
 import services from '../services.js'
 import {Application} from '../app'
-import { IP } from './ip.js'
+import loc from '../locale/hostlist.loc'
 
 
 
@@ -156,10 +156,7 @@ export class HostList extends Abstract{
     }
 
     locale(){
-        const loc={"ITA":{"name":"Nome","port":"Porta","mac":"Indirizzo MAC","add":"Aggiungi","search":"ricerca"},
-                "ENG":{"name":"Name","port":"Port","mac":"MAC Address","add":"Add","search":"search"},
-            }
-
+        
         return loc[Application.language.current];
         
     }
