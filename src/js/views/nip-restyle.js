@@ -189,7 +189,7 @@ import {Location} from '../components/location.js'
 import {Dialog, DialogWrapper} from '../components/dialog.js'
 import services from '../services.js'
 import { Application } from '../app'
-
+import loc from '../locale/ip.loc'
 
 class Report {
 
@@ -258,9 +258,9 @@ class Report {
 export class IP extends Abstract{
   
     timeOutID={"mac":null,"name":null}
-    lastValidValue={}
     validationSet=new Set()
-    
+    lastMacDuplicateResult={}
+    lastNameDuplicateResult={}
     
     constructor(target,args){
         super(target,args)
@@ -282,37 +282,6 @@ export class IP extends Abstract{
 
     locale(){
 
-        const loc= {"ITA":{"form":{"mac":"Indirizzo Mac","config":"Configurazione","name":"Nome","domain":"Dominio","send":"Invia","notes":"Note",
-                               "header-host":"IDENTIFICATIVO NODO","header-notes":"ULTERIORI INFORMAZIONI","goback":"Torna Indietro",
-                               "host-edit-info":"Richiesta di modifica dei dati del nodo",
-                               "config-option-static":"STATICO","config-option-staticvm":"STATICO - Virtuale","config-option-dhcp":"DHCP"},
-                        "errors":{"empty":"Il campo è richiesto","selection-required":"la selezione è richiesta",
-                                  "invalid":"Il campo non è valido","is-your-mac":"L'indirizzo MAC inserito appartiene ad un altro tuo nodo",
-                                  "port-no-set":"La porta non è stata selezionata.","port-busy":"La porta selezionata risulta occupata.",
-                                  "no-free-ports":"Non ci sono porte libere selezionabili nella configurazione scelta",
-                                  "bad-port":"La porta selezionata non è utilizzabile nella configurazione scelta.",
-                                  "hname-duplicated":"Il nome inserito risulta già registrato.",
-                                  "hmac-duplicated":"Il mac address inserito risulta già registrato.",
-                                  "hmac-pending":"Verifica che il mac address inserito non sia già in uso...",
-                                  "hname-pending":"Verifica che il nome inserito non sia già in uso...",
-                                  "invalid-mac-config":"Il mac address inserito non è conforme con la configurazione selezionata."
-                                  }},
-                "ENG":{"form":{"mac":"Mac Address","config":"Configuration","name":"Name","domain":"Domain","send":"Send","notes":"Notes",
-                                "host-edit-info":"Edit request for node",
-                                "header-host":"NODE IDENTIFIER","header-notes":"Additional Information","goback":"Go Back",
-                                "config-option-static":"STATIC","config-option-staticvm":"STATIC - Virtual","config-option-dhcp":"DHCP"},
-                        "errors":{  "empty":"Field cannot be empty","selection-required":"selection is required",
-                                    "invalid":"Field is invalid","is-your-mac":"The MAC address you typed belongs to another node of yours.",
-                                    "port-no-set":"The port has not been selected.","port-busy":"Selected port is busy.",
-                                    "no-free-ports":"No free ports are available for the selected configuration.",
-                                    "bad-port":"The selected port is not available for the selected configuration.",
-                                    "hname-duplicated":"The typed host name is already registered.",
-                                    "hmac-duplicated":"The typed mac adress is already registered.",
-                                    "hmac-pending":"Checking the typed mac address is not yet in use...",
-                                    "hname-pending":"Checking the the typed host name is not yet in use...",
-                                    "invalid-mac-config":"The typed mac address is not compliant with the selected configuration."}}
-            }
-
         return loc[this.currentLanguage()];
     }
 
@@ -321,7 +290,6 @@ export class IP extends Abstract{
         return Application.language.current
     }
 
-    
 
     validateField=async (input)=>{
    
@@ -394,12 +362,15 @@ export class IP extends Abstract{
         const validationRules={
     
             "mac":async (value)=> {
+                console.log(this.lastMacDuplicateResult)
                 clearTimeout(this.timeOutID["mac"])
                 if(!value) return "empty"
                 if(!value.match(/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/)) return "invalid"
                 if(isMacAddressVM(value) && this.hostConfig.value!='STATICVM') return 'invalid-mac-config'
                 if(!isMacAddressVM(value) && this.hostConfig.value=='STATICVM') return 'invalid-mac-config'
-                let isDuplicated=await checkDuplicatedMacAddress(input)
+                let isDuplicated= value in this.lastMacDuplicateResult ? this.lastMacDuplicateResult[value] : await checkDuplicatedMacAddress(input)
+                this.lastMacDuplicateResult={}
+                this.lastMacDuplicateResult[value]=isDuplicated
                 if (!isDuplicated) {return null}
                 if(this.eHost && this.eHost.mac.toLowerCase()==value.toLowerCase()) return null;
                 return 'hmac-duplicated'
@@ -413,17 +384,14 @@ export class IP extends Abstract{
                 if(!value.match(/^([a-zA-Z0-9]+)(-[a-zA-Z0-9]+)*$/)) return 'invalid'
                 let name=value;
                 let domain=this.hostDomain.value;
-                //if(this.lastValidValue['name']==name && this.lastValidValue['domain']==domain) return null;
-               
-                let hostName=`${name}.${domain}`
-                let isDuplicated=await checkDuplicateHostName(input,hostName)
                 
-                if (!isDuplicated) {
-                   // this.lastValidValue['name']=name
-                    //this.lastValidValue['domain']=domain
-                    return null
-                }
+                let hostName=`${name}.${domain}`
+                let isDuplicated= hostName in this.lastNameDuplicateResult ? this.lastNameDuplicateResult[hostName] : await checkDuplicateHostName(input,hostName)
+                this.lastNameDuplicateResult={}
+                this.lastNameDuplicateResult[hostName]=isDuplicated
 
+                if (!isDuplicated) return null
+                
                 if(this.eHost) {
                     let curHostName=this.eHost.fqdn()
                     if(curHostName.toLowerCase()==hostName.toLowerCase()) return null
@@ -444,6 +412,10 @@ export class IP extends Abstract{
         let loc=this.locale();
         let res=await validationRules[name](value)
         res ? this.validationSet.add(name) : this.validationSet.delete(name);
+        /*console.log("res:",res)
+        if(res && name=='mac' && res!='hmac-duplicated'){
+            this.lastMacDuplicateResult={}
+        }*/
         
         return loc.errors[res] || null
     }
@@ -480,7 +452,6 @@ export class IP extends Abstract{
         const valueReplace=(input)=>{
              
             const macReplace=(value)=>{
-
                 value=value.replace("-",":").toUpperCase()
                 if(value[value.length-1]==":" && value[value.length-2]==value[value.length-1])
                 {
@@ -517,6 +488,7 @@ export class IP extends Abstract{
             }
 
             const actions={
+
                 "config":async ()=>{
                         this.hostName.disabled = value=='DHCP'
                         this.hostDomain.disabled=this.hostName.disabled
@@ -533,7 +505,8 @@ export class IP extends Abstract{
                                 this.cleanResult(el) 
                                 continue;
                             }
-                                                                                  
+                             
+                            
                             this.validateField(el).then(res=>{
                                 this.showResult(el,res)
                             })
@@ -541,6 +514,7 @@ export class IP extends Abstract{
                         }
 
                 },
+
                 "domain":async ()=>{
                     this.cleanResult(this.hostName)
                     let res=await this.validateField(this.hostName)
@@ -558,14 +532,19 @@ export class IP extends Abstract{
         const validateFormInput=async function(ev){
             
             let target=ev.target
-            let tag=ev.target.tagName
+            let tag=target.tagName
             
-            if(tag=='INPUT' || tag=='TEXTAREA')
+            /*if(ev.inputType=='insertFromPaste') 
             {
-                target.value=valueReplace(target)
-                let res=await this.validateField(target)
-                this.showResult(target,res)
-            }
+                target.value=""; return
+            }*/
+
+            if(tag!='INPUT' && tag!='TEXTAREA') return;
+                       
+            target.value=valueReplace(target)
+            let res=await this.validateField(target)
+            this.showResult(target,res)
+
            
         }
 
@@ -583,17 +562,7 @@ export class IP extends Abstract{
                     this.showResult(e,loc.errors["empty"])
                 }
             }
-
-            /*if(!this.hostLocBuild.value){
-                this.validationSet.add("build")
-                this.showResult(this.hostLocBuild,"Edificio non selezionato")
-            }
-           
-            if(!this.hostPort.value){
-                this.validationSet.add("port")
-                this.showResult(this.hostPort,loc.errors["port-no-set"])
-            }*/
-
+          
             for(var k in this.hostLoc){
                
                 if(this.hostLoc[k].disabled || this.hostLoc[k].value) continue;
@@ -603,9 +572,7 @@ export class IP extends Abstract{
             }
 
             let formIsValid=this.validationSet.size==0
-            
 
-            console.log("Form is valid:",formIsValid)
 
             if(!formIsValid) return;
             
@@ -727,9 +694,7 @@ export class IP extends Abstract{
         this.hostMac=document.querySelector("input[name='mac']");
         this.hostName=document.querySelector("input[name='name']");
         this.hostDomain=document.querySelector("#domain");
-        //this.hostLocBuild=document.querySelector("#build");
-        //this.hostPort=document.querySelector("#port");
-
+      
         this.hostLoc={
             "build":document.querySelector("#build"),
             "floor":document.querySelector("#floor"),
@@ -742,7 +707,7 @@ export class IP extends Abstract{
         this.hostDomain.disabled=this.hostName.disabled
 
         //eventi del form
-        this.form.addEventListener("keyup",validateFormInput.bind(this))
+        this.form.addEventListener("input",validateFormInput.bind(this))
         this.form.addEventListener("change",validateFormSelect.bind(this))
         this.form.addEventListener("submit",validateForm.bind(this))
         //questo messaggio viene inviato dal componente Location per informare del numero di porte
