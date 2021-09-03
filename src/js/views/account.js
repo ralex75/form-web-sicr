@@ -426,11 +426,7 @@ export class Account extends Abstract{
         
         butt.disabled=true;
         this.emailAddressExists().then(exists=>{
-          
-<<<<<<< HEAD
-=======
-           
->>>>>>> master
+        
             if(!exists)
             {
                 dlg.setTitle(title);
