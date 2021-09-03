@@ -362,7 +362,6 @@ export class IP extends Abstract{
         const validationRules={
     
             "mac":async (value)=> {
-                console.log(this.lastMacDuplicateResult)
                 clearTimeout(this.timeOutID["mac"])
                 if(!value) return "empty"
                 if(!value.match(/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/)) return "invalid"
