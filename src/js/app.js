@@ -194,14 +194,12 @@ const handleError=(err)=>{
 
 window.addEventListener('error', function(event) { 
     
-    //handleError(event);
+    handleError(event);
 })
 
 window.addEventListener('unhandledrejection', function(event) {
-    
-    //console.error('Unhandled rejection (promise: ', event.promise, ', reason: ', event.reason, ').');
-    //document.querySelector("#col_sin_menu").innerHTML="";
-    //handleError(event);
+   
+    handleError(event);
 });
 
 
