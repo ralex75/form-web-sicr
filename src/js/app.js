@@ -140,14 +140,14 @@ const router=async ()=>{
    
     let user=User.current();
 
-    if(!user.isAuthorized)
+    if(!user || !user.isAuthorized)
     {
         let user=User.current();
         routes=routes.filter(r=>(user && r.name=="profile") || r.name=="logout")
     }
 
     
-    if(!user.isAdmin){
+    if(user && !user.isAdmin){
         routes=routes.filter(r=>r.name!="search")
     }
     
@@ -183,7 +183,7 @@ const selectedLanguage=(lang)=>{
 
 const handleError=(err)=>{
     
-    
+    debugger;
     User.remove()
 
     navigateTo('result',{'status':false})
@@ -193,12 +193,12 @@ const handleError=(err)=>{
 
 
 window.addEventListener('error', function(event) { 
-    
+    debugger
     handleError(event);
 })
 
 window.addEventListener('unhandledrejection', function(event) {
-   
+    debugger
     handleError(event);
 });
 
