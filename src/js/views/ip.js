@@ -470,18 +470,6 @@ export class IP extends Abstract{
 
         }
 
-<<<<<<< HEAD
-        //lista di nodi gestiti dall'utente per controllo su nodo di cui è proprietario
-       
-        this.usermaclist=await this.getHosts();
-       
-        debugger;
-        //il nodo di edit
-        this.eHost=this.args ? this.args.eHost : null;
-=======
-        
->>>>>>> use-new-ip
-
         const validateFormSelect=async function(ev){
             
             
@@ -602,14 +590,6 @@ export class IP extends Abstract{
 
             if(this.hostConfig!='DHCP')
             {
-<<<<<<< HEAD
-                
-                let eValue=this.eHost ? `${this.eHost["mac"]}` : ""
-                let value=target.value;
-                
-                if(eValue!=value)
-                {
-=======
                 curr['name']=this.hostName.value
                 curr['domain']=this.hostDomain.value
             }
@@ -621,7 +601,6 @@ export class IP extends Abstract{
             {
                 let dataIsChanged=false;
                 for(let k in curr){
->>>>>>> use-new-ip
                     
                     if(k=='notes') continue;
                     

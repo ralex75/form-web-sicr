@@ -34,19 +34,8 @@ async function forceLDAPSync(req,res,next)
 
 function authToken(req,res,next){
   
-<<<<<<< HEAD
-    //mio
-    var testUUID='50699576-15eb-49c6-a645-c07c0de9c402'
-  
-    testUUID='e7a90559-0446-44d4-af76-7a46c29b8f01'
-    //testUUID='c9779683-b603-4416-ac9a-b46bb4685038'
-    
-    //testUUID='b9abec6d-4ab1-4011-b344-682433ccead1'
-    //testUUID="9228ab75-d9b0-4573-93af-cfd1a6f44848"
-=======
       //mio
       var testUUID='50699576-15eb-49c6-a645-c07c0de9c402'
->>>>>>> use-new-ip
     
       //testUUID='d4595f93-51e8-473d-a47b-f5d70d355024'
       //testUUID='577cc87f-d431-4a8e-80dd-b29b9e0d57e5'
