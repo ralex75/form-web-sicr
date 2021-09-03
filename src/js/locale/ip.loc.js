@@ -1,0 +1,32 @@
+export default {"ITA":{"form":{"mac":"Indirizzo Mac","config":"Configurazione","name":"Nome","domain":"Dominio","send":"Invia","notes":"Note",
+                               "header-host":"IDENTIFICATIVO NODO","header-notes":"ULTERIORI INFORMAZIONI","goback":"Torna Indietro",
+                               "host-edit-info":"Richiesta di modifica dei dati del nodo",
+                               "config-option-static":"STATICO","config-option-staticvm":"STATICO - Virtuale","config-option-dhcp":"DHCP"},
+                        "errors":{"empty":"Il campo è richiesto","selection-required":"la selezione è richiesta",
+                                  "invalid":"Il campo non è valido","is-your-mac":"L'indirizzo MAC inserito appartiene ad un altro tuo nodo",
+                                  "port-no-set":"La porta non è stata selezionata.","port-busy":"La porta selezionata risulta occupata.",
+                                  "no-free-ports":"Non ci sono porte libere selezionabili nella configurazione scelta",
+                                  "bad-port":"La porta selezionata non è utilizzabile nella configurazione scelta.",
+                                  "hname-duplicated":"Il nome inserito risulta già registrato.",
+                                  "hmac-duplicated":"Il mac address inserito risulta già registrato.",
+                                  "hmac-pending":"Verifica che il mac address inserito non sia già in uso...",
+                                  "hname-pending":"Verifica che il nome inserito non sia già in uso...",
+                                  "invalid-mac-config":"Il mac address inserito non è conforme con la configurazione selezionata."
+                                  }},
+                "ENG":{"form":{"mac":"Mac Address","config":"Configuration","name":"Name","domain":"Domain","send":"Send","notes":"Notes",
+                                "host-edit-info":"Edit request for node",
+                                "header-host":"NODE IDENTIFIER","header-notes":"Additional Information","goback":"Go Back",
+                                "config-option-static":"STATIC","config-option-staticvm":"STATIC - Virtual","config-option-dhcp":"DHCP"},
+                        "errors":{  "empty":"Field cannot be empty","selection-required":"selection is required",
+                                    "invalid":"Field is invalid","is-your-mac":"The MAC address you typed belongs to another node of yours.",
+                                    "port-no-set":"The port has not been selected.","port-busy":"Selected port is busy.",
+                                    "no-free-ports":"No free ports are available for the selected configuration.",
+                                    "bad-port":"The selected port is not available for the selected configuration.",
+                                    "hname-duplicated":"The typed host name is already registered.",
+                                    "hmac-duplicated":"The typed mac adress is already registered.",
+                                    "hmac-pending":"Checking the typed mac address is not yet in use...",
+                                    "hname-pending":"Checking the the typed host name is not yet in use...",
+                                    "invalid-mac-config":"The typed mac address is not compliant with the selected configuration."}}
+            }
+
+

@@ -18,16 +18,17 @@ const dump=(fileName,data)=>{
 
 }
 
-router.post("/",(req,res)=>{
+router.post("/", async (req,res)=>{
     let user=req.body.user;
     
-    user=getUser(user.uuid)
+    user= await getUser(user.uuid)
 
     if(!user) return  res.status(500).json({"err":`No user found`})
 
     if(user.isAuthorized) return res.json({"txt":`user is ok`})
 
-    const {templates}=require("./templates")
+    const {templates}=require("./templates");
+    
 
     let txt=`
     
