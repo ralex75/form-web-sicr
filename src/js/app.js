@@ -16,7 +16,7 @@ import menu from './views/menu'
 
 
 let timeoutID=null;
-const ITSEC_GRACE_TIME=15;
+//const ITSEC_GRACE_TIME=15;
 
 const navigateTo=(view,args)=>{
   
@@ -62,23 +62,10 @@ const User={
         return _user && _user.isAdmin
     },
     isValid(){
-
        
         let _user=User.current();
-        let _isValid = _user ? _user.isAuthorized : false;
-        
-        /*if(_user)
-        {
-            _isValid = _user.isAuthorized && _user.loa2 && _user.policies;
-            if(_isValid && !_user.itsec)
-            {
-                //se non ha fatto il corso ed è nel periodo di grazia è valido altrimenti NO.
-                _isValid=_user.gracetime; 
-            }
-           
-        }*/
+        return _user && _user.isAuthorized;
 
-        return _isValid;
     },
     current(){
         let _user=null;
@@ -97,7 +84,6 @@ const User={
 
 
 export const Application={
-    itsecGraceTime:ITSEC_GRACE_TIME,
     language:language,
     user:User,
     navigateTo:navigateTo,

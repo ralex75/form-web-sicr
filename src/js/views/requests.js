@@ -130,7 +130,6 @@ export class Requests extends Abstract{
         var loc=this.locale()[Application.language.current];
         for(var k in loc.form)
         {
-            console.log(k)
             tmp=tmp.replace(`[${k}]`,loc.form[k]);
         }
        
