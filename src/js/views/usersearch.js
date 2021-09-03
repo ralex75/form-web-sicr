@@ -3,7 +3,7 @@ const template=`
     <input type="text" id="search" class="search" placeholder="[SEARCH]" />
 </div>
 <div id="waiting"></div>
-<h4 id="resultText"></h4>
+<h4 id="resultText" ></h4>
 <div class="scroll">
 
     <ul id="userlist"></ul>
@@ -14,6 +14,7 @@ input.search{
     padding:10px;
     margin:10px 0;
     width:80%;
+   
 }
 li{
    
@@ -23,6 +24,21 @@ div.scroll{
     overflow-x:auto;
     width:90%;
     white-space: nowrap;
+}
+
+ul{
+    list-style:none;
+    
+}
+
+li::marker{
+    content: "☹️   ";
+  
+}
+
+li.auth::marker{
+   
+   content: "😊   ";
 }
 </style>
 `
@@ -76,7 +92,8 @@ export class UserSearch extends Abstract{
         let items=""
        
         users.forEach(u => {
-            items+=`<li><pre>${templates.completeUserInfo(u)}</pre></li>`
+            let cls=u.isAuthorized ? 'auth' : ''
+            items+=`<li class="${cls}"><pre>${templates.completeUserInfo(u)}</pre></li>`
         });
 
        

@@ -77,9 +77,9 @@ const template=`
 
 import Abstract from './abstract'
 import services from '../services.js'
-import {RequestDetails} from './reqdetails'
 import {Application} from '../app.js'
 import moment from 'moment'
+import loc from '../locale/requests.loc'
 
 
 const DATE_FORMAT="DD/MM/YYYY HH:mm"
@@ -138,16 +138,7 @@ export class Requests extends Abstract{
     }
 
     locale(){
-        return {
-                "ITA":{"wifi":{"desc":"WIFI temporaneo","format":"DD/MM/YYYY"},
-                        "ip":{"create":"Nuovo nodo","update":"Aggiornamento dati del nodo","delete":"Cancellazione nodo"},
-                        "account":{"desc":"Creazione Account di Posta INFN"},
-                        "form":{"search":"ricerca","filter":"visualizza","option-all":"Tutti","reqdate":"Data richiesta","reqdesc":"Descrizione"}},
-                "ENG":{"wifi":{"desc":"WIFI temporary","format":"YYYY/MM/DD"},
-                        "ip":{"create":"New host","update":"Update host data","delete":"Delete host"},
-                        "account":{"desc":"Create INFN E-mail Account"},
-                        "form":{"search":"search","filter":"view","option-all":"All","reqdate":"Request Date","reqdesc":"Description"}}
-               }
+        return loc;
     }
 
     setFeedbackMessage(type="",message="")

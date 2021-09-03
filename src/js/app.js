@@ -3,12 +3,11 @@ import services from './services.js'
 import {Profile} from './views/profile'
 import {Account} from './views/account'
 import {HostList} from './views/hostlist'
-import {IP} from './views/ip'
 import {WIFI} from './views/wifi'
+import {IP} from './views/ip'
 import {Support} from './views/support'
 import {Requests} from './views/requests'
 import {UserSearch} from './views/usersearch'
-//import {IP} from './views/nip'
 import {RequestDetails} from './views/reqdetails'
 import {Logout} from './views/logout'
 import {Result} from './views/result'
@@ -20,9 +19,8 @@ let timeoutID=null;
 const ITSEC_GRACE_TIME=15;
 
 const navigateTo=(view,args)=>{
-    
-    
-    history.pushState(args,"",`#${view}`)
+  
+    history.pushState(args,null,`#${view}`)
     router();
 }
 
@@ -199,7 +197,7 @@ const selectedLanguage=(lang)=>{
 
 const handleError=(err)=>{
     
-    debugger;
+    
     User.remove()
 
     navigateTo('result',{'status':false})

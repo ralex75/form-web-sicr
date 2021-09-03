@@ -1,30 +1,45 @@
 const template=
 `   
-    <div class="form_intest">
+    <div class="form_intest" >
     [HEADER-PORT]
     </div>
     <div class="form_riga">
         <div class="form_col">
-            <label for="build">[BUILD]</label><br>
-            <select id="build" name="build"></select>
+            <label for="build">[BUILD]</label>
         </div>
         <div class="form_col test">
-            <label for="floor">[FLOOR]</label><br>
-            <select id="floor" name="floor"></select>
+            <select id="build" name="build"></select>
+            <small></small>
         </div>
     </div> 
     <div class="form_riga">
         <div class="form_col">
-            <label for="room">[ROOM]</label><br>
-            <select id="room" name="room"></select>
+            <label for="floor">[FLOOR]</label>
+        </div>
+        <div class="form_col test">
+            <select id="floor" name="floor"></select>
+            <small></small>
+        </div>
+    </div> 
+    <div class="form_riga">
+        <div class="form_col">
+            <label for="room">[ROOM]</label>
         </div>
         <div class="form_col">
-            <label for="port">[PORT]</label><br>
+            <select id="room" name="room"></select>
+            <small></small>
+        </div>
+    </div> 
+    <div class="form_riga">
+        <div class="form_col">
+            <label for="port">[PORT]</label>
+        </div>
+        <div class="form_col">
             <select id="port" class="ports" name="port" data-attr='formdata'></select>
             <small></small>
         </div>
     </div> 
-   
+  
 
     <style>
 
@@ -38,10 +53,12 @@ const template=
        
     }
 
-    select.ports option:disabled {
-        color: #DDD;
-    }
-
+   
+    select option:disabled  {
+        color: #CCC;
+     }
+     
+     
     
     </style>
 `
@@ -104,10 +121,10 @@ export class Location{
 
         
         this.args=args;
-           
         console.log("UpdateFreePorts")
         //Abilita o Disabilita le porte
         this.enableDisablePorts();
+
     }
     
 
@@ -145,8 +162,8 @@ export class Location{
     enableDisablePorts()
     {
        
-       
-        if(!this.ports) return;
+      
+        if(!this.ports || this.ports.length==0) return;
 
        
         var options=this.$ports.options;
@@ -168,11 +185,11 @@ export class Location{
        {
            //this.$ports.value=""
        }*/
-
+       
        var freePorts=(disabledCount!=(this.$ports.options.length-1));
       
 
-       this.target.dispatchEvent(new CustomEvent('freePorts', { detail: freePorts,bubbles:true }));
+       this.target.dispatchEvent(new CustomEvent('freePorts', { detail: freePorts, bubbles:true }));
         
     }
 
@@ -242,6 +259,8 @@ export class Location{
     {   
         
         select.innerHTML=this.defaultOption[select.name];
+        select.className=""
+        select.nextElementSibling.innerText=""
 
         var options="";
        
@@ -252,7 +271,7 @@ export class Location{
 
         select.innerHTML+=options;
         select.disabled = select.options.length<2;
-       
+     
         if(select.name=='port' && !select.disabled)
         {
             this.enableDisablePorts();
@@ -264,6 +283,7 @@ export class Location{
 
     getFloors(){
        
+        this.ports=[]
         var b=this.$builds.value;
 
         return services.locations.getFloors(b).then(res=>{
@@ -274,7 +294,7 @@ export class Location{
 
     getRooms(){
        
-       
+        this.ports=[]
         var b=this.$builds.value;
         var f=this.$floors.value;
 
@@ -286,6 +306,7 @@ export class Location{
 
     getPorts(){
        
+        this.ports=[]
         var loc=this.$rooms.value;
        
         return services.locations.getPorts(loc).then(res=>{
@@ -324,7 +345,7 @@ export class Location{
         switch(name){
 
             case "build":
-                
+              
                 this.buildOptions(this.$floors)
                 this.buildOptions(this.$rooms)
                 this.buildOptions(this.$ports)

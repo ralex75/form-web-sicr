@@ -34,6 +34,7 @@ async function forceLDAPSync(req,res,next)
 
 function authToken(req,res,next){
   
+<<<<<<< HEAD
     //mio
     var testUUID='50699576-15eb-49c6-a645-c07c0de9c402'
   
@@ -42,18 +43,28 @@ function authToken(req,res,next){
     
     //testUUID='b9abec6d-4ab1-4011-b344-682433ccead1'
     //testUUID="9228ab75-d9b0-4573-93af-cfd1a6f44848"
+=======
+      //mio
+      var testUUID='50699576-15eb-49c6-a645-c07c0de9c402'
+>>>>>>> use-new-ip
     
+      //testUUID='d4595f93-51e8-473d-a47b-f5d70d355024'
+      //testUUID='577cc87f-d431-4a8e-80dd-b29b9e0d57e5'
+      
+      //testUUID='b9abec6d-4ab1-4011-b344-682433ccead1'
+      //testUUID="9228ab75-d9b0-4573-93af-cfd1a6f44848"
+      
+      
+      var uid=req.headers["x-uuid"] || testUUID;
+
+      if(!uid){
+        return res.sendStatus(401)
+      }
     
-    var uid=req.headers["x-uuid"] || testUUID;
+      req.userid=uid;
 
-    if(!uid){
-      return res.sendStatus(401)
-    }
-  
-    req.userid=uid;
-  
+      next();
 
-    next();
   }
 
 module.exports={authToken,forceLDAPSync};
