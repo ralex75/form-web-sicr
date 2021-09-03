@@ -14,16 +14,7 @@ let href={'disci':`<a class="prof-feedback" target="_blank" href="${disciplinare
 let disciText_ita=`Le linee guida della politica IT INFN (Disciplinare) non sono state ancora accettate.<br>Per accettarle, prego seguire questo url: ${href.disci}`
 let disciText_eng=`The INFN IT policy guidelines (Disciplinare) has not yet been accepted.<br>To comply, please go to url: ${href.disci}`
 
-let itsec_ita= `Per utilizzare le risorse informatiche dell’INFN è necessario aver seguito il corso obbligatorio di sicurezza informatica, 
-disponibile all’indirizzo ${href.itsec}, 
-dopo aver effettuato la login con le sue credenziali AAI.<br>`
 
-
-
-
-let itsec_eng= `In order to use the INFN IT resources you need to follow the IT security course, 
-available at ${href.itsec}, 
-logging in with your AAI credentials.<br>`
 
 
 
@@ -108,6 +99,17 @@ ${href.supp}
 
 export default ()=>{
     
+    let itsec_ita= `Per utilizzare le risorse informatiche dell’INFN è necessario aver seguito il corso obbligatorio di sicurezza informatica, 
+    disponibile all’indirizzo ${href.itsec}, 
+    dopo aver effettuato la login con le sue credenziali AAI.<br>
+    `
+
+
+    let itsec_eng= `In order to use the INFN IT resources you need to follow the IT security course, 
+    available at ${href.itsec}, 
+    logging in with your AAI credentials.<br>
+    `
+
     if(Application.user.isValid()){
         itsec_ita+=`<b style="color:red">La invitiamo pertanto a seguire e completare il corso prima dello scadere del periodo di "grace-time"</b><br>`
         itsec_eng+=`<b style="color:red">We therefore invite you to attend and complete the course before the "grace-time" expiration period.</b><br>`
