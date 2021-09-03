@@ -183,7 +183,7 @@ const selectedLanguage=(lang)=>{
 
 const handleError=(err)=>{
     
-    debugger;
+   
     User.remove()
 
     navigateTo('result',{'status':false})
@@ -193,12 +193,12 @@ const handleError=(err)=>{
 
 
 window.addEventListener('error', function(event) { 
-    debugger
+  
     handleError(event);
 })
 
 window.addEventListener('unhandledrejection', function(event) {
-    debugger
+   
     handleError(event);
 });
 
