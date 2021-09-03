@@ -25,6 +25,21 @@ div.scroll{
     width:90%;
     white-space: nowrap;
 }
+
+ul{
+    list-style:none;
+    
+}
+
+li::marker{
+    content: "☹️   ";
+  
+}
+
+li.auth::marker{
+   
+   content: "😊   ";
+}
 </style>
 `
 
@@ -77,7 +92,8 @@ export class UserSearch extends Abstract{
         let items=""
        
         users.forEach(u => {
-            items+=`<li><pre>${templates.completeUserInfo(u)}</pre></li>`
+            let cls=u.isAuthorized ? 'auth' : ''
+            items+=`<li class="${cls}"><pre>${templates.completeUserInfo(u)}</pre></li>`
         });
 
        

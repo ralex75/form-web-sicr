@@ -9,7 +9,7 @@ const template=`
         <td>[MAC]</td>
         <td>[PORT]</td>
         <!--<td>Locazione</td>-->
-        <td><a href="#" data-edit='{"mac":"","action":"edit"}'>[ADD]</a></td>
+        <td></td>
     </tr>
 </thead>
 <tbody id="tb-body">

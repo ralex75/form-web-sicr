@@ -59,14 +59,14 @@ const getUserLDAP=async function(query){
                                 //usr.uid=ejson.uid || '--------';
                                 usr.uid=ejson.uid;
                                 usr.uuid=ejson.infnUUID;
-                                usr.cf=ejson.infnUUID;
+                                usr.cf= "";
                                 usr.isMemberOf=ejson.isMemberOf;
                                 usr.loa2      = assurance && assurance.indexOf("urn:mace:infn.it:loa2") >= 0
                                 usr.itsec     = edu && edu.indexOf("urn:mace:infn.it:sicurezza-informatica-base") >= 0
                                 usr.policies  = edu && edu.indexOf("urn:mace:infn.it:disciplinare-it") >= 0
                                 usr.gracetime = edu && edu.indexOf("urn:mace:infn.it:ict-gracetime:true") >= 0
                               
-                               
+                              
                                 
                                 if(schac)
                                 {

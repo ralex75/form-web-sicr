@@ -145,6 +145,12 @@ export class Profile extends Abstract{
         <p>${this.emptyOrDefault(user.phone)}</p>
         </div>
         <div class="prof_lab">
+        <p>${loc["role"]}</p>
+        </div>
+        <div class="prof_val">
+        <p>${this.emptyOrDefault(user.role)}</p>
+        </div>
+        <div class="prof_lab">
         <p>${loc["exp"]}</p>
         </div>
         <div class="prof_val">
