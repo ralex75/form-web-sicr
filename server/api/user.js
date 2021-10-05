@@ -116,7 +116,6 @@ var parseLDAPUserInfo=function (user) {
         for(let i=0;i<userStatus.length;i++){
 
             let ttl=regx.ttl.exec(userStatus[i]);
-           
             if(ttl && minTime!="nolimit"){
                 curTime=ttl[1];
                 if(curTime=="nolimit")
@@ -124,7 +123,8 @@ var parseLDAPUserInfo=function (user) {
                     minTime=curTime;
                 }
                 else{
-                    if(curTime>minTime)
+                    if(Date.parse(curTime.split("-").reverse().join("-"))
+                        >Date.parse(minTime.split("-").reverse().join("-")))
                     {
                         minTime=curTime;
                     } 
