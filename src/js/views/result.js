@@ -113,7 +113,7 @@ export class Result extends Abstract{
                 case types.ACCOUNT:
                     content=this.displayUserAccountFeedback(data);
                 break;
-                case types.IP:
+                case types.IP || types.DPORT:
                     content=this.displayUserRequestIPFeedback(data);
                 break;
                 case types.WIFI:

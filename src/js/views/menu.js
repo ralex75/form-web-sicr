@@ -29,17 +29,6 @@ export default class {
         this.routes=this.routes.filter(r=>!r.hide).map(r=>{
             return {"text":`${loc[r.name]}`,"path":r.path,"name":r.name}
         })
-
-        
-        /*let tpl=""
-        let userIsValid=Application.UserIsValid();
-       
-        if(!userIsValid)
-        {
-            //con il disciplinare non accettato visualizziamo il profile
-            this.routes=this.routes.filter(e=>{return e.view=="profile" || e.view=="logout"});
-            
-        }*/
        
         
         let path=location.hash

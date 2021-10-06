@@ -188,6 +188,10 @@ export class Requests extends Abstract{
                     var h=d.from || d.to;
                     desc+= h.name ? h.name+"."+h.domain : "DHCP - "+h.mac
                 break;
+                case types.DPORT:
+                    var d=item.data;
+                    desc=`${loc["dport"]} - ${d.port_alias} DHCP`
+                break;
                 case types.ACCOUNT:
                   var d=item.data;
                   desc=`${loc["account"]["desc"]}:<br>${d.email}`;

@@ -1,9 +1,12 @@
 const template=
 `   
-    <div class="form_intest" >
+    <div class="form_intest" id="subtitle">
     [HEADER-PORT]
+   
     </div>
+    
     <div class="form_riga">
+        
         <div class="form_col">
             <label for="build">[BUILD]</label>
         </div>
@@ -112,6 +115,9 @@ export class Location{
 
         this.buildOptions(this.$builds,[{'txt':'Marconi','value':'MARCONI'},{'txt':'Fermi','value':'FERMI'},{'txt':'Segre','value':'SEGRE'}])
 
+        if(this.args.subtitle){
+            this.$location.querySelector("#subtitle").innerText=this.args.subtitle
+        }
 
     }
     
@@ -390,7 +396,7 @@ export class Location{
             p=(p && p[0]);
         }
 
-        //this.$ports.dispatchEvent(new CustomEvent("selectedPort",{detail:p,bubbles:true}))
+        this.$ports.dispatchEvent(new CustomEvent("selectedPort",{detail:p,bubbles:true}))
     }
 
     getContent(){
