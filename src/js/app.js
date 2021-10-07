@@ -11,6 +11,7 @@ import {UserSearch} from './views/usersearch'
 import {RequestDetails} from './views/reqdetails'
 import {Logout} from './views/logout'
 import {Result} from './views/result'
+import {ActivePort} from './views/activeport'
 import {UI} from './views/ui'
 import menu from './views/menu'
 
@@ -88,7 +89,7 @@ export const Application={
     user:User,
     navigateTo:navigateTo,
     navigateToWithDelay:navigateToWithDelay,
-    requestTypes:{"WIFI":"WIFI","IP":"IP","ACCOUNT":"ACCOUNT"}
+    requestTypes:{"WIFI":"WIFI","IP":"IP","ACCOUNT":"ACCOUNT","DPORT":"DPORT"}
 }
 
 let latestView={"name":"","args":null}
@@ -108,6 +109,7 @@ const router=async ()=>{
         {"path":"#ip","name":'ip',view:IP},
         {"path":"#hosts/edit","name":'hosts',view:IP, 'hide':true,'requireArgs':true},
         {"path":"#wifi","name":'wifi',view:WIFI},
+        {"path":"#actport","name":'actport',view:ActivePort},
         {"path":"#support","name":'other',view:Support},
         {"path":"#logout","name":'logout',view:Logout},
         {"path":"#search","name":'search',view:UserSearch},
