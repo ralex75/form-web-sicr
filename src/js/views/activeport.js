@@ -6,7 +6,7 @@ const template=`
                 <div class="form_sez">
 		
                     <div class="form_intest">
-                            Lista nodi registrati in DHCP
+                            Lista tuoi nodi registrati in DHCP
                         </div>
                         <div class="form_riga">  
                            
@@ -79,8 +79,8 @@ export class ActivePort extends Abstract{
         if(!this.hostLoc) return;
         if(!this.currSelectedPort){return}
 
-        let html="<h3>La presa in questione è già attiva come DHCP</h3>"
-        let title="Notifica"
+        let html=`<h3>La presa di rete ${this.currSelectedPort.port_alias} è già attiva in DHCP</h3>`
+        let title=""
         let lang='ITA'
         console.log(this.currSelectedPort)
         let callack_yes=null;
@@ -127,7 +127,9 @@ export class ActivePort extends Abstract{
         
         let hosts=await services.net.getHostList()
         let dhcpHosts=hosts.data.filter(h=>!h.host_ip)
-        this.messageContent.innerHTML="<u>Utilizzare la voce di menu <b>\"Richiesta Indirizzo IP\"</b> per registrare un nuovo nodo in DHCP.</u></h5>"
+        this.messageContent.innerHTML=`
+        <u>Se il mac address del nodo che intendi utilizzare in DHCP non è nell'elenco,<br> puoi procedere alla sua registrazione utilizzando
+        la voce di menu <h3 style="display:inline;"><a href="#ip">Richiesta Indirizzo IP</a></h3></u></h5>`
      
        
         if(dhcpHosts.length==0) 
