@@ -1,7 +1,7 @@
 export default{
 
     "ITA":{
-        "HEADER":"In questa sezione puoi richiedere di abilitare qualsiasi porta di rete in configurazione DHCP.",
+        "HEADER":"In questa pagina puoi richiedere di abilitare qualsiasi porta di rete in configurazione DHCP.",
         "SUB-HEADER":"Solo i mac address registrati in configurazione DHCP potranno essere utilizzati su qualsiasi porta attiva <br>ed in configurazione DHCP.",
         "HEADER-HOST-LIST":"Lista dei tuoi mac address registrati in configurazione DHCP",
         "REGISTER-HOST":"Se il mac address del nodo che intendi utilizzare in DHCP non è nell'elenco, puoi procedere alla sua registrazione utilizzando la voce di menu",
