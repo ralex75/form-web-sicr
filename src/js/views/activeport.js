@@ -130,9 +130,9 @@ export class ActivePort extends Abstract{
         let dhcpHosts=hosts.data.filter(h=>!h.host_ip)
         let loc=this.locale()
         this.messageContent.innerHTML=`
-        <u>${loc["REGISTER-HOST"]}:&nbsp;&nbsp;<h3 style="display:inline;"><a href="#ip">${loc["REQUEST-IP-MENU-ITEM"]}</a></h3></u></h5>`
+        ${loc["REGISTER-HOST"]}:&nbsp;&nbsp;&nbsp;&nbsp;<h3 style="display:inline"><a href="#ip">${loc["REQUEST-IP-MENU-ITEM"]}</a></h3>`
      
-      
+              
         if(dhcpHosts.length==0) 
         {
            this.form.querySelector("input[type=submit]").parentElement.style.display="none"
