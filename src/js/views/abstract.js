@@ -15,6 +15,11 @@ export default class {
         return "<h1>Abstract Component</h1>"
     }
 
+    currentLanguage()
+    {
+        return Application.language.current
+    }
+
     SaveRequest=async (type,data)=>{
         
         var success=false;

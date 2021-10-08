@@ -285,12 +285,7 @@ export class IP extends Abstract{
         return loc[this.currentLanguage()];
     }
 
-    currentLanguage()
-    {
-        return Application.language.current
-    }
-
-
+   
     validateField=async (input)=>{
    
       
