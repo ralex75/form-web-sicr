@@ -31,8 +31,10 @@ export class Result extends Abstract{
        
     }
 
+    
 
-    displayUserRequestIPFeedback(data)
+
+    /*displayUserRequestIPFeedback(data)
     {
        
         var content=""
@@ -47,7 +49,7 @@ export class Result extends Abstract{
 
             //o è aggiornamento o è un nuovo nodo
             var host=data.to || data.from;
-            if(host.useMacBusy)
+            if(host && host.useMacBusy)
             {
                 if(lang=="ITA")
 
@@ -63,13 +65,6 @@ export class Result extends Abstract{
             }
 
         }
-        /*
-        else{
-            if(lang=="ITA")
-                content=`<h4>Non ci sono state modifiche, la sua richiesta non è stata inserita.</h4>`
-            else
-                content=`<h4>Non ci sono state modifiche, la sua richiesta non è stata inserita.</h4>`
-        }*/
     
         return content
     }
@@ -84,14 +79,23 @@ export class Result extends Abstract{
     {
         var content=`<h4>La sua richiesta è stata inserita correttamente.</h4>A breve riceverà una mail di riepilogo con i dati inseriti.`
         return content
+    }*/
+
+    getRequestFeedback(){
+        let lang=this.currentLanguage()
+        let content=`<h4>La sua richiesta è stata inserita.</h4>A breve riceverà una mail di riepilogo con i dati inseriti.`
+        if(lang!="ITA")
+        content=`<h4>You request has been submitted.</h4>You will shortly receive a summary email with the data entered.`
+
+        return content;
     }
 
 
     getContent(){
 
        
-        var {status, type, data, next}=this.args; 
-        var content="";
+        let {status, type, data, next}=this.args; 
+        let html="";
 
         if(!status)
         {
@@ -101,32 +105,18 @@ export class Result extends Abstract{
                       'ENG':`Sorry, an error has occurred, please contact us: ${url}`
                     }
            
-           content=`<h3 class="error">${loc[Application.language.current]}<h3>`
+           html=`<h3 class="error">${loc[this.currentLanguage()]}<h3>`
 
         }
         else{
-
-            var types=Application.requestTypes;
-
-            switch(type)
-            {
-                case types.ACCOUNT:
-                    content=this.displayUserAccountFeedback(data);
-                break;
-                case types.IP || types.DPORT:
-                    content=this.displayUserRequestIPFeedback(data);
-                break;
-                case types.WIFI:
-                    content=this.displayUserRequestWiFiFeedback(data);
-                break;
-            }
-
+            
+            html=this.getRequestFeedback()
             Application.navigateToWithDelay(next||'profile',3000);
          
         }
 
 
-        var tmp=template.replace('[CONTENT]',content);
+        let tmp=template.replace('[CONTENT]',html);
         return tmp;
     }
 }

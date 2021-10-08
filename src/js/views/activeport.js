@@ -1,12 +1,12 @@
 const template=`
 <div id="dialogPlaceHolder"></div>
-<h4>In questa pagina puoi richiedere l'attivazione di una presa di rete in DHCP.</h4>
-<h5><u>I tuoi nodi già registrati in DHCP funzioneranno su qualsiasi presa attiva ed in configurazione DHCP.</u></h5>
+<h4>[HEADER]</h4>
+<h5><u>[SUB-HEADER]</u></h5>
 <form id="form">
                 <div class="form_sez">
 		
                     <div class="form_intest">
-                            Lista tuoi nodi registrati in DHCP
+                            [HEADER-HOST-LIST]
                         </div>
                         <div class="form_riga">  
                            
@@ -69,7 +69,7 @@ import {Location} from '../components/location.js'
 import {Dialog, DialogWrapper} from '../components/dialog.js'
 import services from '../services.js'
 import { Application } from '../app'
-import loc from '../locale/ip.loc'
+import loc from '../locale/dport.loc'
 
 export class ActivePort extends Abstract{
 
@@ -79,15 +79,16 @@ export class ActivePort extends Abstract{
         if(!this.hostLoc) return;
         if(!this.currSelectedPort){return}
 
-        let html=`<h3>La presa di rete ${this.currSelectedPort.port_alias} è già attiva in DHCP</h3>`
+        let loc=this.locale()
+        let html=`<h3>${loc["PORT-ALREADY-DHCP"]}</h3>`.replace("PORT",this.currSelectedPort.port_alias)
         let title=""
-        let lang='ITA'
+        let lang=this.currentLanguage();
         console.log(this.currSelectedPort)
         let callack_yes=null;
         let callack_no=null;
         if(this.currSelectedPort.vlanid!=113){
             html=`  <div class="grid">
-            <div>${lang!='ITA' ? 'Network Plug' :'Presa di rete'}:</div><div class="c2">${this.currSelectedPort.port_alias}</div>
+            <div>${lang!='ITA' ? 'Network Port' :'Porta di rete'}:</div><div class="c2">${this.currSelectedPort.port_alias}</div>
             <div>${lang!='ITA' ? 'Configuration':'Configurazione'}:</div><div class="c2">DHCP</div>
             </div>
             `
@@ -99,12 +100,12 @@ export class ActivePort extends Abstract{
                 this.SaveRequest(Application.requestTypes.DPORT,data);
             }
             callack_no=()=>{}
-            title="Richiesta di conferma attivazione presa di rete"
+            title=lang=="ITA" ? "Richiesta di conferma" : "Confirmation Request"
             html+=`<h4>${lang!='ITA' ? "Do you want submit the request?" : "Si vuole procedere con l'invio della richiesta?"}</h4>`
 
         }
        
-
+        this.dlg = new DialogWrapper(this.target.querySelector("#dialogPlaceHolder"))
        
 
         this.dlg.showDialog(title,html,callack_yes,callack_no);
@@ -114,7 +115,7 @@ export class ActivePort extends Abstract{
 
     async mounted(){
 
-        this.dlg = new DialogWrapper(this.target.querySelector("#dialogPlaceHolder"))
+        
         //form
         this.form=document.querySelector("#form")
            //istanzia oggetto location
@@ -127,21 +128,20 @@ export class ActivePort extends Abstract{
         
         let hosts=await services.net.getHostList()
         let dhcpHosts=hosts.data.filter(h=>!h.host_ip)
+        let loc=this.locale()
         this.messageContent.innerHTML=`
-        <u>Se il mac address del nodo che intendi utilizzare in DHCP non è nell'elenco,<br> puoi procedere alla sua registrazione utilizzando
-        la voce di menu <h3 style="display:inline;"><a href="#ip">Richiesta Indirizzo IP</a></h3></u></h5>`
+        <u>${loc["REGISTER-HOST"]}:&nbsp;&nbsp;<h3 style="display:inline;"><a href="#ip">${loc["REQUEST-IP-MENU-ITEM"]}</a></h3></u></h5>`
      
-       
+      
         if(dhcpHosts.length==0) 
         {
-            this.messageContent.innerHTML="Non hai nodi registrati in DHCP.<br>"+this.messageContent.innerHTML
-       
-            return;
+           this.form.querySelector("input[type=submit]").parentElement.style.display="none"
+           return this.messageContent.innerHTML="<h3>"+loc["NO-DHCP-HOSTS-FEEDBACK"]+"</h3><br>"+this.messageContent.innerHTML
         }
  
         this.hostList.innerHTML=dhcpHosts.map(h=>`<li>${h.host_mac}</li>`).join("")
         this.location=new Location(this.form.querySelector("#location"),
-                                        {"config":'DHCP',"mac":"","subtitle":"Locazione presa da attivare in DHCP"});
+                                        {"config":'DHCP',"mac":"","subtitle":loc["HEADER-LOCATION-PORT"]});
         
                                       
             
@@ -156,7 +156,27 @@ export class ActivePort extends Abstract{
 
     }
 
-    getContent(){
-        return template;
+    locale(){
+
+        return loc[this.currentLanguage()];
+
+    }
+
+    
+    
+    getContent()
+    {
+       
+       let tpl=template;
+       let loc=this.locale();
+
+       for(let k in loc)
+       {
+         tpl=tpl.replace(`[${k}]`,loc[k]);
+       }
+       
+        return tpl;
+
+    
     }
 }
