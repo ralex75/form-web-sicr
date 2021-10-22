@@ -1,3 +1,4 @@
+const express = require('express')
 const {getUser,getUsers} = require('./api/user')
 const location = require('./api/location')
 const network = require('./api/network')
@@ -5,7 +6,6 @@ const requests = require('./api/requests')
 const mail = require('./api/mail');
 const {ReadRequests}=require('./dispatcher/bundle');
 const {authToken,forceLDAPSync} =require('./api/auth')
-const moment = require('moment')
 const logger=require('./api/logger')
 const restore=require('./api/restore')
 const snmpq=require('./api/snmpq')
@@ -19,7 +19,6 @@ module.exports = app => {
   app.use(express.json())
   app.use(cors())
 
-  //app.use('/auth',auth.router)
   app.use('/loc', location)
   app.use('/net', authToken, network)
   app.use('/requests', authToken, requests.router)
@@ -28,12 +27,7 @@ module.exports = app => {
   app.use('/restore', authToken, restore)
   app.use('/snmpquery',snmpq)
 
-  /*
-  setInterval(()=>{
-    ReadRequests();
-  },INTERVAL)
-
-
+  setInterval(()=>{ ReadRequests();},INTERVAL)
 
  app.use('/auth/:uid?',authToken,forceLDAPSync, async (req,res,next)=>{
   
@@ -44,11 +38,7 @@ module.exports = app => {
   try{
      
      user = await getUser(req.userid);
-
-     //let resp=await requests.getFirst(user.uuid)
-
-     //user.firstReqDate= (resp[0] && resp[0].req_date) || moment();
-    
+        
   }
   catch(exc)
   {
@@ -85,9 +75,6 @@ module.exports = app => {
 })
 
 
-/*app.use("/*",(req,res)=>{
-  res.status(404).send("Not Found")
-})*/
  
 
 }
