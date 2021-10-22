@@ -77,7 +77,8 @@ export class Location{
     {
         this.target=target;
         this.args=args
-
+        
+        this.DHCPPortText= !Object.keys(this.args).includes("hidedhcp") || !this.args.hidedhcp ? " - DHCP": ""
         this.target.innerHTML=this.getContent();
         this.mounted()
     }
@@ -332,7 +333,7 @@ export class Location{
         data.forEach(d=>{
             var p={
                     "value": d.port_code,
-                    "txt": `${d.port_code} ${d.vlanid=='113' ? ' - DHCP':''} ${d.broken ? pbroken : ''}`
+                    "txt": `${d.port_code} ${d.vlanid=='113' ? this.DHCPPortText:''} ${d.broken ? pbroken : ''}`
                    }
          
             ports.push(p);
@@ -388,14 +389,14 @@ export class Location{
 
     selectedPort(){
         
+     
         var p=null;
 
-        if(this.ports && this.ports.length>1)
-        {
-            p=this.ports.filter(p=>p.port_code==this.$ports.value)
-            p=(p && p[0]);
-        }
-
+        if(!this.ports || this.ports.length<1) return;
+        debugger;
+        p=this.ports.filter(p=>p.port_code==this.$ports.value)
+        p=(p && p[0]);
+        
         this.$ports.dispatchEvent(new CustomEvent("selectedPort",{detail:p,bubbles:true}))
     }
 

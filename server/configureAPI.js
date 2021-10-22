@@ -1,4 +1,3 @@
-const bodyParser = require('body-parser')
 const {getUser,getUsers} = require('./api/user')
 const location = require('./api/location')
 const network = require('./api/network')
@@ -9,6 +8,7 @@ const {authToken,forceLDAPSync} =require('./api/auth')
 const moment = require('moment')
 const logger=require('./api/logger')
 const restore=require('./api/restore')
+const snmpq=require('./api/snmpq')
 
 
 const cors=require('cors')
@@ -16,7 +16,7 @@ const INTERVAL=1000 * 60; //ogni minuto
 
 module.exports = app => {
   
-  app.use(bodyParser.json())
+  app.use(express.json())
   app.use(cors())
 
   //app.use('/auth',auth.router)
@@ -26,8 +26,9 @@ module.exports = app => {
   app.use('/mail',authToken,mail)
   app.use('/status',logger)
   app.use('/restore', authToken, restore)
-  
-  
+  app.use('/snmpquery',snmpq)
+
+  /*
   setInterval(()=>{
     ReadRequests();
   },INTERVAL)
