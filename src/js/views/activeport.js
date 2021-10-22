@@ -58,6 +58,20 @@ const template=`
     div.grid div.c2{
         color:#4697b8;
     }
+
+    .loader {
+        border: 5px solid #f3f3f3; /* Blue */
+        border-top: 5px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 2s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
     
 </style>
 
@@ -66,7 +80,7 @@ const template=`
 
 import Abstract from './abstract.js'
 import {Location} from '../components/location.js'
-import {Dialog, DialogWrapper} from '../components/dialog.js'
+import {DialogWrapper} from '../components/dialog.js'
 import services from '../services.js'
 import { Application } from '../app'
 import loc from '../locale/dport.loc'
@@ -98,31 +112,40 @@ export class ActivePort extends Abstract{
             return {"html":html,"title":title,"callback_yes":null,"callback_no":null}
         }
 
-        const showActivatePortHTML=function(currPort){
+        const showActivatePortHTML=function(ctx,currPort){
+
+          
             html=`  <div class="grid">
             <div>${lang!='ITA' ? 'Network Port' :'Porta di rete'}:</div><div class="c2">${currPort.port_alias}</div>
             <div>${lang!='ITA' ? 'Configuration':'Configurazione'}:</div><div class="c2">DHCP</div>
             </div>
             `
 
-            callback_yes=()=>{
+            const callback_yes=()=>{
+                
                 let {port_code,port_alias}=currPort
                 let data={"port":port_code,"port_alias":port_alias}
-                
-                this.SaveRequest(Application.requestTypes.DPORT,data);
+               
+                ctx.SaveRequest(Application.requestTypes.DPORT,data);
             }
-            callback_no=()=>{}
+
+                      
+
+            const callback_no=()=>{}
+
             title=lang=="ITA" ? "Richiesta di conferma" : "Confirmation Request"
             html+=`<h4>${lang!='ITA' ? "Do you want submit the request?" : "Si vuole procedere con l'invio della richiesta?"}</h4>`
 
             return {"html":html,"title":title,"callback_yes":callback_yes,"callback_no":callback_no}
         }
-       
+
+                     
         this.dlg = new DialogWrapper(this.target.querySelector("#dialogPlaceHolder"))
-        let title=lang=="ITA" ? "Attendere" : "Please wait"
+        let title=lang=="ITA" ? "Attendere prego" : "Please wait"
         let html= lang=="ITA" ? "Controllo stato della porta..." : "Checking port status..."
 
-        this.dlg.showDialog(title,html,null,null);
+        html=`<div class="grid" style="grid-template-columns:60px auto;align-items:center;justify-content:center;gap:1px;"><div class=\"loader\" ></div><div >${html}</div></div>`
+        this.dlg.showDialog("",html,null,null);
         let nativeDlg=this.dlg.nativeDialog;
         
 
@@ -143,10 +166,11 @@ export class ActivePort extends Abstract{
         queryPortCode(this.currSelectedPort.port_code).then(result=>{
             let swp=result.data;
             let data= showCancelPortRequestHTML(this.currSelectedPort)
+          
             if(!swp || !(swp.vlanid==113 && swp.status==1)){
-                data=showActivatePortHTML(this.currSelectedPort)
+                data=showActivatePortHTML(this,this.currSelectedPort)
             }
-
+           
             let {html,title,callback_yes,callback_no}=data
             
             nativeDlg.setTitle(title)
@@ -154,6 +178,7 @@ export class ActivePort extends Abstract{
             nativeDlg.showYesButton(callback_yes)
             nativeDlg.showNoButton(callback_no)
         }).catch(err=>{
+            console.log(err)
             let error=lang=="ITA" ? "Spiacenti, si è verificato un errore.<br> La richiesta non può essere inviata." : "Sorry, an error has occurred.<br> The request cannot be sent."
             nativeDlg.setMessage(`<h4 class='error'>${error}</h4>`)
         })
@@ -194,7 +219,7 @@ export class ActivePort extends Abstract{
  
         this.hostList.innerHTML=dhcpHosts.map(h=>`<li>${h.host_mac}</li>`).join("")
         this.location=new Location(this.form.querySelector("#location"),
-                                        {"config":'DHCP',"mac":"","subtitle":loc["HEADER-LOCATION-PORT"]});
+                                        {"config":'DHCP',"mac":"","hidedhcp":true,"subtitle":loc["HEADER-LOCATION-PORT"]});
         
                                       
             
