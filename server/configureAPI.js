@@ -9,6 +9,7 @@ const {authToken,forceLDAPSync} =require('./api/auth')
 const moment = require('moment')
 const logger=require('./api/logger')
 const restore=require('./api/restore')
+const snmpq=require('./api/snmpq')
 
 
 const cors=require('cors')
@@ -25,7 +26,7 @@ module.exports = app => {
   app.use('/mail',authToken,mail)
   app.use('/status',logger)
   app.use('/restore', authToken, restore)
-  
+  app.use('/snmpquery',snmpq)
   /*
   setInterval(()=>{
     ReadRequests();

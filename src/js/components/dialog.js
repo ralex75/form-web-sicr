@@ -202,6 +202,7 @@ export class Dialog{
         this.ctx=ctx;
         return this;
     }
+   
 
     getContent(){
         var tpl=template;
@@ -238,7 +239,6 @@ export class Dialog{
                     }
                     
                     fn(el.dataset.value)
-                    
                    
                 }
 
@@ -268,5 +268,12 @@ export class DialogWrapper{
               .setMessage(message)
               .showHide();
   
+      }
+      closeDialog(){
+        this.dlg.showHide();
+      }
+
+      get nativeDialog(){
+        return this.dlg;
       }
 }

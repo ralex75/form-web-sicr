@@ -79,38 +79,90 @@ export class ActivePort extends Abstract{
         if(!this.hostLoc) return;
         if(!this.currSelectedPort){return}
 
-        let loc=this.locale()
-        let html=`<h3>${loc["PORT-ALREADY-DHCP"]}</h3>`.replace("PORT",this.currSelectedPort.port_alias)
-        let title=""
+        
+        
         let lang=this.currentLanguage();
-        console.log(this.currSelectedPort)
-        let callack_yes=null;
-        let callack_no=null;
-        if(this.currSelectedPort.vlanid!=113){
+        //console.log(this.currSelectedPort)
+      
+       
+        const showCancelPortRequestHTML=function(currPort){
             html=`  <div class="grid">
-            <div>${lang!='ITA' ? 'Network Port' :'Porta di rete'}:</div><div class="c2">${this.currSelectedPort.port_alias}</div>
+            <div>${lang!='ITA' ? 'Network Port' :'Porta di rete'}:</div><div class="c2">${currPort.port_alias}</div>
             <div>${lang!='ITA' ? 'Configuration':'Configurazione'}:</div><div class="c2">DHCP</div>
             </div>
             `
 
-            callack_yes=()=>{
-                let {port_code,port_alias}=this.currSelectedPort
+            title=lang=="ITA" ? "Notifica" : "Notification"
+            html+=`<h4>${lang!='ITA' ? "The port is already enabled and in DHCP mode" : "La porta risulta già attiva ed in configurazione DHCP"}</h4>`
+
+            return {"html":html,"title":title,"callback_yes":null,"callback_no":null}
+        }
+
+        const showActivatePortHTML=function(currPort){
+            html=`  <div class="grid">
+            <div>${lang!='ITA' ? 'Network Port' :'Porta di rete'}:</div><div class="c2">${currPort.port_alias}</div>
+            <div>${lang!='ITA' ? 'Configuration':'Configurazione'}:</div><div class="c2">DHCP</div>
+            </div>
+            `
+
+            callback_yes=()=>{
+                let {port_code,port_alias}=currPort
                 let data={"port":port_code,"port_alias":port_alias}
                 
                 this.SaveRequest(Application.requestTypes.DPORT,data);
             }
-            callack_no=()=>{}
+            callback_no=()=>{}
             title=lang=="ITA" ? "Richiesta di conferma" : "Confirmation Request"
             html+=`<h4>${lang!='ITA' ? "Do you want submit the request?" : "Si vuole procedere con l'invio della richiesta?"}</h4>`
 
+            return {"html":html,"title":title,"callback_yes":callback_yes,"callback_no":callback_no}
         }
        
         this.dlg = new DialogWrapper(this.target.querySelector("#dialogPlaceHolder"))
+        let title=lang=="ITA" ? "Attendere" : "Please wait"
+        let html= lang=="ITA" ? "Controllo stato della porta..." : "Checking port status..."
+
+        this.dlg.showDialog(title,html,null,null);
+        let nativeDlg=this.dlg.nativeDialog;
+        
+
+        const queryPortCode = function(port_code){
+            return new Promise((res,rej)=>{
+                setTimeout(async ()=>{
+                    try{
+                        let result=await services.snmp.query(port_code)
+                        res(result)
+                    }
+                    catch(exc){
+                        rej(exc)
+                    }
+                },2000)
+            })
+        }
+
+        queryPortCode(this.currSelectedPort.port_code).then(result=>{
+            let swp=result.data;
+            let data= showCancelPortRequestHTML(this.currSelectedPort)
+            if(!swp || !(swp.vlanid==113 && swp.status==1)){
+                data=showActivatePortHTML(this.currSelectedPort)
+            }
+
+            let {html,title,callback_yes,callback_no}=data
+            
+            nativeDlg.setTitle(title)
+            nativeDlg.setMessage(html)
+            nativeDlg.showYesButton(callback_yes)
+            nativeDlg.showNoButton(callback_no)
+        }).catch(err=>{
+            let error=lang=="ITA" ? "Spiacenti, si è verificato un errore.<br> La richiesta non può essere inviata." : "Sorry, an error has occurred.<br> The request cannot be sent."
+            nativeDlg.setMessage(`<h4 class='error'>${error}</h4>`)
+        })
+          
        
 
-        this.dlg.showDialog(title,html,callack_yes,callack_no);
         
-        console.log(this.currSelectedPort)
+        
+        
     }
 
     async mounted(){
@@ -118,7 +170,8 @@ export class ActivePort extends Abstract{
         
         //form
         this.form=document.querySelector("#form")
-           //istanzia oggetto location
+
+        //istanzia oggetto location
         this.form.addEventListener("submit",ev=>this.submitForm(ev))
         this.form.addEventListener("selectedPort",ev=>this.currSelectedPort=ev.detail)
         this.messageContent=this.form.querySelector("#hostcont")

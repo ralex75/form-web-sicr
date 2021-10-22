@@ -136,6 +136,14 @@ const net={
         return axios.get(`/mail/exists/${email}`)
     }
 
+    
+
+}
+
+const snmp={
+    query:function(portcode){
+        return axios.get(`/snmpquery/${portcode}`)
+    }
 }
 
 const REQ_TYPE={"IP":"IP","WIFI":"WIFI","ACCOUNT":"ACCOUNT"}
@@ -173,6 +181,7 @@ export default {
     locations,
     user,
     net,
-    host
+    host,
+    snmp
 
 }
