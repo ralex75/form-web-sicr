@@ -81,18 +81,23 @@ export class Support extends Abstract {
 
     }
 
+    currentUser(){
+      let usr=Application.user.current();
+      return `${usr.name} ${usr.surname}`
+    }
+
     locale(){
       var loc= {
 
               "ITA":{"header":"Supporto e segnalazioni",
-                     "subject":"Richiesta supporto e segnalazioni",
+                     "subject":`Richiesta supporto e segnalazioni: ${this.currentUser()}`,
                      "body_pcsupp":`<b>Assistenza tecnica per personal computer e/o portatili installati nel Dipartimento di Fisica</b>`,
                      "body_pcsupp_info":"<h5>Il servizio è comune al Dipartimento di Fisica e alla sezione di Roma 1 dell'INFN.</h5>",
                      "body_supp":`<b>Segnalazioni di malfunzionamenti e/o disservizi`,
                 },
                     
                 "ENG":{"header":"Support and outages",
-                  "subject":"Richiesta supporto e segnalazioni",
+                  "subject":`Richiesta supporto e segnalazioni: ${this.currentUser()}`,
                   "body_pcsupp":`<b>Technical support for desktop/laptop computers installed in the Department of Physics</b>`,
                   "body_pcsupp_info":"<h5>The service is shared between the Dept. of Physics and the INFN Section of Rome 1.</h5>",
                   "body_supp":`<b>Notices of failures and service outages`,
