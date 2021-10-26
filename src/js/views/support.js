@@ -71,9 +71,12 @@ export class Support extends Abstract {
 
    mounted()
     {
-      
+       
+       let user=Application.user.current();
+       let lang=Application.language.current;
+       lang= lang == 'ITA' ? 'it' : "en_GB";
        let mailto=`<a href="mailto:supporto@roma1.infn.it?subject=${this.locale().subject}">${this.locale().body_supp}</a>`
-       let url=`<a href="https://osticket.roma1.infn.it/support/index.php" target="_blank">${this.locale().body_pcsupp}</a>`
+       let url=`<a href="https://osticket.roma1.infn.it/support/open.php?email=${user.email}&name=${user.name}&surname=${user.surname}&lang=${lang}" target="_blank">${this.locale().body_pcsupp}</a>`
        let info=this.locale().body_pcsupp_info
      
        this.$text=this.target.querySelector("#text");
