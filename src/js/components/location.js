@@ -318,6 +318,7 @@ export class Location{
        
         return services.locations.getPorts(loc).then(res=>{
             
+            console.log(res.data)
             this.ports=res.data;
             var data=this.mapPortData(res.data)
             this.buildOptions(this.$ports,data);
@@ -335,6 +336,8 @@ export class Location{
                     "value": d.port_code,
                     "txt": `${d.port_code} ${d.vlanid=='113' ? this.DHCPPortText:''} ${d.broken ? pbroken : ''}`
                    }
+
+            console.log("Port:",d)
          
             ports.push(p);
         })
