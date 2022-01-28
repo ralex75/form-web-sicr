@@ -32,13 +32,18 @@ ul{
 }
 
 li::marker{
-    content: "☹️   ";
-  
+   
+    content: "\\2717";
+    font-size:2.6em;
+    color:red;
 }
 
 li.auth::marker{
    
-   content: "😊   ";
+   color:#5cd65c;
+   font-size:2.6em;
+   content: "\\2713"
+
 }
 </style>
 `
