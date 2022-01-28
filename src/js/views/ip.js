@@ -396,7 +396,7 @@ export class IP extends Abstract{
             },
 
             "notes":(value)=>{
-                if(value && !value.match(/^[a-zA-Z0-9À-ÿ-.:;! ]+$/)) return 'invalid'
+                if(value && !value.match(/^[a-zA-Z0-9À-ÿ-,.:;!\s]+$/)) return 'invalid'
                 return null
             }
             
