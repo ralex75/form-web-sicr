@@ -26,7 +26,7 @@ module.exports = {
       template: './src/index.html'
     })],
     devServer: {
-      port:3000,
+      port:5000,
       contentBase:path.join(__dirname,"dist"),
       publicPath: `/`,
       before: function(app, server, compiler) {
