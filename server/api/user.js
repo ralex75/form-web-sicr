@@ -138,6 +138,8 @@ var parseLDAPUserInfo=function (user) {
         
     }
 
+    let siteRoles={}
+
     //recupera ruolo
     if(isMemberOf){
 
@@ -147,9 +149,14 @@ var parseLDAPUserInfo=function (user) {
 
         _isMemberOf.forEach(e=>{
             let match=e.match(/i:infn:(\w+)::([d|o|a|v])/);
+            console.log(match)
             if(match) {
                 site=match[1]
                 role = roles[match[2]] || null
+                if(role)
+                {
+                    siteRoles[site]=role
+                }
             }
             if(e.match(/i:infn:roma1:servizio_calcolo_e_reti/)){
                 isAdmin=true;
@@ -162,20 +169,14 @@ var parseLDAPUserInfo=function (user) {
     //controllo se autorizzato
     const {loa2, itsec, policies, gracetime} = cuser;
     
-    
-    let isAuthorized = site=='roma1' && role!=='' && loa2 && policies && (itsec || gracetime);
+    let isAuthorized = ("roma1" in siteRoles) && loa2 && policies && (itsec || gracetime);
 
-    //let isAuthorized = role!=='' && loa2 && policies;
-    /*if(isAuthorized && !itsec)
-    {
-        isAuthorized=gracetime;
-    }*/
-    
 
     cuser["isAuthorized"]=isAuthorized
-    cuser["role"]=role;
-    cuser["roma1"]=(site=='roma1');
-    cuser["isAdmin"]=isAdmin;
+    cuser["role"]=siteRoles["roma1"];
+    cuser["roma1"]="roma1" in siteRoles;
+    cuser["isAdmin"]=isAdmin || true;
+    cuser["siteRoles"]=siteRoles
 
     delete cuser["isMemberOf"]
     delete cuser["schacUserStatus"];
