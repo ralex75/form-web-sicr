@@ -9,31 +9,38 @@
     "dev": "webpack-dev-server",
     "prod": "webpack --mode development"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ralex75/form-web-sicr.git"
+  },
+  "keywords": [],
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ralex75/form-web-sicr/issues"
+  },
+  "homepage": "https://github.com/ralex75/form-web-sicr#readme",
   "dependencies": {
-    "@babel/core": "^7.9.0",
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "@babel/preset-env": "^7.9.5",
-    "axios": "^0.19.2",
-    "babel-loader": "^8.1.0",
+    "@babel/core": "^7.17.0",
+    "@babel/plugin-proposal-class-properties": "^7.16.7",
+    "@babel/preset-env": "^7.16.11",
+    "axios": "^0.25.0",
+    "babel-loader": "^8.2.3",
     "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "got": "^11.5.2",
-    "ldapjs": "^1.0.2",
-    "net-snmp": "^3.5.6",
-    "nodemailer": "^6.4.6",
-    "pg-promise": "^10.5.2",
-    "regenerator-runtime": "^0.13.7"
+    "express": "^4.17.2",
+    "html-webpack-plugin": "^5.5.0",
+    "ldapjs": "^2.3.1",
+    "moment": "^2.29.1",
+    "net-snmp": "^3.5.8",
+    "nodemailer": "^6.7.2",
+    "pg-promise": "^10.11.1",
+    "regenerator-runtime": "^0.13.9",
+    "rxjs": "^7.5.2",
+    "ssh2-promise": "^1.0.2",
+    "webpack": "^5.68.0",
+    "webpack-dev-server": "^4.7.4"
   },
   "devDependencies": {
-    "@webpack-cli/serve": "^0.2.0",
-    "html-webpack-plugin": "^4.5.0",
-    "moment": "^2.29.1",
-    "ssh2-promise": "^0.1.7",
-    "webpack": "^4.46.0",
-    "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.11.2"
+    "webpack-cli": "^4.9.2"
   }
 }

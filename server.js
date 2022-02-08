@@ -2,7 +2,7 @@ var express = require('express')
 var app= express()
 var configureAPI = require('./server/configureAPI')
 
-const PORT=3000;
+const PORT=5000;
 
 app.use(express.static(__dirname + '/dist'));
 

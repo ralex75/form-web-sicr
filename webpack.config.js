@@ -4,7 +4,6 @@ const path = require('path');
 const configureAPI=require('./server/configureAPI');
 
 
-
 require("@babel/core").transform("code", {
   plugins: ["@babel/plugin-proposal-class-properties"]
 });
@@ -27,13 +26,15 @@ module.exports = {
     })],
     devServer: {
       port:5000,
-      contentBase:path.join(__dirname,"dist"),
-      publicPath: `/`,
-      before: function(app, server, compiler) {
-        configureAPI(app);
+      static:{
+        directory:path.join(__dirname,"dist"),
+        publicPath: `/`,
       },
-      after:function(app,server,compiler){
-        app.get('*', function(req, res) {
+      onBeforeSetupMiddleware: function(devServer) {
+        configureAPI(devServer.app);
+      },
+      onAfterSetupMiddleware:function(devServer){
+        devServer.app.get('*', function(req, res) {
           res.redirect("/");
         });
       }

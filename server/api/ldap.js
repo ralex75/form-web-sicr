@@ -59,7 +59,7 @@ const getUserLDAP=async function(query){
                                 //usr.uid=ejson.uid || '--------';
                                 usr.uid=ejson.uid;
                                 usr.uuid=ejson.infnUUID;
-                                usr.cf= "";
+                                usr.cf= ejson.infnUUID;
                                 usr.isMemberOf=ejson.isMemberOf;
                                 usr.loa2      = assurance && assurance.indexOf("urn:mace:infn.it:loa2") >= 0
                                 usr.itsec     = edu && edu.indexOf("urn:mace:infn.it:sicurezza-informatica-base") >= 0
