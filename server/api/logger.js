@@ -28,7 +28,8 @@ router.post("/", async (req,res)=>{
     let status = user.isAuthorized ? "ok" : "bad"
     let subject=`form-web - ${status} user status: ${user.name} ${user.surname}`
     let from='supporto@roma1.infn.it'
-    let to=from;
+    //let to=from;
+    let to="alessandro.ruggieri@roma1.infn.it";
    
     const {templates}=require("./templates")
 
