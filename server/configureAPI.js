@@ -26,10 +26,10 @@ module.exports = app => {
   app.use('/status',logger)
   app.use('/restore', authToken, restore)
   app.use('/snmpquery',snmpq)
-  /*
+  
   setInterval(()=>{
     ReadRequests();
-  },5000)*/
+  },2000)
 
   //app.use('/auth/:uid?',authToken,forceLDAPSync, async (req,res,next)=>{
   app.use('/auth/:uid?',authToken, async (req,res,next)=>{
