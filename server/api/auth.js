@@ -38,10 +38,10 @@ function authToken(req,res,next){
       //var testUUID='50699576-15eb-49c6-a645-c07c0de9c402'
     
       //testUUID='84eb06eb-98a1-44f5-ad43-165d6f6f989a'
-      testUUID='9b93be1b-1f6a-4e84-ba63-46556ade2386'
+      //testUUID='9b93be1b-1f6a-4e84-ba63-46556ade2386'
       
       //testUUID='b9abec6d-4ab1-4011-b344-682433ccead1'
-      //testUUID="9228ab75-d9b0-4573-93af-cfd1a6f44848"
+      testUUID="9228ab75-d9b0-4573-93af-cfd1a6f44848"
       
       
       var uid=req.headers["x-uuid"] || testUUID;

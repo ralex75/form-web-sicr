@@ -66,7 +66,6 @@ export class Profile extends Abstract{
     }
 
     getDays(){
-        debugger;
         let usr=this.currentUser();
         return moment().diff(moment(usr.policies),'days')
     }
@@ -89,7 +88,7 @@ export class Profile extends Abstract{
         {
             content=`${loc['loa2_feedback']}`
         }
-        else if(!user.role)
+        else if(!user.roma1)
         {
             content=`${loc['unauthorized_feedback']}`
         }
