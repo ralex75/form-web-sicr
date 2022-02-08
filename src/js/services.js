@@ -2,7 +2,7 @@ import axios from "axios"
 import "regenerator-runtime/runtime.js"; //per webpack funzioni async 
 
 //axios.defaults.baseURL = '/sicr/supporto/';
-axios.defaults.baseURL = window.location.href;
+axios.defaults.baseURL = 'http://localhost:3000';
 
 const user={
 

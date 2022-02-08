@@ -28,7 +28,7 @@ module.exports = app => {
   app.use('/snmpquery',snmpq)
   
   setInterval(()=>{
-    ReadRequests();
+    //ReadRequests();
   },2000)
 
   //app.use('/auth/:uid?',authToken,forceLDAPSync, async (req,res,next)=>{

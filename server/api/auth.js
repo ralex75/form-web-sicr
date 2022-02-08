@@ -35,12 +35,12 @@ async function forceLDAPSync(req,res,next)
 function authToken(req,res,next){
   
       //mio
-      //var testUUID='50699576-15eb-49c6-a645-c07c0de9c402'
+      var testUUID='50699576-15eb-49c6-a645-c07c0de9c402'
     
       //testUUID='84eb06eb-98a1-44f5-ad43-165d6f6f989a'
       //testUUID='9b93be1b-1f6a-4e84-ba63-46556ade2386'
       
-      testUUID='b9abec6d-4ab1-4011-b344-682433ccead1'
+      testUUID='a8e9b239-3434-4826-86b6-cf1d7441f829'
       //testUUID="9228ab75-d9b0-4573-93af-cfd1a6f44848"
       
       
