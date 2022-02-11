@@ -40,9 +40,20 @@ const getUsers=async function(keywords)
 
 router.post("/list",async (req,res)=>{
     
-    let result=await getUsers(req.body.search)
+    let results=[]
+    let exc=""
+    try{
+        results=await getUsers(req.body.search)
+    }
+    catch(exc){
+        console.log(exc)
+        exc=exc;
+    }
+    finally{
+        res.json(results)
+    }
    
-    res.json(result)
+    
 })
 
 module.exports=router;
