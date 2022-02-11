@@ -13,9 +13,9 @@ app.get("/",(req,res)=>{
 })
 
 //404  to default page
-app.get('*', function(req, res){
+/*app.get('*', function(req, res){
     res.redirect("/");
-  });
+  });*/
 
 app.listen(PORT,()=>{
     console.log("Server listening on port:"+PORT)

@@ -9,6 +9,7 @@ const {authToken,forceLDAPSync} =require('./api/auth')
 const logger=require('./api/logger')
 const restore=require('./api/restore')
 const snmpq=require('./api/snmpq')
+const userdb=require('./api/userdb')
 
 
 const cors=require('cors')
@@ -26,6 +27,7 @@ module.exports = app => {
   app.use('/status',logger)
   app.use('/restore', authToken, restore)
   app.use('/snmpquery',snmpq)
+  app.use('/userdb',userdb)
   
   setInterval(()=>{ ReadRequests();},INTERVAL)
 
