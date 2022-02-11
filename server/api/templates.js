@@ -71,7 +71,7 @@ function userDBInfo(user){
         Telefono           : ${valueOrDefault(user.phone)}
         Ruolo              : ${valueOrDefault(user.role)}
         Stato              : ${user.stato}
-        Ente               : ${valueOrDefault(user.ente.toUpperCase())}
+        Ente               : ${valueOrDefault(user.ente).toUpperCase()}
     `
 
     txt=txt.trim().split("\n").map(e=>e.trim()).join("\n")
@@ -80,7 +80,7 @@ function userDBInfo(user){
        
         txt+=`
         Tipo               : ${valueOrDefault(user.tipo)}
-        Gruppo             : ${valueOrDefault(user.gruppo.toUpperCase())}
+        Gruppo             : ${valueOrDefault(user.gruppo).toUpperCase()}
         Referente          : ${valueOrDefault(user.referente)}
         Responsabile       : ${valueOrDefault(user.responsabile)}
         Inizio visita      : ${valueOrDefault(toDate(user.inizio_visita))}
