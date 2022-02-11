@@ -114,6 +114,8 @@ export class UserSearch extends Abstract{
             }
         })
 
+        
+
         this.services={"LDAP":services.user.list,
                         "USERDB":services.userdb.list}
     }
@@ -135,6 +137,7 @@ export class UserSearch extends Abstract{
     }
 
     displayUsers(users,type="USERDB"){
+
 
         users=users.sort((a,b)=>a.surname>b.surname ? 1 : -1)
 
@@ -180,14 +183,17 @@ export class UserSearch extends Abstract{
         this.$list.innerHTML=""
 
         if(!value || value.length<3) return;
-        
-      
 
+      
         this.searchTimeOutID=setTimeout(async ()=>{
             let close=UI.showUserWaiting("",'waiting')
             try{
                 let resp=await this.services[this.$where.value](value,false)
                 scope.displayUsers(resp.data,this.$where.value)
+            }
+            catch(exc){
+                console.log(exc)
+                this.$resultText.innerHTML=`<span style="color:red">Spiacenti, si è verificato un problema.</span>`
             }
             finally{
                 close();
