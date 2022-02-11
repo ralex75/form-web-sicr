@@ -20,9 +20,10 @@ const getUserDBAll=async function(queryStr){
 
 const getUsers=async function(keywords)
 {
+    let _keywords=keywords.replace(/\'/g,"''")
     let AND=""
 
-    keywords.split(" ").forEach(k=>{
+    _keywords.split(" ").forEach(k=>{
         AND+=` AND (x.email ilike '${k}' OR x.cdf ilike '${k}%' OR x.tel1 ilike '${k}%' OR x.nome ilike '${k}%' OR x.cognome ilike '${k}%')`
     })
 
