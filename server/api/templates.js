@@ -61,8 +61,7 @@ const toDate=(date)=>{
 
 function userDBInfo(user){
    
-    console.log(user)
-    
+        
     let txt=`
         
         Nome               : ${user.name} 
