@@ -180,6 +180,11 @@ export default {
     requests,
     locations,
     user,
+    userdb:{
+        list:function(search,onlyauth,token){
+            return axios.post("/userdb/list",{"search":search,"onlyauth":onlyauth},{cancelToken:token});
+        },
+    },
     net,
     host,
     snmp

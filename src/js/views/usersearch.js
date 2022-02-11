@@ -1,19 +1,43 @@
 const template=`
-<div>
+<div class="search_cont">
     <input type="text" id="search" class="search" placeholder="[SEARCH]" />
+    <select id="where">
+        <option value="LDAP">LDAP</option>
+        <option value="USERDB">USERDB</option>
+    </select>
+    <input type="button" id="btSearch" value="Cerca"/>
 </div>
 <div id="waiting"></div>
 <h4 id="resultText" ></h4>
 <div class="scroll">
-
     <ul id="userlist"></ul>
 </div>
 <style>
 
+div.search_cont{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    grid-template-columns: 100px 30px 60px;
+    grid-gap:10px;
+}
+
+.search_cont{
+    height:60px;
+  
+}
+#btSearch{
+    width:200px;
+    border:1px solid #000;
+}
+.search_cont *{
+    height:50px;
+}
+
 input.search{
     padding:10px;
     margin:10px 0;
-    width:80%;
+    width:100%;
    
 }
 li{
@@ -68,12 +92,30 @@ export class UserSearch extends Abstract{
         {
             return Application.navigateTo("#profile")
         }
-
+        
+        this.$where=this.target.querySelector("#where")
         this.$search=this.target.querySelector("#search")
+        this.$btsearch=this.target.querySelector("#btSearch")
         this.$resultText=this.target.querySelector("#resultText")
         this.$list=this.target.querySelector("#userlist")
         
-        this.$search.addEventListener('input',this.searchUsers.bind(this))
+        //this.$search.addEventListener('input',this.searchUsers.bind(this))
+        this.$btsearch.addEventListener('click',this.searchUsers.bind(this))
+        this.$where.addEventListener('change',this.searchUsers.bind(this))
+
+        let scope=this;
+        this.$search.addEventListener("keyup", function(ev) {
+            // Number 13 is the "Enter" key on the keyboard
+            if (ev.keyCode === 13) {
+              // Cancel the default action, if needed
+              ev.preventDefault();
+              // Trigger the button element with a click
+              scope.$btsearch.click();
+            }
+        })
+
+        this.services={"LDAP":services.user.list,
+                        "USERDB":services.userdb.list}
     }
 
     async getContent(){
@@ -92,14 +134,30 @@ export class UserSearch extends Abstract{
        
     }
 
-    displayUsers(users){
+    displayUsers(users,type="USERDB"){
+
+        users=users.sort((a,b)=>a.surname>b.surname ? 1 : -1)
 
         let items=""
        
-        users.forEach(u => {
-            let cls=u.isAuthorized ? 'auth' : ''
-            items+=`<li class="${cls}"><pre>${templates.completeUserInfo(u)}</pre></li>`
-        });
+        if(type=='LDAP')
+        { 
+            users.forEach(u => {
+                let cls=u.isAuthorized ? 'auth' : ''
+                items+=`<li class="${cls}"><pre>${templates.completeUserInfo(u)}</pre></li>`
+            });
+        }
+        
+        if(type=="USERDB"){
+            let separator= users.length>1 ? "<br>----------------------------------------------------------------------" : ""
+            users.forEach(u => {
+                console.log(u)
+                let state=u.stato.toUpperCase()
+                let cls=(state=='ATTIVO' || state=='ATTIVO - AUTORIZZATO') ? 'auth' : ''
+                items+=`<li class="${cls}"><pre>${templates.userDBInfo(u)}</pre></li>`
+                items+=separator
+            });
+        }
 
        
       
@@ -110,27 +168,32 @@ export class UserSearch extends Abstract{
 
     searchUsers(ev){
 
+       
         clearTimeout(this.searchTimeOutID)
         let scope=this;
         
-        let value=ev.target.value;
+        //let value=ev.target.value;
+        let value=this.$search.value
+        console.log(value)
 
         this.$resultText.innerText=""
         this.$list.innerHTML=""
 
-        if(!value || value.length<5) return;
+        if(!value || value.length<3) return;
         
+      
+
         this.searchTimeOutID=setTimeout(async ()=>{
             let close=UI.showUserWaiting("",'waiting')
             try{
-                let resp=await services.user.list(ev.target.value,false)
-                scope.displayUsers(resp.data)
+                let resp=await this.services[this.$where.value](value,false)
+                scope.displayUsers(resp.data,this.$where.value)
             }
             finally{
                 close();
             }
            
-        },1000)
+        },1)
     }
 
     locale(){
