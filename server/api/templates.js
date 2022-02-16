@@ -16,22 +16,23 @@ const generateHTMLSiteRoles=(siteRoles)=>{
 
 function userInfo(user){
    
+    
 
     let userEmails=user.mailAlternates.filter(m=>m.indexOf("@roma1.infn.it")<0).join(";")
     
     let txt=`
-        
         Nome               : ${user.name} 
         Cognome            : ${user.surname}
         UID                : ${valueOrDefault(user.uid)}
         INFN UUID          : ${user.uuid}
-        CF                 : ${(user.cf!=user.uid) ? valueOrDefault(user.cf) : "---"}
+        CF                 : ${(user.cf!=user.uuid) ? valueOrDefault(user.cf) : "---"}
         Email              : ${valueOrDefault(user.email)}
         Email alternativi  : ${valueOrDefault(userEmails).split(";").join(`\n &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`)}
         Telefono           : ${valueOrDefault(user.phone)}
         Sede - Ruolo       : ${valueOrDefault(generateHTMLSiteRoles(user.siteRoles).join("\n "+generateHtmlWhiteSpace(21)))}
         Scadenza           : ${valueOrDefault(user.expiration)}
     `
+    
     return txt.trim().split("\n").map(e=>e.trim()).join("\n");
 
 }
@@ -48,7 +49,7 @@ function completeUserInfo(user){
             -----------------------------------------------------------------
             Autorizzato        : ${user.isAuthorized ? 'SI': 'NO'}`
             
-    
+   
     return txt.trim().split("\n").map(e=>e.trim()).join("\n");
 }
 
