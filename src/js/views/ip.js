@@ -582,7 +582,8 @@ export class IP extends Abstract{
             curr['port']=this.hostLoc.port.value
             curr['notes']=this.hostNotes.value
 
-            if(this.hostConfig!='DHCP')
+            
+            if(curr['config']!='DHCP')
             {
                 curr['name']=this.hostName.value
                 curr['domain']=this.hostDomain.value
@@ -629,8 +630,14 @@ export class IP extends Abstract{
                     action:action
                 }
     
+            if(data.to){
+                if(data.to["config"]!='STATIC'){
+                    delete data.to["name"]
+                    delete data.to["domain"]
+                }
+            }
            
-    
+            
             let lang=this.currentLanguage();
     
             let html=new Report("IP",lang,data.to).getReport()
