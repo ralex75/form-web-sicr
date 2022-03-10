@@ -10,7 +10,6 @@ const generateHtmlWhiteSpace=(count)=>{
 }
 
 const generateHTMLSiteRoles=(siteRoles)=>{
-    //return Object.keys(siteRoles).filter(k=>k!='roma1').map(k=>`${k} - ${siteRoles[k]}`)
     return Object.keys(siteRoles).map(k=>`${k.toUpperCase()} - ${siteRoles[k]}`)
 }
 
@@ -62,8 +61,7 @@ const toDate=(date)=>{
 
 function userDBInfo(user){
    
-    console.log(user)
-    
+        
     let txt=`
         
         Nome               : ${user.name} 
@@ -72,8 +70,9 @@ function userDBInfo(user){
         Email              : ${valueOrDefault(user.email)}
         Telefono           : ${valueOrDefault(user.phone)}
         Ruolo              : ${valueOrDefault(user.role)}
-        Stato              : ${user.stato}
         Ente               : ${valueOrDefault(user.ente).toUpperCase()}
+        Stato              : ${user.stato}
+        Qualifica          : ${valueOrDefault(user.qualifica)}
     `
 
     txt=txt.trim().split("\n").map(e=>e.trim()).join("\n")
@@ -81,7 +80,6 @@ function userDBInfo(user){
     if (user.role!='FISSO'){
        
         txt+=`
-        Tipo               : ${valueOrDefault(user.tipo)}
         Gruppo             : ${valueOrDefault(user.gruppo).toUpperCase()}
         Referente          : ${valueOrDefault(user.referente)}
         Responsabile       : ${valueOrDefault(user.responsabile)}
@@ -92,7 +90,6 @@ function userDBInfo(user){
     else{
         txt+=`
         Scadenza           : ${valueOrDefault(user.expire_date).split("-").reverse().join("-")}
-      
         `
     }
     
