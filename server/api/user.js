@@ -44,8 +44,13 @@ const getUsers=async function(keywords)
     if(!keywords) return users;
 
     let k=keywords
+    kw=keywords.split(" ")
+    nameFilter=""
+    if(kw.length==2){
+        nameFilter=`(cn=*${kw[1]} ${kw[0]}*)` //nome -> cognome o cognome -> nome
+    }
    
-    ldapFilter+=`(|(cn=*${k}*)(uid=${k})(mail=${k})(schacPersonalUniqueID=*:CF:${k})(infnUUID=${k})(mailAlternateAddress=${k}))`
+    ldapFilter+=`(|(cn=*${k}*)${nameFilter}(uid=${k})(mail=${k})(schacPersonalUniqueID=*:CF:${k})(infnUUID=${k})(mailAlternateAddress=${k}))`
     
 
     try{
