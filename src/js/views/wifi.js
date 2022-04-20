@@ -172,9 +172,15 @@ export class WIFI extends Abstract {
 
        
        this.target.querySelectorAll('[type=date]').forEach(el=>{
+        
           el.min=date;
           el.value=date;
           this.setDate(el,date);
+          
+          //serve in firefox per prevenire il keydown sul calendario
+          el.addEventListener('keydown',ev=>{
+            ev.preventDefault()
+          })
           el.addEventListener('change',ev=>{
             if(ev.target.value)
             {
