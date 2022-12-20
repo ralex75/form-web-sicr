@@ -93,6 +93,7 @@ export class UserSearch extends Abstract{
             return Application.navigateTo("#profile")
         }
         
+        console.log("QUI")
         this.$where=this.target.querySelector("#where")
         this.$search=this.target.querySelector("#search")
         this.$btsearch=this.target.querySelector("#btSearch")
@@ -174,8 +175,7 @@ export class UserSearch extends Abstract{
        
         clearTimeout(this.searchTimeOutID)
         let scope=this;
-        
-        //let value=ev.target.value;
+              
         let value=this.$search.value
         console.log(value)
 
@@ -188,6 +188,7 @@ export class UserSearch extends Abstract{
         this.searchTimeOutID=setTimeout(async ()=>{
             let close=UI.showUserWaiting("",'waiting')
             try{
+                
                 let resp=await this.services[this.$where.value](value,false)
                 scope.displayUsers(resp.data,this.$where.value)
             }

@@ -16,8 +16,10 @@ const generateHTMLSiteRoles=(siteRoles)=>{
 function userInfo(user){
    
     
-
-    let userEmails=user.mailAlternates.filter(m=>m.indexOf("@roma1.infn.it")<0).join(";")
+    
+    let userEmails=user.mailAlternates.filter(m=>m.indexOf(user.email)<0)
+    userEmails=userEmails.filter(m=>!m.match(/^\w+@roma1.infn.it$/))
+    userEmails=userEmails.join(";")
     
     let txt=`
         Nome               : ${user.name} 
