@@ -165,6 +165,7 @@ export class Profile extends Abstract{
     showList(items)
     {
         var list=Array.isArray(items) ? items : [items];
+        list=list.filter(m=>m.match(/^\w+(\.([a-zA-Z-]+))+@.+/))
         return list.join("<br>")
     }
 
