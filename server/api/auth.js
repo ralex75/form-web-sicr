@@ -36,22 +36,11 @@ function authToken(req,res,next){
   
     var uid=req.headers["x-uuid"];
     
-<<<<<<< HEAD
     if(!uid){
       return res.sendStatus(401)
     }
   
     req.userid=uid;
-=======
-            
-      var uid=req.headers["x-uuid"] || testUUID;
-
-      if(!uid){
-        return res.sendStatus(401)
-      }
-    
-      req.userid=uid;
->>>>>>> master
 
     next();
 
