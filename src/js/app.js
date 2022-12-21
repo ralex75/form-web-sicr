@@ -252,10 +252,11 @@ document.addEventListener('DOMContentLoaded',async ev=>{
         }
 
         user.roma1Email=function(){
+           
             if(this.mailAlternates.length>0)
             {
-            let email=this.mailAlternates.concat(this.email).filter(m=>m.match(/(\w+\.\w+)@roma1.infn.it/))
-            return email[0] || ""
+                let email=this.mailAlternates.concat(this.email).filter(m=>m.match(/^\w+(\.([a-zA-Z-]+))+@roma1.infn.it/))
+                return email[0] || ""
             }
             return "";
         }
