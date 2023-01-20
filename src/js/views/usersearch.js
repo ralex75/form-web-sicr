@@ -1,5 +1,7 @@
 const template=`
+
 <div class="search_cont">
+    
     <input type="text" id="search" class="search" placeholder="[SEARCH]" />
     <select id="where">
         <option value="LDAP">LDAP</option>
@@ -69,6 +71,20 @@ li.auth::marker{
    content: "\\2713"
 
 }
+
+ul  > button{
+    float:right;
+    border:1px solid #000;
+    padding:12px;
+    background-color:#DDD;
+    color:#333;
+    transition:all 0.5s ease-in-out;
+}
+
+ul  > button:hover{
+    background-color:#333;
+    color:#DDD;
+}
 </style>
 `
 
@@ -93,7 +109,7 @@ export class UserSearch extends Abstract{
             return Application.navigateTo("#profile")
         }
         
-        console.log("QUI")
+        
         this.$where=this.target.querySelector("#where")
         this.$search=this.target.querySelector("#search")
         this.$btsearch=this.target.querySelector("#btSearch")
@@ -114,7 +130,12 @@ export class UserSearch extends Abstract{
               scope.$btsearch.click();
             }
         })
+        
+        let script=document.createElement("script")
+        let qs=this.target.querySelector(".search_cont")
 
+        script.innerText="function doSync(id){const url=\"http://ds.roma1.infn.it/cgi-bin/fix_roles.cgi?infnUUID=\"+id+\"&env=prod\";console.log(url);}"
+        qs.appendChild(script)
         
 
         this.services={"LDAP":services.user.list,
@@ -146,9 +167,16 @@ export class UserSearch extends Abstract{
        
         if(type=='LDAP')
         { 
+            
             users.forEach(u => {
                 let cls=u.isAuthorized ? 'auth' : ''
                 items+=`<li class="${cls}"><pre>${templates.completeUserInfo(u)}</pre></li>`
+                let siteRoles=u.siteRoles
+                console.log(siteRoles)
+                if (u.loa2 && u.policies && (u.itsec | u.gracetime) && !u.roma1)
+                {
+                    items+=`<button onClick="doSync('${u.uuid}')")>Forza il SYNC</button>`
+                }
             });
         }
         
@@ -163,7 +191,7 @@ export class UserSearch extends Abstract{
             });
         }
 
-       
+    
       
         this.$resultText.innerText=`Risultati trovati:${users.length}`
         this.$list.innerHTML=items;
