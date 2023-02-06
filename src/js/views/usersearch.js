@@ -218,10 +218,8 @@ export class UserSearch extends Abstract{
             users.forEach(u => {
                 let cls=u.isAuthorized ? 'auth' : ''
                 items+=`<li class="${cls}"><pre>${templates.completeUserInfo(u)}</pre></li>`
-                let siteRoles=u.siteRoles
-                console.log(siteRoles)
-                //if (u.loa2 && u.policies && !u.roma1)
-                if (u.loa2 && u.policies)
+                //let siteRoles=u.siteRoles
+                if (u.loa2 && u.policies && !u.roma1)
                 {
                     let cls=this.insync.indexOf(u.uuid) > -1 ? "class='pending'" : ""
                     items+=`<button ${cls}  data-uid='${u.uuid}'>Forza il SYNC</button>`
