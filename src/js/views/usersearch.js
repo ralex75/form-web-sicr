@@ -205,40 +205,37 @@ export class UserSearch extends Abstract{
        
     }
 
-    displayUsers(users,type="USERDB"){
+    parseLDAPItem=(u)=>{
+        let cls=u.isAuthorized ? 'auth' : ''
+        let item=`<li class="${cls}"><pre>${templates.completeUserInfo(u)}</pre></li>`
+        //let siteRoles=u.siteRoles
+        if (u.loa2 && !u.roma1)
+        {
+            let cls=this.insync.indexOf(u.uuid) > -1 ? "class='pending'" : ""
+            item+=`<button ${cls}  data-uid='${u.uuid}'>Forza il SYNC</button>`
+        }
+        return item
+    }
 
+    parseUserDBItem=(u)=>{
+        let state=u.stato.toUpperCase()
+        let cls=(state=='ATTIVO' || state=='ATTIVO - AUTORIZZATO') ? 'auth' : ''
+        return `<li class="${cls}"><pre>${templates.userDBInfo(u)}</pre></li>`
+    }
+
+    displayUsers(users,type="USERDB"){
 
         users=users.sort((a,b)=>a.surname>b.surname ? 1 : -1)
 
         let items=""
-       
-        if(type=='LDAP')
+        let separator= users.length>1 ? "<br>================================================================" : ""
+        let callback=this.parseLDAPItem
+        if(type!='LDAP')
         { 
-            
-            users.forEach(u => {
-                let cls=u.isAuthorized ? 'auth' : ''
-                items+=`<li class="${cls}"><pre>${templates.completeUserInfo(u)}</pre></li>`
-                //let siteRoles=u.siteRoles
-                if (u.loa2 && u.policies && !u.roma1)
-                {
-                    let cls=this.insync.indexOf(u.uuid) > -1 ? "class='pending'" : ""
-                    items+=`<button ${cls}  data-uid='${u.uuid}'>Forza il SYNC</button>`
-                }
-            });
+            callback=this.parseUserDBItem
         }
-        
-        if(type=="USERDB"){
-            let separator= users.length>1 ? "<br>----------------------------------------------------------------------" : ""
-            users.forEach(u => {
-                console.log(u)
-                let state=u.stato.toUpperCase()
-                let cls=(state=='ATTIVO' || state=='ATTIVO - AUTORIZZATO') ? 'auth' : ''
-                items+=`<li class="${cls}"><pre>${templates.userDBInfo(u)}</pre></li>`
-                items+=separator
-            });
-        }
-
-    
+       
+        items=users.map(u => callback(u)).join(separator);
       
         this.$resultText.innerText=`Risultati trovati:${users.length}`
         this.$list.innerHTML=items;
