@@ -53,6 +53,13 @@ module.exports = app => {
 
 })
 
+app.use("/user/sync/:uid",forceLDAPSync,async (req,res,next)=>{
+  
+  
+  let {syncResultMessage}=res.locals || "";
+  let {status,message}=syncResultMessage
+  res.status(status).json(syncResultMessage)
+})
 
 
  app.use('/user/list',async (req,res,next)=>{

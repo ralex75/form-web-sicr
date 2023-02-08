@@ -16,6 +16,9 @@ const user={
        });
       
     },
+    sync:function(uid){
+        return axios.get(`/user/sync/${uid}`)
+    },
 
     list:function(search,onlyauth,token){
         return axios.post("/user/list",{"search":search,"onlyauth":onlyauth},{cancelToken:token});
