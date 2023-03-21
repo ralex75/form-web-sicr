@@ -381,6 +381,7 @@ export class IP extends Abstract{
                 if(!value) return "empty"
                 if(!value.match(/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/)) return "invalid"
                 if(badMacAddress.indexOf(value.toLowerCase())>-1) return "invalid"
+                console.log("QUI")
                 if(isMacAddressVM(value) && this.hostConfig.value!='STATICVM') return 'invalid-mac-config'
                 if(!isMacAddressVM(value) && this.hostConfig.value=='STATICVM') return 'invalid-mac-config'
                 if(!await isValidMacAddressVendor(value)) return 'invalid'
