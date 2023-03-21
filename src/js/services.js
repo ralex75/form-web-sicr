@@ -134,6 +134,18 @@ const net={
         return axios.get(`/net/portcode/${portcode}/vlan`)
     },
 
+    vendor(mac){
+        return new Promise((resolve,reject)=>{
+            axios.get(`/net/vendor/${mac}`).then(({data})=>{
+                resolve(data)
+            })
+            .catch(err=>{
+                reject(err)
+            })
+        })
+        
+    },
+
     verifyEmailAddress(email){
         return axios.get(`/mail/exists/${email}`)
     }
