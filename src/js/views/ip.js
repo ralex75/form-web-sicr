@@ -325,7 +325,26 @@ export class IP extends Abstract{
             });
         }
 
-    
+        const badMacAddress=["ff:ff:ff:ff:ff:ff","00:00:00:00:00:00"]
+
+        const isValidMacAddressVendor=async (value)=>{
+            let isValid=false
+            try{
+              
+                let {companyName}=await services.net.vendor(value)
+                
+                isValid = companyName!="" && companyName!=undefined
+                isValid = companyName.indexOf("errors")<0
+                console.log("VENDOR IS VALID:",companyName)
+            }
+            catch(exc)
+            {
+                console.log("vendor:",exc)    
+            }
+
+            return isValid
+
+        }
 
         const isMacAddressVM=(value)=>{
             
@@ -357,17 +376,20 @@ export class IP extends Abstract{
         const validationRules={
     
             "mac":async (value)=> {
+                
                 clearTimeout(this.timeOutID["mac"])
                 if(!value) return "empty"
                 if(!value.match(/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/)) return "invalid"
+                if(badMacAddress.indexOf(value.toLowerCase())>-1) return "invalid"
                 if(isMacAddressVM(value) && this.hostConfig.value!='STATICVM') return 'invalid-mac-config'
                 if(!isMacAddressVM(value) && this.hostConfig.value=='STATICVM') return 'invalid-mac-config'
-                let isDuplicated= value in this.lastMacDuplicateResult ? this.lastMacDuplicateResult[value] : await checkDuplicatedMacAddress(input)
-                this.lastMacDuplicateResult={}
-                this.lastMacDuplicateResult[value]=isDuplicated
-                if (!isDuplicated) {return null}
-                if(this.eHost && this.eHost.mac.toLowerCase()==value.toLowerCase()) return null;
-                return 'hmac-duplicated'
+                if(!await isValidMacAddressVendor(value)) return 'invalid'
+                if(this.eHost && this.eHost.mac.toLowerCase()!=value.toLowerCase() || !this.eHost)
+                {
+                    if(await checkDuplicatedMacAddress(input)) { return 'hmac-duplicated' }
+                } 
+              
+                return null
             },
             
             "name":async (value)=>{
@@ -406,11 +428,7 @@ export class IP extends Abstract{
         let loc=this.locale();
         let res=await validationRules[name](value)
         res ? this.validationSet.add(name) : this.validationSet.delete(name);
-        /*console.log("res:",res)
-        if(res && name=='mac' && res!='hmac-duplicated'){
-            this.lastMacDuplicateResult={}
-        }*/
-        
+              
         return loc.errors[res] || null
     }
 

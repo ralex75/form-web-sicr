@@ -133,36 +133,30 @@ export class WIFI extends Abstract {
     super(target,args)
   }
 
+   showWarningWIFI()
+   {
+      var loc=this.locale();
+      var isEng=Application.language.current=='ENG';
+      
+      let html="<p style=\"width:80%;\">Warning, you currently have a roma1 account. \
+                <br>Therefore you can use the <b>eduroam</b> or <b>dot1x</b> wifi.</p>"
+      if(!isEng)
+      {
+        html="<p style=\"width:80%;\">Attenzione, attualmente sei in possesso di un account roma1. \
+                <br>Per il WIFI puoi utilizzare le reti <b>eduroam</b> o <b>dot1x</b></p>"
+      }
+    
+      
+      this.target.innerHTML=`<div class="form_sez"><div class="form_intest">${loc.form.header}</div><div>${html}</div>`;
+    
+   }
+
    mounted()
     {
-       //const user=Application.user.current();
+      
        let email=Application.user.current().roma1Email();
-       if(email)
-       {
-
-          var loc=this.locale();
-          var isEng=Application.language.current=='ENG';
-          
-          let html="<div class=\"form_sez\"><div class=\"form_intest\">"
-          html+=loc.form.header
-          html+="</div>"
-          if(!isEng)
-          {
-            html+="<p style=\"width:80%;\">Attenzione, attualmente sei in possesso di un account roma1. \
-                    <br>Per il WIFI puoi utilizzare le reti <b>eduroam</b> o <b>dot1x</b></p>"
-          }
-          else{
-            html+="<p style=\"width:80%;\">Warning, you currently have a roma1 account. \
-                    <br>Therefore you can use the <b>eduroam</b> or <b>dot1x</b> wifi.</p>"
-          }
-          html+="</div>"
-
-          
-          this.target.innerHTML=html;
-          
-          return;
-       }
-
+       if(email) return this.showWarningWIFI()
+       
        this.$form=this.target.querySelector("form");
       
        this.$from=this.target.querySelector("#from");
