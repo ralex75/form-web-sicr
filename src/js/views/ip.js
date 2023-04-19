@@ -335,7 +335,6 @@ export class IP extends Abstract{
                 
                 isValid = companyName!="" && companyName!=undefined
                 isValid = companyName.indexOf("errors")<0
-                console.log("VENDOR IS VALID:",companyName)
             }
             catch(exc)
             {
