@@ -1,6 +1,7 @@
 const getUserLDAP=async function(query){
 
     
+    
     const ldap=require('ldapjs');
     const usr_list=[];
 
@@ -15,6 +16,7 @@ const getUserLDAP=async function(query){
         url: ldap_conf.url
     });
     
+    
 
     return new Promise(function(resolve,reject){
 
@@ -22,6 +24,7 @@ const getUserLDAP=async function(query){
                 
                 client.bind(ldap_conf.username, ldap_conf.userpwd, function(err){
                     
+                    debugger
                     if(err){
                         console.log(err);
                         reject("bind error:",err);
@@ -47,7 +50,8 @@ const getUserLDAP=async function(query){
                         res.on('searchEntry',function(entry){
                            
                             try{
-                                
+                            
+                                console.log("entry:",entry)
                                 var ejson=entry.object;
                             
                                 var usr={};

@@ -93,9 +93,12 @@ var parseLDAPUserInfo=function (user) {
     //console.log("mail alternates:",cuser.mailAlternates)
     
     //rimuove dall'alternateMailAddress se esiste mail principale per evitare duplicati
-    cuser.mailAlternates=cuser.mailAlternates.map(e=>e.toLowerCase())
-                                             .filter(e=>e.indexOf(cuser.email.toLowerCase())<0).sort()
-    
+    console.log(cuser)
+    if(cuser.email)
+    {
+        cuser.mailAlternates=cuser.mailAlternates.map(e=>e.toLowerCase())
+                                                .filter(e=>e.indexOf(cuser.email.toLowerCase())<0).sort()
+    }
 
     let ma=cuser.mailAlternates;
     

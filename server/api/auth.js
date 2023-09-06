@@ -9,6 +9,7 @@ async function forceLDAPSync(req,res,next)
     const env="prod"
     const url=`http://ds.roma1.infn.it/cgi-bin/fix_roles.cgi?infnUUID=${uid}&env=${env}`
  
+    console.log("QUI")
        
     let response=null;
 
@@ -20,8 +21,11 @@ async function forceLDAPSync(req,res,next)
       response=err.response;
     }
 
+    
+
     res.locals.syncResultMessage={"uid":uid,"status":response?.status || 500,"message":response?.data ? response.data?.message :"Error"}
 
+   
     //timeout 5000 quando il sync è andato bene --- diamo tempo al db Godiva di sistemarsi...
     let timeout= res.locals.syncResultMessage!=200 ? 1 : 500;
 
@@ -35,8 +39,8 @@ async function forceLDAPSync(req,res,next)
 function authToken(req,res,next){
   
       //mio
-      var testUUID='50699576-15eb-49c6-a645-c07c0de9c402'
-      //testUUID='952c0240-f47f-42f8-9a1b-3d02f331e8d5'
+      //var testUUID='3160f2fb-f0f1-489c-b56e-8ebfd4dbbeae'
+      testUUID='50699576-15eb-49c6-a645-c07c0de9c402'
             
       var uid=req.headers["x-uuid"] || testUUID;
 
