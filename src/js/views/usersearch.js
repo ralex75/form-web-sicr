@@ -209,11 +209,11 @@ export class UserSearch extends Abstract{
         let cls=u.isAuthorized ? 'auth' : ''
         let item=`<li class="${cls}"><pre>${templates.completeUserInfo(u)}</pre></li>`
         //let siteRoles=u.siteRoles
-        if (u.loa2 && !u.roma1)
-        {
-            let cls=this.insync.indexOf(u.uuid) > -1 ? "class='pending'" : ""
+        //if (u.loa2 && !u.roma1)
+        //{
+            cls=this.insync.indexOf(u.uuid) > -1 ? "class='pending'" : ""
             item+=`<button ${cls}  data-uid='${u.uuid}'>Forza il SYNC</button>`
-        }
+        //}
         return item
     }
 
